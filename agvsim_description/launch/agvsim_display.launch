@@ -1,0 +1,32 @@
+<launch>
+	<arg name="model" default="$(find xacro)/xacro --inorder '$(find agvsim_description)/urdf/oryxbot_uarm.urdf.xacro'" />
+	<arg name="gui" default="true" />
+	<arg name="open_rviz" default="true" />
+	<param name="robot_description" command="$(arg model)" />
+
+    <!-- 设置GUI参数，显示关节控制插件 -->
+	<param name="use_gui" value="$(arg gui)"/>
+
+    <!-- 运行joint_state_publisher节点，发布机器人的关节状态  -->
+	<!--<node name="joint_state_publisher1" pkg="joint_state_publisher" type="joint_state_publisher" />-->
+
+	<!-- 运行robot_state_publisher节点，发布tf  -->
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" type="string" value="" />
+  </node>
+
+	<node name="agvsim_rviz_node" pkg="agvsim_description" type="agvsim_rviz_node" />
+
+  <!--<node pkg="tf" type="static_transform_publisher" name="base_to_base"
+      args="0.033 0.01 0.034  -1.57079632679 0 3.1415926 /base_footprint /Base 10" />-->
+
+  <group if="$(arg open_rviz)"> 
+  <node
+    name="rviz"
+    pkg="rviz"
+    type="rviz"
+    args="-d $(find agvsim_description)/rviz/oryxbot.rviz" />
+  </group>
+
+</launch>

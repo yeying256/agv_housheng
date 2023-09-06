@@ -1,0 +1,39 @@
+<launch>
+
+  <arg name="world_name" value="$(find agv_urdf_test)/world/world_room.world"/>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(arg world_name)" />
+    <!--arg name="use_sim_time" value="true"/-->
+  </include>
+  <!-- <node
+    name="tf_footprint_base"
+    pkg="tf"
+    type="static_transform_publisher"
+    args="0 0 0 0 0 0 base_link base_footprint 40" /> -->
+
+  <param name="robot_description" textfile="$(find agv_urdf_test)/urdf/agv_urdf_test.urdf" />
+  <node
+    name="spawn_model"
+    pkg="gazebo_ros"
+    type="spawn_model"
+    args="-param robot_description -urdf -model agv_urdf_test"
+    output="screen" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
+    <!-- <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" /> -->
+
+    <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
+      <param name="destination_frame" value="base_footprint"/>
+      <param name="cloud_destination_topic" value="/merged_cloud"/>
+      <param name="scan_destination_topic" value="/scan"/>
+      <param name="laserscan_topics" value ="/scan1 /scan2" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
+
+      </node>
+
+
+  <!-- <node
+    name="fake_joint_calibration"
+    pkg="rostopic"
+    type="rostopic"
+    args="pub /calibrated std_msgs/Bool true" /> -->
+</launch>

@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find agvsim_navigation)/launch/navigation.launch" />
+    <include file="$(find agv_urdf_test)/launch/gazebo.launch" />
+</launch>
