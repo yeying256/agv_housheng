@@ -19,7 +19,10 @@
     args="-param robot_description -urdf -model agv_urdf_test"
     output="screen" />
 
-    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" >
+      <remap from="/joint_states" to="/agv_sim/joint_states"/>
+    </node>
+    
     <!-- <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" /> -->
 
     <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
@@ -28,7 +31,9 @@
       <param name="scan_destination_topic" value="/scan"/>
       <param name="laserscan_topics" value ="/scan1 /scan2" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
 
-      </node>
+    </node>
+
+    
 
 
   <!-- <node

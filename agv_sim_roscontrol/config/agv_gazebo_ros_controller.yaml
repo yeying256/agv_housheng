@@ -1,0 +1,6 @@
+gazebo_ros_control:
+  pid_gains:
+    joint_turn_1: {p: 100.0, i: 0.01, d: 10.0}
+    joint_turn_3: {p: 100.0, i: 0.01, d: 10.0}
+    joint_wheel_1: {p: 100.0, i: 0.01, d: 10.0}
+    joint_wheel_3: {p: 100.0, i: 0.01, d: 10.0}

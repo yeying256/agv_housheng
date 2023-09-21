@@ -1,0 +1,8 @@
+<library path="lib/libturn_wheels_controller">
+    <class name="xj_control_ns/turn_wheels_controller" 
+           type="xj_control_ns::turn_wheels_controller"           
+           base_class_type="controller_interface::ControllerBase" />
+      <description>
+        fuck test??????????
+      </description>
+  </library>

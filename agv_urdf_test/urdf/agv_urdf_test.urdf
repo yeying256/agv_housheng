@@ -220,7 +220,7 @@
 
   <joint
     name="joint_turn_2"
-    type="revolute">
+    type="continuous">
     <origin
       xyz="-0.255 0.325 -0.285"
       rpy="0 0 0" />
@@ -230,11 +230,7 @@
       link="link_turn_2" />
     <axis
       xyz="0 0 1" />
-    <limit
-      lower="-6.28"
-      upper="6.28"
-      effort="3"
-      velocity="4" />
+
   </joint>
 
 
@@ -456,7 +452,7 @@
 
   <joint
     name="joint_turn_4"
-    type="revolute">
+    type="continuous">
     <origin
       xyz="0.255 -0.325 -0.285"
       rpy="0 0 0" />
@@ -466,11 +462,7 @@
       link="link_turn_4" />
     <axis
       xyz="0 0 1" />
-    <limit
-      lower="-6.28"
-      upper="6.28"
-      effort="3"
-      velocity="4" />
+
   </joint>
 
 
@@ -590,12 +582,14 @@
     <child link="camera_link_fake"/>
   </joint>
 
-
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
       <robotNamespace>/agv_sim</robotNamespace>
     </plugin>
   </gazebo>
+
+
+
 
   <gazebo>
     <plugin name="base_controller" filename="libgazebo_ros_planar_move.so">
@@ -756,7 +750,7 @@
 
 <transmission name="tran_wheel1">
   <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint_turn_1">
+    <joint name="joint_wheel_1">
       <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="motorwheel1">
@@ -767,7 +761,7 @@
 
 <transmission name="tran_wheel2">
   <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint_turn_3">
+    <joint name="joint_wheel_3">
       <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="motorwheel2">
@@ -775,6 +769,10 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
 </transmission>
+
+
+
+
 
 
 

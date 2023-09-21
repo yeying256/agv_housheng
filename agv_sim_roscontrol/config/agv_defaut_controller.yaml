@@ -1,0 +1,26 @@
+agv_sim:
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50
+
+  joint_turn1_velocity_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: joint_turn_1
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+
+  joint_turn2_velocity_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: joint_turn_3
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+  joint_wheel1_velocity_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: joint_wheel_1
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+  joint_wheel2_velocity_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: joint_wheel_3
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+
+
+
+  

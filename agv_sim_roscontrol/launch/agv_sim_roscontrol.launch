@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+
+    <rosparam file="$(find agv_sim_roscontrol)/config/agv_geometry_param.yaml" command="load"></rosparam>
+    <rosparam file="$(find agv_sim_roscontrol)/config/agv_gazebo_ros_controller.yaml" command="load"></rosparam>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="/agv_sim" args=" 
+    turn_wheels_controller"/>
+  <!-- convert joint states to TF transforms for rviz, etc -->
+  <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+    respawn="false" output="screen">
+    <remap from="/joint_states" to="/agv_sim/joint_states"/>
+  </node> -->
+
+  <include file="$(find agv_urdf_test)/launch/gazebo.launch">
+    
+  </include>
+
+</launch>

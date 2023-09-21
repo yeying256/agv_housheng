@@ -13,6 +13,14 @@ find_package(catkin REQUIRED COMPONENTS
   robot_state_publisher
   roscpp
   rospy
+
+  controller_interface
+  hardware_interface
+  pluginlib
+  std_msgs
+
+
+  robot_dynamic_cal
 )
 
 ## System dependencies are found with CMake's conventions
@@ -105,7 +113,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+ INCLUDE_DIRS include
 #  LIBRARIES agv_sim_roscontrol
 #  CATKIN_DEPENDS controller_manager joint_state_controller robot_state_publisher roscpp rospy
 #  DEPENDS system_lib
@@ -118,7 +126,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -206,3 +214,14 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+
+add_library(turn_wheels_controller
+  src/turn_wheels_controller.cpp
+)
+
+target_link_libraries(turn_wheels_controller
+  ${catkin_LIBRARIES}
+)
+
+
