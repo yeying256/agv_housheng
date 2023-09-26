@@ -147,8 +147,8 @@ namespace xj_control_ns
         }
         else if (log_flag_ == true)
         {
-            std::thread th_data_log(&turn_wheels_controller::log_thread,this,log_xyw_cmd_.size());
-            th_data_log.detach();
+            // std::thread th_data_log(&turn_wheels_controller::log_thread,this,log_xyw_cmd_.size());
+            // th_data_log.detach();
             log_flag_ = false;
         }
         

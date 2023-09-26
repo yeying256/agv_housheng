@@ -39,10 +39,33 @@ roslaunch agvsim_navigation navigation_gazebo.launch
 ### agv_sim_roscontrol
 ros_control可以连接robot_hw以及gazebo的仿真环境
 
+带遥控器和gazebo的launch,可以使用遥控器对机器人进行控制
+
+```
+roslaunch agv_sim_roscontrol agv_sim_roscontrol_joy.launch
+```
+
 
 ### agv_slam
 里面只有几个launch
+可以进行建图
+```
+roslaunch agv_slam agv_slam.launch
+```
+### ira_laser_tools
+激光雷达融合的包
 
-### 
+### robot_pose_ekf
+里程计imu，视觉里程计融合的包，用的卡尔曼滤波算法
+用到了 $$ orocos-bfl$$ 包,可以安装一下
+安装过程：cd到那个包的路径
+```
+$ mkdir build
+$ cd build
+$ cmake …
+$ make
+$ sudo make install
+```
+
 
 
