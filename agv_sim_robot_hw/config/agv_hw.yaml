@@ -1,0 +1,8 @@
+agv_sim:
+  robot_hw_test:
+    type: xj_control_ns/Agv_hw_interface
+    joints:
+      - joint_turn_1
+      - joint_turn_3
+      - joint_wheel_1
+      - joint_wheel_3

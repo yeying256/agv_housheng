@@ -1,0 +1,3 @@
+figure(1)
+plot(1:size(cmd_turn_vel),xyw_cmd_)
+legend('xr','xd','x');

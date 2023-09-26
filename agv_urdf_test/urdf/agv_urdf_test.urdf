@@ -16,7 +16,7 @@
         xyz="-5.5511E-17 0.00010136 -0.14206"
         rpy="0 0 0" />
       <mass
-        value="1008.2" />
+        value="50.2" />
       <inertia
         ixx="138.54"
         ixy="-0.25447"
@@ -105,10 +105,10 @@
   </link>
   <joint
     name="joint_turn_1"
-    type="revolute">
+    type="continuous">
     <origin
       xyz="0.255 0.325 -0.285"
-      rpy="0 0 0" />
+      rpy="0 0 3.1415" />
     <parent
       link="base_link" />
     <child
@@ -116,8 +116,7 @@
     <axis
       xyz="0 0 1" />
     <limit
-      lower="-6.28"
-      upper="6.28"
+
       effort="3"
       velocity="4" />
   </joint>
@@ -335,10 +334,10 @@
 
   <joint
     name="joint_turn_3"
-    type="revolute">
+    type="continuous">
     <origin
       xyz="-0.255 -0.325 -0.285"
-      rpy="0 0 0" />
+      rpy="0 0 3.1415" />
     <parent
       link="base_link" />
     <child
@@ -346,8 +345,6 @@
     <axis
       xyz="0 0 1" />
     <limit
-      lower="-6.28"
-      upper="6.28"
       effort="3"
       velocity="4" />
   </joint>
@@ -589,7 +586,7 @@
   </gazebo>
 
 
-
+<!-- 
 
   <gazebo>
     <plugin name="base_controller" filename="libgazebo_ros_planar_move.so">
@@ -600,7 +597,7 @@
       <robotBaseFrame>base_footprint</robotBaseFrame>
     </plugin>
   </gazebo>
-
+ -->
 
 
   <gazebo reference="link_camera">

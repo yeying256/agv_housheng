@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<launch>
+    
+
+    <rosparam file="$(find agv_sim_roscontrol)/config/agv_defaut_controller.yaml" command="load"></rosparam>
+
+    <!-- 几何参数 -->
+    <rosparam file="$(find agv_sim_roscontrol)/config/agv_geometry_param.yaml" command="load"></rosparam>
+    <rosparam file="$(find agv_sim_robot_hw)/config/agv_hw.yaml" command="load"></rosparam>
+
+    <!-- 加载控制器，一定不能用ns参数，直接用绝对参数路径才能搞定 -->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="/" args=" 
+    /agv_sim/turn_wheels_controller
+    "/>
+
+
+    <node pkg="agv_sim_robot_hw" type="agv_hw_node" name="agv_hw_node" output="screen">
+        
+    </node>
+
+<!-- 遥控器节点 -->
+    <include file="$(find joy)/launch/joy.launch">
+    
+    </include>
+
+
+
+    
+
+
+
+</launch>

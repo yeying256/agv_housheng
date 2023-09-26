@@ -1,7 +1,7 @@
 agv_sim:
   joint_state_controller:
     type: joint_state_controller/JointStateController
-    publish_rate: 50
+    publish_rate: 200
 
   joint_turn1_velocity_controller:
     type: velocity_controllers/JointVelocityController

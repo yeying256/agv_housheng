@@ -10,12 +10,25 @@
 #include <std_msgs/Float64.h>
 
 #include <realtime_tools/realtime_buffer.h>
+#include <realtime_tools/realtime_publisher.h>
+
+#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/Twist.h>
+
+
+
 
 
 #include <hardware_interface/hardware_interface.h>
 #include <controller_interface/multi_interface_controller.h>
 
 #include "robot_dynamic.h"
+
+#include "agv_turn_wheel.h"
+#include <matlogger2/matlogger2.h>
+#include <matlogger2/utils/mat_appender.h>
+
+
 
 
 
@@ -29,12 +42,31 @@ namespace xj_control_ns
     private:
         /* data */
         int wheel_num;
+
+        std::vector<hardware_interface::JointHandle> turn_wheel_joint_handles_;
+        xj_dy_ns::agv_turn_wheel agv_cal_;
+        ros::Subscriber sub_cmd_vel;
+        Eigen::Vector3d xyw_cmd_;
+        Eigen::Vector2d turn_theta_;
+        XBot::MatLogger2::Ptr logger;
+        ros::Time time_starting_;
+        std::vector<Eigen::VectorXd> log_xyw_cmd_,log_cmd_turn_vel_,log_cmd_wheel_vel_;
+        bool log_flag_;
+
+        
+        
+        
+
     public:
         turn_wheels_controller(/* args */);
         ~turn_wheels_controller();
         bool init(hardware_interface::RobotHW* robot_hw,ros::NodeHandle& nh);
         void starting(const ros::Time& /*time*/);
         void update(const ros::Time& time, const ros::Duration& period);
+
+        void cb_target_pose(const geometry_msgs::Twist& msg);
+
+        void log_thread(int size);
     };
     
 

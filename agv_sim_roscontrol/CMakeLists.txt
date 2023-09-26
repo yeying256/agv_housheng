@@ -21,6 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 
   robot_dynamic_cal
+  matlogger2
 )
 
 ## System dependencies are found with CMake's conventions
@@ -221,6 +222,7 @@ add_library(turn_wheels_controller
 )
 
 target_link_libraries(turn_wheels_controller
+  matlogger2::matlogger2
   ${catkin_LIBRARIES}
 )
 

@@ -72,7 +72,7 @@
   <build_depend>hardware_interface</build_depend>
   <build_export_depend>hardware_interface</build_export_depend>
   <exec_depend>hardware_interface</exec_depend>
-  
+
   <build_depend>pluginlib</build_depend>
   <build_export_depend>pluginlib</build_export_depend>
   <exec_depend>std_msgs</exec_depend>
@@ -80,6 +80,16 @@
   <build_depend>std_msgs</build_depend>
   <build_export_depend>std_msgs</build_export_depend>
   <exec_depend>std_msgs</exec_depend>
+  
+
+  <build_depend>robot_dynamic_cal</build_depend>
+  <build_export_depend>robot_dynamic_cal</build_export_depend>
+  <exec_depend>robot_dynamic_cal</exec_depend>
+  
+
+  <build_depend>matlogger2</build_depend>
+  <build_export_depend>matlogger2</build_export_depend>
+  <exec_depend>matlogger2</exec_depend>
 
 
 
