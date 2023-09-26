@@ -67,5 +67,13 @@ $ make
 $ sudo make install
 ```
 
+### agvsim_navigation
+导航规划功能包，包括全局规划A*和局部规划TEB
+启动导航终端命令：
+```
+roslaunch agvsim_navigation move_base.launch
+```
+
+
 
 
