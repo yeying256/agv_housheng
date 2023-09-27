@@ -62,7 +62,7 @@ roslaunch agv_slam agv_slam.launch
 ```
 $ mkdir build
 $ cd build
-$ cmake …
+$ cmake ..
 $ make
 $ sudo make install
 ```
