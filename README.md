@@ -21,6 +21,36 @@ https://xj-robot.yuque.com/houhyu/xypu3s/xswpi3a6ldfhc9gy
 官网链接：
 ```
 https://github.com/ADVRHumanoids/MatLogger2
+
+```
+### pcl_conversions
+```
+sudo apt-get install ros-noetic-pcl-conversions 
+```
+
+### pcl_ros
+
+```
+sudo apt-get install ros-noetic-pcl-ros
+
+```
+
+### amcl
+```
+sudo apt-get install ros-noetic-amcl
+```
+
+### map_server
+
+```
+sudo apt-get install ros-noetic-map-server
+```
+
+### move_base
+
+```
+sudo apt-get install ros-noetic-move-base
+
 ```
 
 ## 使用

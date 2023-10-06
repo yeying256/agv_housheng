@@ -9,7 +9,6 @@ project(agvsim_navigation)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   amcl
-  agvsim_description
   map_server
   move_base
 )

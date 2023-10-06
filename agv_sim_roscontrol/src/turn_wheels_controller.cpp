@@ -67,7 +67,10 @@ namespace xj_control_ns
         // ros::Subscriber subscribe<M>(const std::string &topic, uint32_t queue_size, void (*fp)(const boost::shared_ptr<const M> &), const ros::TransportHints &transport_hints = ros::TransportHints())
         sub_cmd_vel= nh.subscribe("/cmd_vel",10,&turn_wheels_controller::cb_target_pose,this,ros::TransportHints().reliable().tcpNoDelay());
 
+        //初始化里程计播报
         
+        // odom_pub_ = nh.advertise<nav_msgs::Odometry>("/odom",50);
+        odom_pub_.init(nh,"/odom",1,false);
 
 
         log_flag_ = true;
@@ -98,7 +101,8 @@ namespace xj_control_ns
         for (int i = 0; i < turn_theta_.size(); i++)
         {
             this->turn_theta_[i]=turn_wheel_joint_handles_[i].getPosition();//将角度返回
-            // vel_4_now[i]=turn_wheel_joint_handles_[i].getVelocity();//将角度返回
+            this->omega_turn_now_[i]=turn_wheel_joint_handles_[i].getVelocity();//将转向电机的角速度返回
+            this->omega_wheel_now_[i]=turn_wheel_joint_handles_[i+2].getVelocity();//将行走电机的角速度返回
 
 
         }
@@ -106,9 +110,28 @@ namespace xj_control_ns
         // std::cout<<"\033[1;36;40m "<<"turn_theta_="<<turn_theta_<<"\033[0m "<<std::endl;
         // std::cout<<"\033[1;36;40m "<<"vel_4_now="<<vel_4_now<<"\033[0m "<<std::endl;
 
-
-
- 
+        //读取当前反馈信息,更新运动学内部参数
+        agv_cal_.update(omega_wheel_now_,omega_turn_now_,turn_theta_,period);
+        agv_cal_.tf_odom_trans(this->odom_,this->odom_tf_,time,"odom","base_footprint");
+        
+        odom_.pose.covariance={1e-3, 0, 0, 0, 0, 0, 
+                        0, 1e-3, 0, 0, 0, 0,
+                        0, 0, 1e6, 0, 0, 0,
+                        0, 0, 0, 1e6, 0, 0,
+                        0, 0, 0, 0, 1e6, 0,
+                        0, 0, 0, 0, 0, 1e3};
+         odom_.twist.covariance={1e-3, 0, 0, 0, 0, 0, 
+                         0, 1e-3, 0, 0, 0, 0,
+                         0, 0, 1e6, 0, 0, 0,
+                         0, 0, 0, 1e6, 0, 0,
+                         0, 0, 0, 0, 1e6, 0,
+                         0, 0, 0, 0, 0, 1e3};
+        //发送消息
+        odom_pub_.msg_ = odom_;
+        odom_pub_.unlockAndPublish();
+        // odom_pub_.publish(odom_);
+        odom_broadcaster_.sendTransform(odom_tf_);
+        
 
 
         Eigen::Vector2d cmd_vel_drive,cmd_vel_steer;

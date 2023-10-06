@@ -47,13 +47,21 @@ namespace xj_control_ns
         xj_dy_ns::agv_turn_wheel agv_cal_;
         ros::Subscriber sub_cmd_vel;
         Eigen::Vector3d xyw_cmd_;
-        Eigen::Vector2d turn_theta_;
+        Eigen::Vector2d turn_theta_,omega_turn_now_,omega_wheel_now_;
         XBot::MatLogger2::Ptr logger;
         ros::Time time_starting_;
         std::vector<Eigen::VectorXd> log_xyw_cmd_,log_cmd_turn_vel_,log_cmd_wheel_vel_;
         bool log_flag_;
 
-        
+        //播报tf
+        tf::TransformBroadcaster odom_broadcaster_;
+        //播报里程计信息
+        // ros::Publisher odom_pub_;
+        realtime_tools::RealtimePublisher<nav_msgs::Odometry> odom_pub_;
+        //tf信息
+        geometry_msgs::TransformStamped odom_tf_;
+        //odom信息
+        nav_msgs::Odometry odom_;
         
         
 

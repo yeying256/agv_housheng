@@ -1,0 +1,1 @@
+svn info /home/wangxiao/catkin_ws/src/agv_sim/orocos-bfl | grep '^Revision' | sed -e 's/Revision: *//'
