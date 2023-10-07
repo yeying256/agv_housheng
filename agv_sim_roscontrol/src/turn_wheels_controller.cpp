@@ -114,23 +114,22 @@ namespace xj_control_ns
         agv_cal_.update(omega_wheel_now_,omega_turn_now_,turn_theta_,period);
         agv_cal_.tf_odom_trans(this->odom_,this->odom_tf_,time,"odom","base_footprint");
         
-        odom_.pose.covariance={1e-3, 0, 0, 0, 0, 0, 
-                        0, 1e-3, 0, 0, 0, 0,
+        odom_.pose.covariance={1, 0, 0, 0, 0, 0, 
+                        0, 1, 0, 0, 0, 0,
                         0, 0, 1e6, 0, 0, 0,
                         0, 0, 0, 1e6, 0, 0,
                         0, 0, 0, 0, 1e6, 0,
-                        0, 0, 0, 0, 0, 1e3};
-         odom_.twist.covariance={1e-3, 0, 0, 0, 0, 0, 
-                         0, 1e-3, 0, 0, 0, 0,
-                         0, 0, 1e6, 0, 0, 0,
+                        0, 0, 0, 0, 0, 1};
+        odom_.twist.covariance={1e1, 0, 0, 0, 0, 0, 
+                         0, 1e1, 0, 0, 0, 0,
+                         0, 0, 1e1, 0, 0, 0,
                          0, 0, 0, 1e6, 0, 0,
                          0, 0, 0, 0, 1e6, 0,
-                         0, 0, 0, 0, 0, 1e3};
+                         0, 0, 0, 0, 0, 1e1};
         //发送消息
         odom_pub_.msg_ = odom_;
         odom_pub_.unlockAndPublish();
-        // odom_pub_.publish(odom_);
-        odom_broadcaster_.sendTransform(odom_tf_);
+        // odom_broadcaster_.sendTransform(odom_tf_);
         
 
 

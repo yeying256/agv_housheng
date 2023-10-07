@@ -16,14 +16,14 @@
         xyz="-5.5511E-17 0.00010136 -0.14206"
         rpy="0 0 0" />
       <mass
-        value="50.2" />
+        value="1.2" />
       <inertia
-        ixx="138.54"
-        ixy="-0.25447"
-        ixz="-6.9968E-15"
-        iyy="99.715"
-        iyz="-0.013495"
-        izz="224.59" />
+        ixx="1"
+        ixy="0"
+        ixz="0"
+        iyy="1"
+        iyz="0"
+        izz="1" />
     </inertial>
     <visual>
       <origin
@@ -787,13 +787,13 @@
   <gravity>true</gravity>
   <sensor name="imu_sensor" type="imu">
       <always_on>true</always_on>
-      <update_rate>100</update_rate>
+      <update_rate>1000</update_rate>
       <visualize>true</visualize>
       <topic>__default_topic__</topic>
       <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
           <topicName>imu_data</topicName>
           <bodyName>base_footprint</bodyName>
-          <updateRateHZ>100.0</updateRateHZ>
+          <updateRateHZ>1000.0</updateRateHZ>
           <gaussianNoise>0.0</gaussianNoise>
           <xyzOffset>0 0 0</xyzOffset>     
           <rpyOffset>0 0 0</rpyOffset>
