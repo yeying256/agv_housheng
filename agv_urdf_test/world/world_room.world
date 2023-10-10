@@ -134,6 +134,41 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
+
+
+
+      <link name="link1">
+        <!-- <pose>0 0 0 0 0 0</pose> -->
+        <!-- //定义该link的位置,就是决定贴图位置 -->
+            <visual name="visual">
+              <pose>-5.8 0 0.3 0 0 0</pose>
+              <geometry>
+                <box>
+                  <size>0.00001 0.5 0.5</size>
+                  <!-- //link的大小决定这图片显示大小 -->
+                </box>
+              </geometry>
+              <material>
+               <script>
+                  <uri>model://ar_targ/materials/scripts1</uri>
+                  <!-- //图片的配置信息 -->
+                  <uri>model://ar_targ/materials/textures1</uri>
+                  <!-- //图片位置路径 -->
+                   <name>Artag/Artag0</name>
+                   <!-- //这个一定要跟scripts1里面的box_beer.material里面的第一行名称一致. -->
+               </script>
+               </material>
+           </visual>
+      </link>
+
+      <joint type="fixed" name="link1joint">
+        <!-- //一定要定义该joint,否则图片的位置无法准确定义,这是sdf编写的规则决定的 -->
+        <pose>0 0 0.5 0 0 0</pose>
+        <child>link1</child>
+        <parent>Wall_0</parent>
+      </joint>
+
+
       <link name='Wall_1'>
         <collision name='Wall_1_Collision'>
           <geometry>

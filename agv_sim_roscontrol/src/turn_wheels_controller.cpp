@@ -63,6 +63,16 @@ namespace xj_control_ns
 
         printf("\033[1;36;40m  /agv_sim/lr = %f lf=%f,B=%f,R=%f \033[0m \n",lr,lf,B,R);
         agv_cal_.init(lr,lf,B,R);
+
+        //新参数0.90547
+        Eigen::Vector2d phi,b,r,a_init,l;
+        phi<<0.90547,0.90547+M_PI;
+        b<<0.05,0.05;
+        r<<0.05,0.05;
+        l<<0.41309805131,0.41309805131;
+        a_init<<M_PI_2,M_PI_2;
+        agv_cal_.init(phi,b,r,l,a_init);
+
         // nh.subscribe("/cmd_vel",10,);
         // ros::Subscriber subscribe<M>(const std::string &topic, uint32_t queue_size, void (*fp)(const boost::shared_ptr<const M> &), const ros::TransportHints &transport_hints = ros::TransportHints())
         sub_cmd_vel= nh.subscribe("/cmd_vel",10,&turn_wheels_controller::cb_target_pose,this,ros::TransportHints().reliable().tcpNoDelay());
@@ -135,6 +145,8 @@ namespace xj_control_ns
 
         Eigen::Vector2d cmd_vel_drive,cmd_vel_steer;
         agv_cal_.Steer_Wheel_Kinematics(cmd_vel_drive,cmd_vel_steer,turn_theta_,this->xyw_cmd_);//计算逆向运动学
+
+        // agv_cal_.Inverse_Kinematics_new(cmd_vel_drive,cmd_vel_steer,turn_theta_,this->xyw_cmd_);
 
         // Eigen::Vector2d turn_theta_test;
         // Eigen::Vector3d xyw_cmd_test;

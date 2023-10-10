@@ -31,6 +31,37 @@
       </visual>
       <pose>-5.925 1.375 0 0 -0 1.5708</pose>
     </link>
+
+
+
+    <link name = "link_arcode0">
+      <pose>0 0 0 0 0 0</pose>
+      <visual>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box size="0.05 0.05 0.05"/>
+        </geometry>
+        <material name="">
+          <script>
+            <uri>package://agv_urdf_test/world/world_room/materials/scripts1</uri>
+            <uri>package://agv_urdf_test/world/world_room/materials/textures1</uri>
+            <name>arcode/arcode0</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="joint_arcode0" type="fixed">
+      <origin
+      xyz="0 -0.075 0.424"
+      rpy="0 0 3.1415926" />
+      <parent link="Wall_0"/>
+      <child link="link_arcode0"/>
+    </joint>
+
+
+
+
     <link name='Wall_1'>
       <collision name='Wall_1_Collision'>
         <geometry>

@@ -575,7 +575,7 @@
   </link>
 
 
-
+<!-- 
   <joint
     name="joint_camera"
     type="fixed">
@@ -586,7 +586,19 @@
       link="base_link" />
     <child
       link="link_camera" />
-  </joint>
+  </joint> -->
+
+  <joint
+  name="joint_camera"
+  type="fixed">
+  <origin
+    xyz="0.5 0 0.01"
+    rpy="0 0 0" />
+  <parent
+    link="base_link" />
+  <child
+    link="link_camera" />
+</joint>
 
   <joint name="camera_joint_fake" type="fixed">
     <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708 "/>
@@ -638,7 +650,7 @@
   <plugin name="kinect_camera_controller" filename="libgazebo_ros_openni_kinect.so">
     <cameraName>/kinect_camera</cameraName>
     <alwaysOn>true</alwaysOn>
-    <updateRate>10</updateRate>
+    <updateRate>0</updateRate>
     <imageTopicName>rgb/image_raw</imageTopicName>
     <depthImageTopicName>depth/image_raw</depthImageTopicName>
     <pointCloudTopicName>depth/points</pointCloudTopicName>
@@ -652,6 +664,8 @@
     <distortion_t1>0.0</distortion_t1>
     <distortion_t2>0.0</distortion_t2>
     <pointCloudCutoff>0.4</pointCloudCutoff>
+    <pointCloudCutoffMax>3.0</pointCloudCutoffMax>
+
   </plugin>
 </sensor>
 </gazebo>

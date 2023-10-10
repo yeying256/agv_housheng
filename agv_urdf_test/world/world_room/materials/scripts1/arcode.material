@@ -1,0 +1,15 @@
+material arcode/arcode0       
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture arcode0.png        
+        filtering anistropic
+        max_anisotropy 16
+      }
+    }
+  }
+}
