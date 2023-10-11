@@ -91,7 +91,7 @@ namespace xj_control_ns
     {
         geometry_msgs::Pose target_pose = req.pose;
         ;
-
+        
         return true;
     }
 

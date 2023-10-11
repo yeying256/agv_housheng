@@ -1,4 +1,9 @@
+# 储存底盘相对导航信息
 geometry_msgs/Pose pose
+
+#储存工位的高度和宽度
+float64 high
+float64 width
 ---
 bool success
 string msg
