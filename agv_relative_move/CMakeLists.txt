@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   agv_msg
 
   ar_track_alvar_msgs
+  robot_dynamic_cal
 
   tf
   tf2

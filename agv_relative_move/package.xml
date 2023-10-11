@@ -86,6 +86,12 @@
   <build_depend>tf2</build_depend>
   <build_export_depend>tf2</build_export_depend>
   <exec_depend>tf2</exec_depend>
+
+  
+
+  <build_depend>robot_dynamic_cal</build_depend>
+  <build_export_depend>robot_dynamic_cal</build_export_depend>
+  <exec_depend>robot_dynamic_cal</exec_depend>
   
 
 

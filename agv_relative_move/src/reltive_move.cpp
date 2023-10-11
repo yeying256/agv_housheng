@@ -5,18 +5,26 @@
 
 namespace xj_control_ns
 {
+
+    /**
+     * @brief 构造函数
+     * 
+     */
     reltive_move::reltive_move(/* args */)
     {
+        //有参构造
+        pid_ = new xj_dy_ns::PID_controller(20,0,0);
         //接收ar_pose
         arpos_sub_  = n.subscribe("ar_pose_marker", 10, &reltive_move::pose_callback,this);
 
         //接收target
         ar_target_Server_ = n.advertiseService("ar_track_target", &reltive_move::TrackCallback,this);
-
+        pub_cmd_vel_ = n.advertise<geometry_msgs::Twist>("cmd_vel", 10);
     }
     
     reltive_move::~reltive_move()
     {
+        delete pid_;
     }
 
 
@@ -72,6 +80,10 @@ namespace xj_control_ns
                 {
                     this->confidence_ =  marks_msgs.markers[i].confidence;
                     ar_reltive_ = this->trans_arpose(marks_msgs.markers[i].pose.pose);//将处理好的pose加载到内部参数
+
+                    tf::Quaternion quat;
+                    tf::quaternionMsgToTF(ar_reltive_.orientation, quat); //将相对方向转换成tf
+                    tf::Matrix3x3(quat).getRPY(reltive_pose.roll, reltive_pose.pitch, reltive_pose.yaw);
                 }
             }
         }
@@ -79,7 +91,7 @@ namespace xj_control_ns
 
 
     /**
-     * @brief 接收相对目标
+     * @brief 接收相对目标 并且让底盘相对运动到合适的位置。
      * 
      * @param req 
      * @param respon 
@@ -89,9 +101,47 @@ namespace xj_control_ns
     bool reltive_move::TrackCallback(agv_msg::reltive_pose::Request &req, 
                             agv_msg::reltive_pose::Response &respon)
     {
-        geometry_msgs::Pose target_pose = req.pose;
-        ;
+        geometry_msgs::Pose2D target_pose = req.pose;//相对机器人底盘的期望运动偏置
+        xj_dy_ns::PID_controller pid_tmp[3];
+        for (int i = 0; i < 3; i++) //初始化移动机器人的位置跟踪pid
+        {
+            pid_tmp[i].init(10,0,0);
+        }
+
+
+        geometry_msgs::Twist cmd_vel;   //机器人的指令速度
+        double hight = req.high;//机械手臂的宽和高
+        double width = req.width;
+        this->target_ar_id_ = req.target_ar_id;
+        move_flag_ = true;//可以开始运动了
+
+        double err[3];
+        err[0] = target_pose.x - this->ar_reltive_.position.x;
+        err[1] = target_pose.y - this->ar_reltive_.position.y;
+        err[2] = target_pose.theta - reltive_pose.yaw;
+
+        double err_all = 0;
+        for (int i = 0; i < 2; i++)
+        {
+            err_all+=abs(err[i]);
+        }//计算总体误差
         
+        
+        //  运动的代码
+
+        while (err_all>0.001 || abs(err[2])>0.005)
+        {
+            cmd_vel.linear.x = pid_tmp[0].PID(err[0]);
+            cmd_vel.linear.y = pid_tmp[1].PID(err[1]);
+            cmd_vel.angular.z = pid_tmp[2].PID(err[2]);
+            pub_cmd_vel_.publish(cmd_vel);
+        }
+        
+        //  运动的代码
+
+        move_flag_=false;
+        respon.success = true;
+        respon.msg = "相对运动结束";
         return true;
     }
 

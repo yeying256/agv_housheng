@@ -1,9 +1,10 @@
 # 储存底盘相对导航信息
-geometry_msgs/Pose pose
+geometry_msgs/Pose2D pose
 
 #储存工位的高度和宽度
 float64 high
 float64 width
+int32 target_ar_id
 ---
 bool success
 string msg
