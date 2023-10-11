@@ -130,7 +130,7 @@ int MarkerDetectorImpl::Detect(cv::Mat& image, Camera* cam, bool track,
       {
         if (blob_corners[i].empty())
           continue;
-        mn->CompareCorners(blob_corners[i], &orientation, &error);
+        mn->CompareCorners(blob_corners[i], &orientation, &error);//计算误差
         if (error < track_error)
         {
           track_i = i;
