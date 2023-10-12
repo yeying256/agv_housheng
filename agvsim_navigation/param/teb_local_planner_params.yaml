@@ -64,8 +64,9 @@ TebLocalPlannerROS:
  weight_max_vel_x: 2
  weight_max_vel_theta: 1
  weight_acc_lim_x: 1
+ weight_acc_lim_y: 0
  weight_acc_lim_theta: 1
- weight_kinematics_nh: 2 #全向权重
+ weight_kinematics_nh: 1 #全向权重
  weight_kinematics_forward_drive: 1
  weight_kinematics_turning_radius: 0
  weight_optimaltime: 1 # must be > 0

@@ -103,7 +103,8 @@ $ sudo make install
 ```
 roslaunch agvsim_navigation move_base.launch
 ```
-
+### agv_relative_move
+根据状态机给出的信息，
 
 
 
