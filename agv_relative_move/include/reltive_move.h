@@ -41,7 +41,9 @@ namespace xj_control_ns
             double yaw;
         }reltive_pose;
 
-        xj_dy_ns::PID_controller *pid_;
+        xj_dy_ns::PID_controller *pid_;//没什么用
+
+        tf::TransformListener listener_;//tf监听器
         
 
     public:
