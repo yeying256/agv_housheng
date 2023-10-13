@@ -3,7 +3,8 @@
 
 ## 使用
 在新环境下，请安装依赖的功能包
-将路径
+
+第一次不管不顾直接运行，一定会出现gazebo卡死的现象，将路径
 ```
 agv_sim/agv_urdf_test/src/agv_sim/agv_urdf_test/world
 ```
@@ -11,7 +12,21 @@ agv_sim/agv_urdf_test/src/agv_sim/agv_urdf_test/world
 ```
 ~/.gazebo/models/
 ```
-下
+下。
+另外，将下列链接的模型下载下来
+```
+https://github.com/osrf/gazebo_models
+```
+将下载下来的模型放置到：
+```
+~/.gazebo/models/
+```
+文件夹下。
+教程链接：
+```
+https://blog.csdn.net/weixin_45498383/article/details/128938766
+```
+
 
 
 ## 依赖的功能包
@@ -67,11 +82,34 @@ sudo apt-get install ros-noetic-move-base
 
 ## 使用
 
-可以直接运行
-
+### 导航可以直接运行
 ```
 roslaunch agvsim_navigation navigation_gazebo.launch
 ```
+### 导航+ar码识别+相对运动运行
+launch文件
+```
+roslaunch agv_relative_move test.launch 
+```
+调用srv
+```
+rosservice call /ar_track_target
+```
+然后按tab补全,如果补全不出来，则source一下此工作空间下的环境变量。
+完整代码：
+```
+rosservice call /ar_track_target "pose:
+  x: 1.7
+  y: 0.3
+  theta: 0.0
+high: 0.0
+width: 0.0
+target_ar_id: 0" 
+success: True
+msg: "reltive move success"
+```
+
+
 
 ## 功能包介绍
 
