@@ -1,6 +1,18 @@
 # 舵轮机器人功能包
 
 
+## 使用
+在新环境下，请安装依赖的功能包
+将路径
+```
+agv_sim/agv_urdf_test/src/agv_sim/agv_urdf_test/world
+```
+下的$ar_targ$文件夹整个复制到
+```
+~/.gazebo/models/
+```
+下
+
 
 ## 依赖的功能包
 需要将这些功能包编译然后加载到动态链接库中
