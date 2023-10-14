@@ -7,6 +7,7 @@ project(agv_sim_roscontrol)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+set(matlogger2_DIR "/home/esaycell/catkin_ws/src/MatLogger2/build")
 find_package(catkin REQUIRED COMPONENTS
   controller_manager
   joint_state_controller
