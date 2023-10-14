@@ -12,6 +12,7 @@ namespace xj_control_ns
      */
     reltive_move::reltive_move(/* args */)
     {
+        have_target_ = false;
         //有参构造
         pid_ = new xj_dy_ns::PID_controller(20,0,0);
         //接收ar_pose
@@ -79,6 +80,7 @@ namespace xj_control_ns
 
         if (this->move_flag_ == true)//如果是让运动，才开始下列的操作
         {
+            int tmp=0;
             for (int i = 0; i < marks_msgs.markers.size(); i++)//遍历所有识别到的ar码
             {
                 if (marks_msgs.markers[i].id==this->target_ar_id_)//如果是需要跟踪的id,那么把信息加载下来
@@ -93,8 +95,12 @@ namespace xj_control_ns
                     tf::Quaternion quat;
                     tf::quaternionMsgToTF(ar_reltive_.orientation, quat); //将相对方向转换成tf
                     tf::Matrix3x3(quat).getRPY(reltive_pose.roll, reltive_pose.pitch, reltive_pose.yaw);
+                    tmp++;
                 }
             }
+            if (tmp>0)
+            {this->have_target_ = true;}else{have_target_ = false;}
+            
         }
     }
 
@@ -191,6 +197,7 @@ namespace xj_control_ns
             
 
             cmd_vel.linear.x = pid_tmp[0].PID(-err[0]);
+            //测试
             cmd_vel.linear.y = pid_tmp[1].PID(-err[1]);
             cmd_vel.angular.z = pid_tmp[2].PID(-err[2]);
             // std::cout<<"cmd_vel="<<cmd_vel<<std::endl;
@@ -210,7 +217,7 @@ namespace xj_control_ns
             // std::cout<<"reltive_pose.yaw = "<<reltive_pose.yaw<<std::endl;
 
             //检查是否还有这个坐标系
-            if (!listener_.frameExists(strb))
+            if (have_target_ == false)
             {
                 // 如果不存在ar码的坐标系了，那就跳出循环，并返回跳出边界
                 respon.msg = "Leaving the boundary";

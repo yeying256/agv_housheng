@@ -122,7 +122,7 @@ namespace xj_control_ns
 
         //读取当前反馈信息,更新运动学内部参数
         agv_cal_.update(omega_wheel_now_,omega_turn_now_,turn_theta_,period);
-        agv_cal_.tf_odom_trans(this->odom_,this->odom_tf_,time,"odom","base_footprint");
+        agv_cal_.tf_odom_trans(this->odom_,this->odom_tf_,ros::Time::now(),"odom","base_footprint");
         
         odom_.pose.covariance={1, 0, 0, 0, 0, 0, 
                         0, 1, 0, 0, 0, 0,

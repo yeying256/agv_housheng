@@ -20,7 +20,7 @@ namespace xj_control_ns
         private:
         ros::NodeHandle n;
         ros::Subscriber arpos_sub_;
-        bool move_flag_;
+        bool move_flag_,have_target_;
         double m_p;
     //    double m_i;
     //    double m_d;
