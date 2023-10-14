@@ -32,6 +32,13 @@ https://blog.csdn.net/weixin_45498383/article/details/128938766
 ## 依赖的功能包
 需要将这些功能包编译然后加载到动态链接库中
 
+### serial
+串口包
+
+```
+sudo apt-get install ros-noetic-serial
+```
+
 ### robot_dynamic_cal
 作用：用到了舵轮运动学解算
 链接：
