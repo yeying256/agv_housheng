@@ -2,6 +2,7 @@
     <include file="$(find agvsim_navigation)/launch/navigation.launch" />
     <!-- <include file="$(find agv_urdf_test)/launch/gazebo.launch" /> -->
     <include file="$(find agv_sim_roscontrol)/launch/agv_sim_roscontrol.launch" />
+    <include file="$(find imu_launch)/launch/imu_msg.launch" />
 
     <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
         <param name="output_frame" value="odom"/>
