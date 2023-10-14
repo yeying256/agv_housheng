@@ -193,7 +193,7 @@ namespace xj_control_ns
             cmd_vel.linear.x = pid_tmp[0].PID(-err[0]);
             cmd_vel.linear.y = pid_tmp[1].PID(-err[1]);
             cmd_vel.angular.z = pid_tmp[2].PID(-err[2]);
-            std::cout<<"cmd_vel="<<cmd_vel<<std::endl;
+            // std::cout<<"cmd_vel="<<cmd_vel<<std::endl;
             pub_cmd_vel_.publish(cmd_vel);
             
             time.sleep();
@@ -203,13 +203,20 @@ namespace xj_control_ns
 
             err_all = abs(err[0])+abs(err[1]);
 
-            for (int i = 0; i < 3; i++)
+            // for (int i = 0; i < 3; i++)
+            // {
+            //     std::cout<<"err"<<i<<"="<<err[i]<<std::endl;
+            // }
+            // std::cout<<"reltive_pose.yaw = "<<reltive_pose.yaw<<std::endl;
+
+            //检查是否还有这个坐标系
+            if (!listener_.frameExists(strb))
             {
-                std::cout<<"err"<<i<<"="<<err[i]<<std::endl;
+                // 如果不存在ar码的坐标系了，那就跳出循环，并返回跳出边界
+                respon.msg = "Leaving the boundary";
+                respon.success = false;
+                break;
             }
-            std::cout<<"reltive_pose.yaw = "<<reltive_pose.yaw<<std::endl;
-
-
 
         }
 
@@ -226,8 +233,12 @@ namespace xj_control_ns
         //  运动的代码
 
         move_flag_=false;//将标志位设置为 否，接收到数据不再读取
-        respon.success = true;//给客户端返回成功
-        respon.msg = "reltive move success";    
+
+        if (respon.success != false)
+        {
+            respon.success = true;//给客户端返回成功
+            respon.msg = "reltive move success";
+        }
         return true;
     }
 
