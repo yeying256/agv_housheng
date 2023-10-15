@@ -12,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   actionlib
   message_generation
-  message_runtime
   std_msgs
 )
 
@@ -49,12 +48,11 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * uncomment the generate_messages entry below
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+# Generate messages in the 'msg' folder
+add_message_files(
+  FILES
+  Button.msg
+)
 
 ## Generate services in the 'srv' folder
 add_service_files(
@@ -73,7 +71,8 @@ add_service_files(
 generate_messages(
   DEPENDENCIES
   actionlib_msgs
-  geometry_msgs   std_msgs
+  geometry_msgs   
+  std_msgs
 )
 
 ################################################
@@ -108,7 +107,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES agv_msg
-#  CATKIN_DEPENDS roscpp rospy std_msgs
+ CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
 #  DEPENDS system_lib
 )
 

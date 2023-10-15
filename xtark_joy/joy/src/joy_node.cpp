@@ -47,7 +47,6 @@
 #include <sensor_msgs/Joy.h>
 #include <sensor_msgs/JoyFeedbackArray.h>
 
-
 int closedir_cb(DIR *dir)
 {
   if (dir)

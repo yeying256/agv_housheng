@@ -1,19 +1,14 @@
 <?xml version="1.0"?>
 <launch>
-    
-    <include file="$(find agvsim_navigation)/launch/navigation_control.launch">
-        
-    </include>
-    <include file="$(find ar_track_alvar)/launch/steel_wheel_artrack.launch">
-        
-    </include>
+    <arg name="joy_dev_name" default = "/dev/input/js0" />
 
-    <node pkg="agv_relative_move" type="reltive_move" name="reltive_move" output="screen">
-        
-    </node>
+    <include file="$(find agvsim_navigation)/launch/navigation_control.launch" />
+    <include file="$(find ar_track_alvar)/launch/steel_wheel_artrack.launch" />
+    <include file="$(find xtark_joy)/joy/launch/joy.launch" />
 
-
-
-
+    <node pkg="agv_relative_move" type="reltive_move" name="reltive_move" output="screen" />
+    <!-- <node pkg="joy" type="joy_node" name="joystick_ctl" >
+        <param name="_dev_name" type="string" value="$(arg joy_dev_name)" />
+    </node> -->
 
 </launch>
