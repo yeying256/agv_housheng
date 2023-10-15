@@ -30,7 +30,7 @@ from std_msgs.msg import String as StringMsg
 from agv_msg.msg import Button
 
 # X:急停(2)、Y:解锁(3)、A:下一步(0)、B:回初始点(1)
-func_list = ["stop", "unlock", "next_step", "go_back"]
+func_list = ["next_step", "go_back", "stop", "unlock"]
 
 class JoyTeleop:
     def __init__(self):
