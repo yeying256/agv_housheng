@@ -83,6 +83,9 @@ namespace estimation
     nh_private.param("gps_used",   gps_used_, false);
     nh_private.param("debug",   debug_, false);
     nh_private.param("self_diagnose",  self_diagnose_, false);
+    nh_private.param("topic_imu",topic_imu_name,std::string("/imu_data"));
+    //默认值给它仿真的topic
+
     double freq;
     nh_private.param("freq", freq, 30.0);
 
@@ -116,7 +119,7 @@ namespace estimation
     // subscribe to imu messages
     if (imu_used_){
       ROS_DEBUG("Imu sensor can be used");
-      imu_sub_ = nh.subscribe("/IMU_data", 10,  &OdomEstimationNode::imuCallback, this);
+      imu_sub_ = nh.subscribe(topic_imu_name, 10,  &OdomEstimationNode::imuCallback, this);
     }
     else ROS_DEBUG("Imu sensor will NOT be used");
 

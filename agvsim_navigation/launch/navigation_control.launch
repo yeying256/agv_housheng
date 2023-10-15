@@ -3,6 +3,7 @@
     <!-- <include file="$(find agv_urdf_test)/launch/gazebo.launch" /> -->
     <include file="$(find agv_sim_roscontrol)/launch/agv_sim_roscontrol.launch" />
     <include file="$(find imu_launch)/launch/imu_msg.launch" />
+    <!-- 真实imu的数据 -->
 
     <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
         <param name="output_frame" value="odom"/>
@@ -12,6 +13,9 @@
         <param name="odom_used" value="true"/>
         <param name="imu_used" value="true"/>
         <param name="vo_used" value="false"/>
+        <param name="topic_imu" value="/IMU_data"/>
+        <!-- 真实imu的话题名称 -->
+
     </node> 
    
 

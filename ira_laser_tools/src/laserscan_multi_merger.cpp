@@ -132,8 +132,8 @@ LaserscanMerger::LaserscanMerger()
 	nh.param<std::string>("cloud_destination_topic", cloud_destination_topic, "/merged_cloud");
 	nh.param<std::string>("scan_destination_topic", scan_destination_topic, "/scan_multi");
 	nh.param<std::string>("laserscan_topics", laserscan_topics, "");
-	nh.param("angle_min", angle_min, -2.36);
-	nh.param("angle_max", angle_max, 2.36);
+	nh.param("angle_min", angle_min, -M_PI);
+	nh.param("angle_max", angle_max, M_PI);
 	nh.param("angle_increment", angle_increment, 0.0058);
 	nh.param("scan_time", scan_time, 0.0333333);
 	nh.param("range_min", range_min, 0.45);
