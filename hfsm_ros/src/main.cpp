@@ -1,11 +1,14 @@
 #include <hfsm/Context.h>
 #include <hfsm/State.h>
 #include <hfsm/SendGoal.hpp>
+#include <hfsm/param.h>
 #include <iostream>
 #include <functional>
 #include <vector>
 #include <ros/ros.h>
 #include <agv_msg/Button.h>
+#include <agv_msg/reltive_pose.h>
+#include <unordered_map>
 
 bool run = true;
 
@@ -25,14 +28,8 @@ public:
 
     void update()
     {
-        time++;
-        if (time == 10)
-        {
-            TransState("Lock");
-        }
+        TransState("Lock");
     }
-
-    int time = 0;
 };
 
 // 锁定状态（不可移动状态）
@@ -51,14 +48,8 @@ public:
 
     void update()
     {
-        time++;
-        if (time == 10)
-        {
-            TransState("Telecontrol");
-        }
+        TransState("Telecontrol");
     }
-
-    int time = 0;
 };
 
 // 遥控状态
@@ -77,14 +68,8 @@ public:
 
     void update()
     {
-        time++;
-        if (time == 10)
-        {
-            TransState("Auto");
-        }
+        TransState("Auto");
     }
-
-    int time = 0;
 };
 
 // 自动状态 （ROS接管状态）
@@ -94,9 +79,8 @@ public:
     NavState nav;
     void start()
     {
-        std::cout << "AutoState start" << std::endl;
-        ROS_INFO("send simple goal");
-        nav.set_goal(10, 10, 1);
+        ROS_INFO("AutoState start");
+        // nav.set_goal(10, 10, 1);
         std::function<EventDeal(EventData &)> func = std::bind(&AutoState::DealEvent, this, std::placeholders::_1);
         set_event_func(func);
     }
@@ -109,9 +93,11 @@ public:
         }
         if ((EventS)event_data._event_type == go_)
         {
-            ROS_INFO("send simple goal");
-            goal_data* goal = event_data.GetData<goal_data>();
-            nav.set_goal(goal->set_x, goal->set_y, goal->orientation);
+            ROS_INFO("send goal");
+            goal_data *goal = event_data.GetData<goal_data>();
+            int ret = nav.set_goal(goal->set_x, goal->set_y, goal->orientation);
+            if (ret)
+                TransState("Adjust");
         }
         return tail;
     }
@@ -123,8 +109,47 @@ public:
 
     void update()
     {
-        // TransState("Shutdown");
         ROS_INFO("WAITING");
+    }
+};
+
+// 自动状态-调整状态
+class AdjustState : public AutoState
+{
+public:
+    ros::NodeHandle n;
+    ros::ServiceClient client;
+    agv_msg::reltive_pose::Request req;
+    agv_msg::reltive_pose::Response resp;
+    std::unordered_map<int8_t, workbench> workbench_map;
+    AdjustState(ros::NodeHandle nh) : n(nh) { client = nh.serviceClient<agv_msg::reltive_pose>("ar_track_target"); };
+    void start()
+    {
+        ROS_INFO("Adjust start");
+    }
+
+    void stop()
+    {
+        ROS_INFO("Adjust stop");
+    }
+
+    void update()
+    {
+        ROS_INFO("SEARCHING FOR AR MARK...");
+        workbench find_ar = workbench_map.find(1)->second;
+        req.pose.x = find_ar.bias_x;
+        req.pose.y = find_ar.bias_y;
+        req.pose.theta = 0;
+        bool ok = client.call(req, resp);
+        if (ok)
+        {
+            ROS_INFO("client: send bias = %f, bias = %f", req.pose.x, req.pose.y);
+        }
+        else
+        {
+            ROS_ERROR("failed to send ar_target service");
+        }
+        TransState("Auto");
     }
 };
 
@@ -144,7 +169,6 @@ public:
 
     void update()
     {
-        // TransState("ShutdownState");
         ROS_INFO("agent shutdown");
     }
 };
@@ -155,6 +179,8 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(2);
     spinner.start();
     Context *context = new Context();
+    ros::NodeHandle nh;
+    ros::Subscriber sub = nh.subscribe("/push_button", 100, &Context::ButtonCallback, context);
 
     // 创建状态机
     State *start = new StartState();
@@ -165,22 +191,19 @@ int main(int argc, char **argv)
     context->CreateState(tele, "Telecontrol");
     State *automation = new AutoState();
     context->CreateState(automation, "Auto");
+    State *adjust = new AdjustState(nh);
+    context->CreateState(adjust, "Adjust");
     State *shutdown = new ShutdownState();
     context->CreateState(shutdown, "Shutdown");
 
     // 开始状态机
     context->Start("Start");
 
-    ros::NodeHandle nh;
-    ros::Subscriber sub = nh.subscribe("/push_button", 100, &Context::ButtonCallback, context);
-    
-
     int time = 0;
     while (ros::ok())
     {
         time++;
         ros::Duration(0.1).sleep();
-        // context->Update();
 
         // 如果为自动状态，每隔1s发出心跳事件
         if (context->GetCurStateName() == "Auto" && time % 10 == 0)
@@ -188,12 +211,6 @@ int main(int argc, char **argv)
             EventData e = EventData((int)checkheart_);
             context->SendEvent(e);
         }
-
-        // if (context->GetCurStateName() == "Auto" && time % 1000 == 0)
-        // {
-        //     EventData e = EventData((int)go_);
-        //     context->SendEvent(e);
-        // }
     }
 
     if (context)

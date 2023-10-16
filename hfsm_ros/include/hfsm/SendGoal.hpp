@@ -13,7 +13,7 @@ private:
     MoveBaseClient ac;
     move_base_msgs::MoveBaseGoal goal; // 目标的属性设置
 public:
-    //创建action客户端，参数1：action名，参数2：true，不需要手动调用ros::spin()，会在它的线程中自动调用。
+    // 创建action客户端，参数1：action名，参数2：true，不需要手动调用ros::spin()，会在它的线程中自动调用。
     NavState() : ac("move_base", true){};
     int set_goal(float set_x, float set_y, float set_orientation);
 };
@@ -30,14 +30,19 @@ int NavState::set_goal(float set_x, float set_y, float set_orientation)
     goal.target_pose.pose.position.x = set_x;
     goal.target_pose.pose.position.y = set_y;
     goal.target_pose.pose.orientation.w = set_orientation;
-    ROS_INFO("");
+    ROS_INFO("goal is: %f, %f, %f", set_x, set_y, set_orientation);
     ROS_INFO("Sending goal");
     ac.sendGoal(goal);
     // Wait for the action to return
     ac.waitForResult();
     if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
         ROS_INFO("You have reached the goal!");
+        return 1;
+    }
     else
+    {
         ROS_INFO("The base failed for some reason");
-    return 0;
+        return 0;
+    }
 }

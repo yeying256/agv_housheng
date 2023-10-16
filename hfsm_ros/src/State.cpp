@@ -1,7 +1,6 @@
 #include <hfsm/Context.h>
 #include <hfsm/State.h>
 
-// 设置时间响应回调函数
 void State::set_event_func(std::function<EventDeal(EventData &)> func)
 {
 	_event_func = func;

@@ -4,7 +4,7 @@
 
     <include file="$(find agvsim_navigation)/launch/navigation_control.launch" />
     <include file="$(find ar_track_alvar)/launch/steel_wheel_artrack.launch" />
-    <include file="$(find xtark_joy)/joy/launch/joy.launch" />
+    <include file="$(find joy)/launch/joy.launch" />
 
     <node pkg="agv_relative_move" type="reltive_move" name="reltive_move" output="screen" />
     <!-- <node pkg="joy" type="joy_node" name="joystick_ctl" >

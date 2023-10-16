@@ -12,8 +12,8 @@ enum EventS
 {
 	next_ = 0,	  // 下一步
 	goback_,	  // 回到起点
-	unlock_,	  // 解锁
 	stop_,		  // 急停
+	unlock_,	  // 解锁
 	telecontrol_, // 遥控状态
 	auto_,		  // 自动状态
 	shutdown_,	  // 关机状态
