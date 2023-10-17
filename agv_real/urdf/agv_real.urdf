@@ -1,0 +1,789 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="agv_real">
+  <link
+    name="base_footprint">
+  </link>
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-4.16333634234434E-17 0.000119875147478033 -0.120056933559523"
+        rpy="0 0 0" />
+      <mass
+        value="1.2" />
+        <inertia
+        ixx="1"
+        ixy="0"
+        ixz="0"
+        iyy="1"
+        iyz="0"
+        izz="1" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="foot2base"
+    type="fixed">
+    <origin
+      xyz="0 0 0.3925"
+      rpy="0 0 0" />
+    <parent
+      link="base_footprint" />
+    <child
+      link="base_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="link_turn_1">
+    <inertial>
+      <origin
+        xyz="0.00977957605544538 0 -0.0221025781959049"
+        rpy="0 0 0" />
+      <mass
+        value="1.51073323776649" />
+      <inertia
+        ixx="0.00254264312406574"
+        ixy="1.1275177792891E-19"
+        ixz="0.000824346714844698"
+        iyy="0.00283404681054336"
+        iyz="-2.1574660967174E-19"
+        izz="0.00237535494219059" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_turn_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_turn_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_turn_1"
+    type="continuous">
+    <origin
+      xyz="0.30003 0.28496 -0.241"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_turn_1" />
+    <axis
+      xyz="0 0 1" />
+
+  </joint>
+  <link
+    name="link_wheel_1">
+    <inertial>
+      <origin
+        xyz="0 0 5.55111512312578E-17"
+        rpy="0 0 0" />
+      <mass
+        value="1.61428775009303" />
+      <inertia
+        ixx="0.0019531200226386"
+        ixy="-1.03817629223929E-22"
+        ixz="-1.2831782859717E-20"
+        iyy="0.0019531200226386"
+        iyz="6.23742612149849E-20"
+        izz="0.00323362014940511" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_wheel_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_wheel_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_wheel_1"
+    type="continuous">
+    <origin
+      xyz="0.0625 0 -0.089"
+      rpy="1.5708 0 3.1416" />
+    <parent
+      link="link_turn_1" />
+    <child
+      link="link_wheel_1" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="link_turn_2">
+    <inertial>
+      <origin
+        xyz="0.00977957605544538 5.55111512312578E-17 -0.022102578195905"
+        rpy="0 0 0" />
+      <mass
+        value="1.51073323776649" />
+      <inertia
+        ixx="0.00254264312406574"
+        ixy="9.05562260497264E-19"
+        ixz="0.000824346714844697"
+        iyy="0.00283404681054336"
+        iyz="-1.385927775418E-18"
+        izz="0.00237535494219059" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_turn_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_turn_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_turn_2"
+    type="continuous">
+    <origin
+      xyz="-0.30003 0.28496 -0.241"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_turn_2" />
+    <axis
+      xyz="0 0 1" />
+
+  </joint>
+  <link
+    name="link_wheel_2">
+    <inertial>
+      <origin
+        xyz="-5.55111512312578E-17 0 5.55111512312578E-17"
+        rpy="0 0 0" />
+      <mass
+        value="1.61428775009303" />
+      <inertia
+        ixx="0.0019531200226386"
+        ixy="-1.42089143883198E-34"
+        ixz="-1.23558270378388E-20"
+        iyy="0.0019531200226386"
+        iyz="1.87050615219907E-21"
+        izz="0.00323362014940511" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_wheel_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_wheel_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_wheel_2"
+    type="continuous">
+    <origin
+      xyz="0.0625 0 -0.089"
+      rpy="1.5708 0 3.1416" />
+    <parent
+      link="link_turn_2" />
+    <child
+      link="link_wheel_2" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="link_turn_3">
+    <inertial>
+      <origin
+        xyz="0.00977957605544538 0 -0.022102578195905"
+        rpy="0 0 0" />
+      <mass
+        value="1.51073323776649" />
+      <inertia
+        ixx="0.00254264312406574"
+        ixy="-1.26097210048081E-19"
+        ixz="0.000824346714844698"
+        iyy="0.00283404681054336"
+        iyz="2.16794722339323E-19"
+        izz="0.00237535494219059" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_turn_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_turn_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_turn_3"
+    type="continuous">
+    <origin
+      xyz="-0.30003 -0.28496 -0.241"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_turn_3" />
+    <axis
+      xyz="0 0 1" />
+
+  </joint>
+  <link
+    name="link_wheel_3">
+    <inertial>
+      <origin
+        xyz="0 2.77555756156289E-17 5.55111512312578E-17"
+        rpy="0 0 0" />
+      <mass
+        value="1.61428775009303" />
+      <inertia
+        ixx="0.0019531200226386"
+        ixy="8.25422893665097E-35"
+        ixz="-1.23558270378389E-20"
+        iyy="0.0019531200226386"
+        iyz="3.42695163846761E-20"
+        izz="0.00323362014940511" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_wheel_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_wheel_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_wheel_3"
+    type="continuous">
+    <origin
+      xyz="0.0625 0 -0.089"
+      rpy="1.5708 0 3.1416" />
+    <parent
+      link="link_turn_3" />
+    <child
+      link="link_wheel_3" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="link_turn_4">
+    <inertial>
+      <origin
+        xyz="0.00977957605544538 -5.55111512312578E-17 -0.0221025781959049"
+        rpy="0 0 0" />
+      <mass
+        value="1.51073323776649" />
+      <inertia
+        ixx="0.00254264312406573"
+        ixy="1.97818720467024E-19"
+        ixz="0.000824346714844697"
+        iyy="0.00283404681054336"
+        iyz="-4.17435819027717E-19"
+        izz="0.00237535494219059" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_turn_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_turn_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_turn_4"
+    type="continuous">
+    <origin
+      xyz="0.30003 -0.28496 -0.241"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_turn_4" />
+    <axis
+      xyz="0 0 1" />
+
+  </joint>
+  <link
+    name="link_wheel_4">
+    <inertial>
+      <origin
+        xyz="0 2.77555756156289E-17 1.66533453693773E-16"
+        rpy="0 0 0" />
+      <mass
+        value="1.61428775009303" />
+      <inertia
+        ixx="0.0019531200226386"
+        ixy="-1.44141714161091E-33"
+        ixz="-1.23558270378386E-20"
+        iyy="0.0019531200226386"
+        iyz="-3.24343282116005E-20"
+        izz="0.00323362014940511" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_wheel_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://agv_real/meshes/link_wheel_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_wheel_4"
+    type="continuous">
+    <origin
+      xyz="0.0625 0 -0.089"
+      rpy="1.5708 0 3.1416" />
+    <parent
+      link="link_turn_4" />
+    <child
+      link="link_wheel_4" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+
+<!-- 雷达 -->
+
+  <link
+  name="link_laser_1">
+  </link>
+
+  
+  <joint
+    name="joint_laser_1"
+    type="fixed">
+    <origin
+      xyz="0.4 0.5 0.03"
+      rpy="0 0 1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_laser_1" />
+  </joint>
+
+  
+  <link
+    name="link_laser_2">
+  </link>
+  <joint
+    name="joint_laser_2"
+    type="fixed">
+    <origin
+      xyz="-0.4 -0.5 0.03"
+      rpy="0 0 1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_laser_2" />
+  </joint>
+
+
+  <!-- imu -->
+  
+  
+  <link
+  name="link_imu">
+</link>
+<joint
+  name="joint_link_imu"
+  type="fixed">
+  <origin
+    xyz="0 0 0.03"
+    rpy="0 0 1.5708" />
+  <parent
+    link="base_link" />
+  <child
+    link="link_imu" />
+</joint>
+
+<!-- 相机 -->
+<link
+name="link_camera">
+</link>
+
+<link name="camera_link_fake">
+</link>
+
+
+<joint
+name="joint_camera"
+type="fixed">
+<origin
+  xyz="0.5 0 0.01"
+  rpy="0 0 0" />
+<parent
+  link="base_link" />
+<child
+  link="link_camera" />
+</joint>
+
+<joint name="camera_joint_fake" type="fixed">
+  <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708 "/>
+  <parent link="link_camera"/>
+  <child link="camera_link_fake"/>
+</joint>
+
+<!-- roscontrol -->
+<gazebo>
+  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+    <robotNamespace>/agv_sim</robotNamespace>
+  </plugin>
+</gazebo>
+
+
+
+<gazebo reference="link_camera">
+  <sensor type="depth" name="kinect_camera">
+    <always_on>true</always_on>
+    <update_rate>20.0</update_rate>
+    <camera>
+      <horizontal_fov>1.0472</horizontal_fov>
+      <image>
+        <format>R8G8B8</format>
+        <width>1920</width>
+        <height>1080</height>
+      </image>
+      <clip>
+        <near>0.5</near>
+        <far>8.0</far>
+      </clip>
+</camera>
+
+<plugin name="kinect_camera_controller" filename="libgazebo_ros_openni_kinect.so">
+  <cameraName>/kinect_camera</cameraName>
+  <alwaysOn>true</alwaysOn>
+  <updateRate>0</updateRate>
+  <imageTopicName>rgb/image_raw</imageTopicName>
+  <depthImageTopicName>depth/image_raw</depthImageTopicName>
+  <pointCloudTopicName>depth/points</pointCloudTopicName>
+  <cameraInfoTopicName>rgb/camera_info</cameraInfoTopicName>
+  <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
+  <frameName>camera_link_fake</frameName>
+  <baseline>0.1</baseline>
+  <distortion_k1>0.0</distortion_k1>
+  <distortion_k2>0.0</distortion_k2>
+  <distortion_k3>0.0</distortion_k3>
+  <distortion_t1>0.0</distortion_t1>
+  <distortion_t2>0.0</distortion_t2>
+  <pointCloudCutoff>0.4</pointCloudCutoff>
+  <pointCloudCutoffMax>3.0</pointCloudCutoffMax>
+
+</plugin>
+
+
+
+
+</sensor>
+
+
+
+</gazebo>
+
+
+
+<!-- 雷达插件 -->
+
+<gazebo reference="link_laser_1">
+  <sensor type="ray" name="rplidar_sensor1">
+    <pose>0 0 0 0 0 0</pose>
+    <visualize>true</visualize>
+    <update_rate>15</update_rate>
+    <ray>
+      <scan>
+        <horizontal>
+          <samples>1400</samples>
+          <resolution>1</resolution>
+          <!--min_angle>-1.570796</min_angle>
+          <max_angle>1.570796</max_angle-->
+          <min_angle>-3.14</min_angle>
+          <max_angle>1.57</max_angle>
+        </horizontal>
+      </scan>
+      <range>
+        <min>0.2</min>
+        <max>15.0</max>
+        <resolution>0.002</resolution>
+      </range>
+      <noise>
+        <type>gaussian</type>
+        <!-- Noise parameters based on published spec for Hokuyo laser
+             achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+             stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+             reading. -->
+        <mean>0.0</mean>
+        <stddev>0.01</stddev>
+      </noise>
+    </ray>
+    <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+      <topicName>/scan1</topicName>
+      <frameName>link_laser_1</frameName>
+    </plugin>
+  </sensor>
+</gazebo>
+
+
+
+<gazebo reference="link_laser_2">
+  <sensor type="ray" name="rplidar_sensor2">
+    <pose>0 0 0 0 0 0</pose>
+    <visualize>true</visualize>
+    <update_rate>15</update_rate>
+    <ray>
+      <scan>
+        <horizontal>
+          <samples>1400</samples>
+          <resolution>1</resolution>
+          <!--min_angle>-1.570796</min_angle>
+          <max_angle>1.570796</max_angle-->
+          <min_angle>0</min_angle>
+          <max_angle>4.71</max_angle>
+        </horizontal>
+      </scan>
+      <range>
+        <min>0.2</min>
+        <max>15.0</max>
+        <resolution>0.002</resolution>
+      </range>
+      <noise>
+        <type>gaussian</type>
+        <!-- Noise parameters based on published spec for Hokuyo laser
+             achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+             stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+             reading. -->
+        <mean>0.0</mean>
+        <stddev>0.01</stddev>
+      </noise>
+    </ray>
+    <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+      <topicName>/scan2</topicName>
+      <frameName>link_laser_2</frameName>
+    </plugin>
+  </sensor>
+</gazebo>
+
+
+
+<transmission name="tran_turn1">
+  <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_turn_2">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motorturn1">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+</transmission>
+
+<transmission name="tran_turn2">
+  <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_turn_4">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motorturn2">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+</transmission>
+
+
+
+<transmission name="tran_wheel1">
+  <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_wheel_2">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motorwheel1">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+</transmission>
+
+<transmission name="tran_wheel2">
+  <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_wheel_4">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motorwheel2">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+</transmission>
+
+
+<gazebo reference="link_imu">
+  <gravity>true</gravity>
+  <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>1000</update_rate>
+      <visualize>true</visualize>
+      <topic>__default_topic__</topic>
+      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+          <topicName>imu_data</topicName>
+          <bodyName>base_footprint</bodyName>
+          <updateRateHZ>1000.0</updateRateHZ>
+          <gaussianNoise>0.0</gaussianNoise>
+          <xyzOffset>0 0 0</xyzOffset>     
+          <rpyOffset>0 0 0</rpyOffset>
+          <frameName>link_imu</frameName>        
+      </plugin>
+      <pose>0 0 0 0 0 0</pose>
+  </sensor>
+</gazebo>
+
+
+
+
+
+
+
+
+
+
+</robot>
