@@ -144,9 +144,9 @@ namespace xj_control_ns
 
 
         Eigen::Vector2d cmd_vel_drive,cmd_vel_steer;
-        agv_cal_.Steer_Wheel_Kinematics(cmd_vel_drive,cmd_vel_steer,turn_theta_,this->xyw_cmd_);//计算逆向运动学
+        // agv_cal_.Steer_Wheel_Kinematics(cmd_vel_drive,cmd_vel_steer,turn_theta_,this->xyw_cmd_);//计算逆向运动学
 
-        // agv_cal_.Inverse_Kinematics_new(cmd_vel_drive,cmd_vel_steer,turn_theta_,this->xyw_cmd_);
+        agv_cal_.Inverse_Kinematics_new(cmd_vel_drive,cmd_vel_steer,turn_theta_,this->xyw_cmd_);
 
         // Eigen::Vector2d turn_theta_test;
         // Eigen::Vector3d xyw_cmd_test;
