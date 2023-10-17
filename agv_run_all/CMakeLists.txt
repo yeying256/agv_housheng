@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(agv_sim_roscontrol)
+project(agv_run_all)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -7,22 +7,10 @@ project(agv_sim_roscontrol)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-# set(matlogger2_DIR "~/catkin_ws/src/MatLogger2/build")
 find_package(catkin REQUIRED COMPONENTS
-  controller_manager
-  joint_state_controller
-  robot_state_publisher
   roscpp
   rospy
-
-  controller_interface
-  hardware_interface
-  pluginlib
   std_msgs
-
-
-  robot_dynamic_cal
-  matlogger2
 )
 
 ## System dependencies are found with CMake's conventions
@@ -82,7 +70,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
+#   std_msgs
 # )
 
 ################################################
@@ -115,9 +103,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
- INCLUDE_DIRS include
-#  LIBRARIES agv_sim_roscontrol
-#  CATKIN_DEPENDS controller_manager joint_state_controller robot_state_publisher roscpp rospy
+#  INCLUDE_DIRS include
+#  LIBRARIES agv_run_all
+#  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
 
@@ -128,13 +116,13 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-include
+# include
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/agv_sim_roscontrol.cpp
+#   src/${PROJECT_NAME}/agv_run_all.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -145,7 +133,7 @@ include
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/agv_sim_roscontrol_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/agv_run_all_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -209,22 +197,10 @@ include
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_agv_sim_roscontrol.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_agv_run_all.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
-
-add_library(turn_wheels_controller
-  src/turn_wheels_controller.cpp
-)
-
-target_link_libraries(turn_wheels_controller
-  matlogger2::matlogger2
-  ${catkin_LIBRARIES}
-)
-
-
