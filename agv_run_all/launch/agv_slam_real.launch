@@ -1,24 +1,38 @@
 <?xml version="1.0"?>
 <launch>
-
+  <arg name="lidar_hostname1" default="192.168.1.51" />
+  <arg name="lidar_hostname2" default="192.168.1.52" />
+  <arg name="serial_no_1" default="332522071089" />
+  <arg name="serial_no_2" default="332522072143" />
   <!-- 启动硬件 -->
-  <include file="$(find agv_sim_robot_hw)/launch/hw_real.launch"/>
+  <include file="$(find agv_sim_robot_hw)/launch/hw_real.launch" />
 
-  <!-- 启动激光雷达驱动？？？？还没写 -->
-
-
-  
+  <!-- 启动激光雷达1,2 -->
+  <include file="$(find sick_scan)/launch/sick_tim_5xx_twin.launch" >
+    <arg name="hostname1" value="$(arg lidar_hostname1)" />
+    <arg name="hostname2" value="$(arg lidar_hostname2)" />
+  </include>
+  <!-- 启动相机 -->
+  <include file="$(find realsense2_camera)/launch/rs_multiple_devices.launch">
+    <arg name="serial_no_camera1" value="$(arg serial_no_1)" />
+    <arg name="serial_no_camera2" value="$(arg serial_no_2)" />
+  </include>
+  <!-- <include file="$(find realsense2_camera)/launch/rs_camera.launch"/> -->
+  <!-- 启动imu -->
+  <include file="$(find imu_launch)/launch/imu_msg.launch" />
+  <!-- 打开遥控器节点 -->
+  <include file="$(find joy)/launch/joy.launch" />
 
   <!-- 启动激光雷达融合 -->
-  <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
-    <param name="destination_frame" value="base_footprint"/>
-    <param name="cloud_destination_topic" value="/merged_cloud"/>
-    <param name="scan_destination_topic" value="/scan"/>
-    <param name="laserscan_topics" value ="/scan1 /scan2" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
-    <param name="angle_min" value="-2.7"/>
-    <param name="angle_max" value="2.7"/>
-    <!-- 尾部留一点位置让人可以操纵机器人 -->
-  </node>
+  <!-- <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger"
+    output="screen">
+    <param name="destination_frame" value="base_footprint" />
+    <param name="cloud_destination_topic" value="/merged_cloud" />
+    <param name="scan_destination_topic" value="/scan" />
+    <param name="laserscan_topics" value="/scan1 /scan2" />
+    <param name="angle_min" value="-2.7" />
+    <param name="angle_max" value="2.7" />
+  </node> -->
 
 
 </launch>

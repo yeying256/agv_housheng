@@ -249,6 +249,4 @@ namespace xj_control_ns
         return true;
     }
 
-    
-
 }
