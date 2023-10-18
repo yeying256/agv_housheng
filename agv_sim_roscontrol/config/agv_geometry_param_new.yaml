@@ -1,0 +1,45 @@
+#        ^
+#        |     1
+#        |    / 
+#        | L /
+#        |  /
+#        | /
+#        |/phi
+# --------------->X
+#       /|
+#      / |
+#     /  |
+#    /   |
+#   2    |
+#
+#
+
+
+agv_sim:
+#x轴向右，y轴向前
+  lr: 0.255
+  lf: 0.325
+
+  #轮子与车体固定点到轮子滚动中心的垂直距离
+  B: 0.05
+
+  #轮子的半径
+  R: 0.05
+
+
+  turn_wheels_controller:
+    type: xj_control_ns/turn_wheels_controller
+    joints: 
+        - joint_turn_2
+        - joint_turn_4
+        - joint_wheel_2
+        - joint_wheel_4
+
+
+
+
+
+
+
+
+
