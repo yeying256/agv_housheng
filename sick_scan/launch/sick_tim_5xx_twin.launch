@@ -16,9 +16,9 @@
 <launch>
     <arg name="hostname1" default="192.168.0.1"/>
     <arg name="hostname2" default="192.168.0.2"/>
-    <param name="robot_description" command="$(find xacro)/xacro -i '$(find sick_scan)/urdf/example.urdf.xacro'"/>
-    <node pkg="tf" type="static_transform_publisher" name="scanner1_to_map" args="0 0 0 0 0 0 map laser_1 100"/>
-    <node pkg="tf" type="static_transform_publisher" name="scanner2_to_map" args="2 0 0 0 0 0 map laser_2 100"/>
+    <!-- <param name="robot_description" command="$(find xacro)/xacro -i '$(find sick_scan)/urdf/example.urdf.xacro'"/> -->
+    <!-- <node pkg="tf" type="static_transform_publisher" name="scanner1_to_map" args="0 0 0 0 0 0 map laser_1 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="scanner2_to_map" args="2 0 0 0 0 0 map laser_2 100"/> -->
     <node name="sick_tim_5xx_1" pkg="sick_scan" type="sick_generic_caller" respawn="false" output="screen">
         <param name="scanner_type" type="string" value="sick_tim_5xx"/>
         <param name="frame_id" value="laser_1"/>

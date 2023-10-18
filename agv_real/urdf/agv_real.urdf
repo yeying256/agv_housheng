@@ -492,7 +492,7 @@
 <!-- 雷达 -->
 
   <link
-  name="link_laser_1">
+  name="laser_1">
   </link>
 
   
@@ -505,12 +505,12 @@
     <parent
       link="base_link" />
     <child
-      link="link_laser_1" />
+      link="laser_1" />
   </joint>
 
   
   <link
-    name="link_laser_2">
+    name="laser_2">
   </link>
   <joint
     name="joint_laser_2"
@@ -521,7 +521,7 @@
     <parent
       link="base_link" />
     <child
-      link="link_laser_2" />
+      link="laser_2" />
   </joint>
 
 
@@ -630,7 +630,7 @@ type="fixed">
 
 <!-- 雷达插件 -->
 
-<gazebo reference="link_laser_1">
+<gazebo reference="laser_1">
   <sensor type="ray" name="rplidar_sensor1">
     <pose>0 0 0 0 0 0</pose>
     <visualize>true</visualize>
@@ -663,14 +663,14 @@ type="fixed">
     </ray>
     <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
       <topicName>/scan1</topicName>
-      <frameName>link_laser_1</frameName>
+      <frameName>laser_1</frameName>
     </plugin>
   </sensor>
 </gazebo>
 
 
 
-<gazebo reference="link_laser_2">
+<gazebo reference="laser_2">
   <sensor type="ray" name="rplidar_sensor2">
     <pose>0 0 0 0 0 0</pose>
     <visualize>true</visualize>
@@ -703,7 +703,7 @@ type="fixed">
     </ray>
     <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
       <topicName>/scan2</topicName>
-      <frameName>link_laser_2</frameName>
+      <frameName>laser_2</frameName>
     </plugin>
   </sensor>
 </gazebo>
