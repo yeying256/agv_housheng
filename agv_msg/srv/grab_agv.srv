@@ -1,0 +1,7 @@
+#相机所识别的货物信息/AGV所处的状态
+float64 high
+float64 width
+int32 status #0:急停；1：回零；2：两部分一起运动；3：AGV单独运动；4：夹爪单独运动
+---
+bool grab_result
+bool agv_result

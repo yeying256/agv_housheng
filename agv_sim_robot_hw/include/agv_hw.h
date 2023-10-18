@@ -19,6 +19,9 @@ namespace xj_control_ns
         std::vector<double> joint_effort_state;
         std::vector<double> joint_velocity_command;
         int agv_num_joints_;
+        int status_;
+
+        ros::ServiceClient client;
 
 
         hardware_interface::JointStateInterface joint_state_interface;
@@ -31,6 +34,11 @@ namespace xj_control_ns
         bool init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh);
         void read(const ros::Time& time, const ros::Duration& period);
         void write(const ros::Time& time, const ros::Duration& period);
+
+        bool Grab_Server(agv_msg::grab_agv::Request& req,
+                    agv_msg::grab_agv::Request& resp);
+        void commandCheckHandler(const char *command, int ret);
+        int MyDirect_SetSpeed(ZMC_HANDLE handle, int axis, float fValue);
 
     };
     
