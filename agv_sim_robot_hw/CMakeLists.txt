@@ -21,6 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
   pluginlib
   controller_interface
   hardware_interface
+  agv_msg
 
 )
 
@@ -128,6 +129,9 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
+
+
+
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
@@ -141,12 +145,22 @@ link_directories(
 ## Declare a C++ library
 add_library(Agv_hw_interface
   src/agv_hw.cpp
+  
 )
 
-target_link_libraries(
-  Agv_hw_interface
-  ${catkin_LIBRARIES}
+add_library(zmcaux
+  src/zmcaux.cpp
+  
 )
+
+add_library(agv_hw
+  src/agv_hw.cpp
+  
+)
+
+
+
+
 
 
 
@@ -160,39 +174,55 @@ target_link_libraries(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(agv_hw_node src/agv_hw_node.cpp)
-add_executable(agv_hw src/agv_hw.cpp)
-add_executable(agv_hw src/agv_hw.cpp)
-add_executable(agv_server 
-src/agv_server.cpp
-src/zmcaux.cpp
-include/zmotion.h
-include/zmcaux.h)
+# add_executable(agv_hw 
+# src/agv_hw.cpp
+# src/zmcaux.cpp
+# include/zmotion.h
+# include/zmcaux.h)
 
 
-target_link_libraries(agv_hw
-        ${catkin_LIBRARIES}
-        zmotion
-)
-target_link_libraries(agv_hw_node
+add_dependencies(Agv_hw_interface ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+
+add_dependencies(zmcaux ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(agv_hw ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_dependencies(agv_hw_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+
+## Specify libraries to link a library or executable target against
+
+
+# target_link_libraries(
+#   lib_zmotion
+#   ${catkin_LIBRARIES}
+# )
+
+target_link_libraries(
+  Agv_hw_interface
+  zmcaux
+  /home/jacob/agv_grab_ws/src/agv_sim/agv_sim_robot_hw/lib/libzmotion.so
   ${catkin_LIBRARIES}
 )
 
-## Rename C++ executable without prefix
-## The above recommended prefix causes long target names, the following renames the
-## target back to the shorter version for ease of user use
-## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
-
-## Add cmake target dependencies of the executable
-## same as for the library above
-add_dependencies(agv_hw_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-## Specify libraries to link a library or executable target against
 target_link_libraries(
   agv_hw_node
   Agv_hw_interface
+  zmcaux
+  agv_hw
+  zmotion
+  /home/jacob/agv_grab_ws/src/agv_sim/agv_sim_robot_hw/lib/libzmotion.so
+  
   ${catkin_LIBRARIES}
 )
+
+
+
+# target_link_libraries(agv_hw
+# zmotion
+#         ${catkin_LIBRARIES}
+        
+# )
 
 #############
 ## Install ##

@@ -10,15 +10,15 @@
 class State;
 enum EventS
 {
-	next_ = 0,	  // ÏÂÒ»²½
-	goback_,	  // »Øµ½Æðµã
-	stop_,		  // ¼±Í£
-	unlock_,	  // ½âËø
-	telecontrol_, // Ò£¿Ø×´Ì¬
-	auto_,		  // ×Ô¶¯×´Ì¬
-	shutdown_,	  // ¹Ø»ú×´Ì¬
-	checkheart_,  // ¼ì²âÐÄÌø
-	go_			  // µ¼º½µ½Ä¿±êµã
+	next_ = 0,	  // ï¿½ï¿½Ò»ï¿½ï¿½
+	goback_,	  // ï¿½Øµï¿½ï¿½ï¿½ï¿½
+	stop_,		  // ï¿½ï¿½Í£
+	unlock_,	  // ï¿½ï¿½ï¿½ï¿½
+	telecontrol_, // Ò£ï¿½ï¿½×´Ì¬
+	auto_,		  // ï¿½Ô¶ï¿½×´Ì¬
+	shutdown_,	  // ï¿½Ø»ï¿½×´Ì¬
+	checkheart_,  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	go_			  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½
 };
 
 struct goal_data
@@ -48,41 +48,41 @@ public:
 	Context();
 
 	~Context();
-	// ¿ªÊ¼×´Ì¬»ú
+	// ï¿½ï¿½Ê¼×´Ì¬ï¿½ï¿½
 	bool Start(std::string name);
 
-	// ´´½¨Ò»¸ö×´Ì¬
-	// [in] state ×´Ì¬¶ÔÏó£¬ÔÚContextÏú»ÙÊ±£¬ÄÚ²¿ÊÍ·Åstate
-	// [in] name  ×´Ì¬Ãû³Æ£¬Îª¿ÕÃû³ÆÎªtypednameµÄÖµ
-	// [in] father_name ¸¸×´Ì¬µÄÃû³Æ
-	// [out] ·µ»Østate
+	// ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬
+	// [in] state ×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Contextï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ú²ï¿½ï¿½Í·ï¿½state
+	// [in] name  ×´Ì¬ï¿½ï¿½ï¿½Æ£ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªtypednameï¿½ï¿½Öµ
+	// [in] father_name ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// [out] ï¿½ï¿½ï¿½ï¿½state
 	State *CreateState(State *state, std::string name, std::string father_name = "");
 
-	// ¸üÐÂµ±Ç°×´Ì¬
+	// ï¿½ï¿½ï¿½Âµï¿½Ç°×´Ì¬
 	void Update();
 
-	// Í¬²½ÊÂ¼þ
-	// ·¢ËÍÒ»¸öÊÂ¼þ£¬Ìá¹©¸øroot×´Ì¬ºÍµ±Ç°×´Ì¬´¦Àí
-	// Èç¹ûµ±Ç°×´Ì¬ÊÇ×Ó×´Ì¬£¬Ôò»¹»á¸ø¸¸×´Ì¬´¦Àí
+	// Í¬ï¿½ï¿½ï¿½Â¼ï¿½
+	// ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½á¹©ï¿½ï¿½root×´Ì¬ï¿½Íµï¿½Ç°×´Ì¬ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ç°×´Ì¬ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ò»¹»ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½
 	void SendEvent(EventData event_data);
 
-	// »ñÈ¡µ±Ç°×´Ì¬Ãû³Æ
+	// ï¿½ï¿½È¡ï¿½ï¿½Ç°×´Ì¬ï¿½ï¿½ï¿½ï¿½
 	std::string GetCurStateName();
 
 	void ButtonCallback(const agv_msg::Button::ConstPtr &msg);
 
 private:
-	// ×´Ì¬ÇÐ»»
+	// ×´Ì¬ï¿½Ð»ï¿½
 	void TransForState(std::string name);
 
-	// µÝ¹ésend
+	// ï¿½Ý¹ï¿½send
 	void RecursiveSend(NodeState &node_state, EventData &event_data);
 
-	std::unordered_map<std::string, NodeState> _states; // ×´Ì¬ÁÐ±í
-	NodeState _cur_node_state;							// µ±Ç°×´Ì¬Ãû
+	std::unordered_map<std::string, NodeState> _states; // ×´Ì¬ï¿½Ð±ï¿½
+	NodeState _cur_node_state;							// ï¿½ï¿½Ç°×´Ì¬ï¿½ï¿½
 	std::string _cur_name;
 
-	std::string _root_name; // ¸ù×´Ì¬Ãû
+	std::string _root_name; // ï¿½ï¿½×´Ì¬ï¿½ï¿½
 };
 
 #endif

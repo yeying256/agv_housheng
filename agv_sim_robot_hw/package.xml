@@ -66,6 +66,12 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>message_runtime</exec_depend>
 
+  <build_depend>agv_msg</build_depend>
+  <build_export_depend>agv_msg</build_export_depend>
+  <exec_depend>agv_msg</exec_depend>
+
+
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

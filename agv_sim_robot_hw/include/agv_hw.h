@@ -4,6 +4,8 @@
 #include <hardware_interface/robot_hw.h>
 #include <pluginlib/class_list_macros.hpp>
 #include <ros/ros.h>
+#include "zmotion.h"
+#include "agv_msg/grab_agv.h"
 
 namespace xj_control_ns
 {
@@ -26,6 +28,9 @@ namespace xj_control_ns
 
         hardware_interface::JointStateInterface joint_state_interface;
         hardware_interface::VelocityJointInterface velocity_joint_interface;
+
+        ZMC_HANDLE handle = NULL;//连接句柄
+
     public:
         Agv_hw_interface(/* args */);
         ~Agv_hw_interface();

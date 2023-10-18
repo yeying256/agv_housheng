@@ -57,6 +57,11 @@ https://xj-robot.yuque.com/houhyu/xypu3s/xswpi3a6ldfhc9gy
 https://github.com/ADVRHumanoids/MatLogger2
 
 ```
+### ros-control
+```
+sudo apt-get install ros-noetic-ros-control
+```
+
 ### pcl_conversions
 ```
 sudo apt-get install ros-noetic-pcl-conversions 

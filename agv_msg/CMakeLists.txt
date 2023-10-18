@@ -58,7 +58,10 @@ add_message_files(
 add_service_files(
   FILES
   reltive_pose.srv
+  grab_agv.srv
 )
+
+
 
 ## Generate actions in the 'action' folder
 # add_action_files(
