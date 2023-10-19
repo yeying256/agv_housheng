@@ -501,7 +501,7 @@
     type="fixed">
     <origin
       xyz="0.586 0.486 0.04"
-      rpy="3.1415 0 2.355" />
+      rpy="3.1415 0 0.7853981" />
     <parent
       link="base_link" />
     <child
@@ -517,7 +517,7 @@
     type="fixed">
     <origin
       xyz="-0.586 -0.486 0.04"
-      rpy="3.1415 0 -0.7865" />
+      rpy="3.1415 0 -2.356194" />
     <parent
       link="base_link" />
     <child
@@ -642,8 +642,8 @@ type="fixed">
           <resolution>1</resolution>
           <!--min_angle>-1.570796</min_angle>
           <max_angle>1.570796</max_angle-->
-          <min_angle>-0.785398</min_angle>
-          <max_angle>3.92699</max_angle>
+          <min_angle>-2.356194</min_angle>
+          <max_angle>2.356194</max_angle>
         </horizontal>
       </scan>
       <range>
@@ -682,8 +682,8 @@ type="fixed">
           <resolution>1</resolution>
           <!--min_angle>-1.570796</min_angle>
           <max_angle>1.570796</max_angle-->
-            <min_angle>-0.785398</min_angle>
-            <max_angle>3.92699</max_angle>
+            <min_angle>-2.356194</min_angle>
+            <max_angle>2.356194</max_angle>
         </horizontal>
       </scan>
       <range>
