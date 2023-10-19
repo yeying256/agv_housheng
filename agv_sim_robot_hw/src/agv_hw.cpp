@@ -11,10 +11,16 @@ namespace xj_control_ns
 {
     Agv_hw_interface::Agv_hw_interface(/* args */)
     {
+        handle = NULL;
     }
     
     Agv_hw_interface::~Agv_hw_interface()
     {
+        for (int i = 0; i < 4; i++)
+        {
+            ZAux_Direct_SetAxisEnable(handle,i,0);
+        }
+        
         
     }
 
@@ -36,11 +42,19 @@ namespace xj_control_ns
         ZMC_HANDLE handle = NULL;
         uint32 homestatus; 
         
+        for (int i = 0; i < 4; i++)
+        {
+            ZAux_Direct_SetAxisEnable(handle,i,1);
+
+        }
+        
 
         if(status_ == 3||5){
             ROS_INFO("夹爪处于运动状态");
             ZAux_Direct_Single_MoveAbs(handle,4, high_unit);//上升电机同步运动
             ZAux_Direct_Single_MoveAbs(handle,7, width_unit);//夹取运动电机运动
+            ZAux_Direct_SetAtype(handle, 0, 66);
+            ZAux_Direct_SetAtype(handle, 2, 66);  
         }
         else if(status_ == 1){//AGV回零
             ZAux_Direct_SetAtype(handle, 0, 65);
@@ -56,7 +70,7 @@ namespace xj_control_ns
             int retBD0 = ZAux_BusCmd_Datum(handle, 0,3);
             while (1)//等待轴 0 回零运动完成
             {
-                sleep(100);
+                sleep(1);
                 ZAux_Direct_GetHomeStatus(handle,0,&homestatus);//获取回零运动完成状态
                 if (homestatus==1){break;}
             }
@@ -66,7 +80,7 @@ namespace xj_control_ns
             int retBD2 = ZAux_BusCmd_Datum(handle, 2,3);
             while (1)//等待轴 2 回零运动完成
             {
-                sleep(100);
+                sleep(1);
                 ZAux_Direct_GetHomeStatus(handle,0,&homestatus);//获取回零运动完成状态
                 if (homestatus==1){break;}
             }
@@ -78,14 +92,14 @@ namespace xj_control_ns
         else if(status_==2){//夹爪回零
             int retBD4 = ZAux_BusCmd_Datum(handle, 4,3);while (1)//等待轴 4 回零运动完成
             {
-                sleep(100);
+                sleep(1);
                 ZAux_Direct_GetHomeStatus(handle,0,&homestatus);//获取回零运动完成状态
                 if (homestatus==1){break;}
             }
             commandCheckHandler("ZAux_BusCmd_Datum", retBD4);
             int retBD6 = ZAux_BusCmd_Datum(handle, 4,3);while (1)//等待轴 6 回零运动完成
             {
-                sleep(100);
+                sleep(1);
                 ZAux_Direct_GetHomeStatus(handle,0,&homestatus);//获取回零运动完成状态
                 if (homestatus==1){break;}
             }
@@ -111,7 +125,11 @@ namespace xj_control_ns
         
         ROS_ERROR("getParam ret= %d",ret);
         
-        int agv_num_joints_ = agv_joint_name.size();
+        agv_num_joints_ = agv_joint_name.size();
+
+        ROS_ERROR("agv_joint_name.size()= %d",agv_joint_name.size());
+
+
         for (size_t i = 0; i < agv_num_joints_; i++)
         {
             ROS_ERROR("jointname=%s",agv_joint_name[i].c_str());
@@ -160,62 +178,65 @@ namespace xj_control_ns
 
 //*********************************************************************************************************
         int AxisEnable;
-        for(int axis=0;axis<7; axis++)
+        for(int axis=0;axis<4; axis++)
         {
-            // int retGAE = ZAux_Direct_GetAxisEnable(handle, axis, &AxisEnable);// 读取轴使能： 0 表示关闭，1表示打开
-            // commandCheckHandler("ZAux_BusCmd_GetInitStatus", retGAE);
-            // printf("总线初始化使能状态为： %d \n", AxisEnable);
-            // if (AxisEnable<1)
-            // {
+        ZAux_BusCmd_DriveClear(handle,axis,0);//0-清除当前 1-清除历史 2-清除外部输入警告
+
+
                 int retSAE = ZAux_Direct_SetAxisEnable(handle, axis, 1);// 设置轴使能： 0 表示关闭， 1 表示打开
                 commandCheckHandler("ZAux_Direct_SetAxisEnable", retSAE);
-                printf("打开使能\n");
-            // }
+                if (retSAE == 0)
+                {
+                    printf("打开使能\n");
+                }
+                
         }
 
         //机器人参数初始化********************************************************************************************
-        for(int i=0;i < 7;i++)
+        for(int i=0;i < 4;i++)
         {
         
             if(i<4){//AGV电机参数初始化
                 ZAux_Direct_SetAtype(handle, i, 66);//设置各轴的类型为66（EtherCAT总线周期速度模式）
             }
         //夹爪参数设置
-            else if(i==4){//夹爪上升主动电机参数初始化
-                ZAux_Direct_SetAtype(handle, i, 65);//设置各轴的类型为65（EtherCAT总线周期位置模式）
-                ZAux_Direct_SetUnits(handle, i, 625000/471); //设置各轴脉冲当量为 100
-                ZAux_Direct_SetSpeed(handle, i, 100); //设置轴 0 速度为 200units/s
-                ZAux_Direct_SetAccel(handle, i, 1000); //设置各轴加速度为 2000units/s/s
-                ZAux_Direct_SetDecel(handle, i, 1000); //设置各轴减速度为 2000units/s/s
-                // ZAux_Direct_SetHomeWait(handle, i, 1000);//设置各轴回零等待时间
-                ZAux_Direct_SetFastDec(handle, i, 3000) ;//设置转向急停时快减速度为 3000units/s/s
-                ZAux_Direct_SetSramp(handle, i, 200); //设置各轴S曲线时间为 200ms
-                ZAux_Direct_SetCreep(handle, i, 50);//设置回零时反向爬行速度
-            }
-            else if(i==5){//夹爪上升从动电机参数初始化
-                ZAux_Direct_SetAtype(handle, i, 65);//设置各轴的类型为65（EtherCAT总线周期位置模式）
-                ZAux_Direct_SetUnits(handle, i, 100); //设置各轴脉冲当量为 100
-            }
-            else{//夹爪开合电机参数初始化
-                ZAux_Direct_SetAtype(handle, i, 65);//设置各轴的类型为65（EtherCAT总线周期位置模式）
-                ZAux_Direct_SetUnits(handle, i, 2000/3); //设置各轴脉冲当量为 666.66667
-                ZAux_Direct_SetSpeed(handle, i, 100); //设置轴 0 速度为 200units/s
-                ZAux_Direct_SetAccel(handle, i, 1000); //设置各轴加速度为 2000units/s/s
-                ZAux_Direct_SetDecel(handle, i, 1000); //设置各轴减速度为 2000units/s/s
-                // ZAux_Direct_SetHomeWait(handle, i, 1000);//设置各轴回零等待时间
-                ZAux_Direct_SetFastDec(handle, i, 3000) ;//设置转向急停时快减速度为 3000units/s/s
-                ZAux_Direct_SetSramp(handle, i, 200); //设置各轴S曲线时间为 200ms
-                ZAux_Direct_SetCreep(handle, i, 50);//设置回零时反向爬行速度
-            }
-            ZAux_Direct_Single_Addax(handle,5,4);
+            // else if(i==4){//夹爪上升主动电机参数初始化
+            //     ZAux_Direct_SetAtype(handle, i, 65);//设置各轴的类型为65（EtherCAT总线周期位置模式）
+            //     ZAux_Direct_SetUnits(handle, i, 625000/471); //设置各轴脉冲当量为 100
+            //     ZAux_Direct_SetSpeed(handle, i, 100); //设置轴 0 速度为 200units/s
+            //     ZAux_Direct_SetAccel(handle, i, 1000); //设置各轴加速度为 2000units/s/s
+            //     ZAux_Direct_SetDecel(handle, i, 1000); //设置各轴减速度为 2000units/s/s
+            //     // ZAux_Direct_SetHomeWait(handle, i, 1000);//设置各轴回零等待时间
+            //     ZAux_Direct_SetFastDec(handle, i, 3000) ;//设置转向急停时快减速度为 3000units/s/s
+            //     ZAux_Direct_SetSramp(handle, i, 200); //设置各轴S曲线时间为 200ms
+            //     ZAux_Direct_SetCreep(handle, i, 50);//设置回零时反向爬行速度
+            // }
+            // else if(i==5){//夹爪上升从动电机参数初始化
+            //     ZAux_Direct_SetAtype(handle, i, 65);//设置各轴的类型为65（EtherCAT总线周期位置模式）
+            //     ZAux_Direct_SetUnits(handle, i, 100); //设置各轴脉冲当量为 100
+            // }
+            // else{//夹爪开合电机参数初始化
+            //     ZAux_Direct_SetAtype(handle, i, 65);//设置各轴的类型为65（EtherCAT总线周期位置模式）
+            //     ZAux_Direct_SetUnits(handle, i, 2000/3); //设置各轴脉冲当量为 666.66667
+            //     ZAux_Direct_SetSpeed(handle, i, 100); //设置轴 0 速度为 200units/s
+            //     ZAux_Direct_SetAccel(handle, i, 1000); //设置各轴加速度为 2000units/s/s
+            //     ZAux_Direct_SetDecel(handle, i, 1000); //设置各轴减速度为 2000units/s/s
+            //     // ZAux_Direct_SetHomeWait(handle, i, 1000);//设置各轴回零等待时间
+            //     ZAux_Direct_SetFastDec(handle, i, 3000) ;//设置转向急停时快减速度为 3000units/s/s
+            //     ZAux_Direct_SetSramp(handle, i, 200); //设置各轴S曲线时间为 200ms
+            //     ZAux_Direct_SetCreep(handle, i, 50);//设置回零时反向爬行速度
+            // }
+            // ZAux_Direct_Single_Addax(handle,5,4);
         }
     
 
         
         // robot_hw_nh.advertiseService("robot_control",Grab_Server);//启动夹爪运动服务器
-        robot_hw_nh.advertiseService("robot_control",&Agv_hw_interface::Grab_Server,this);//启动夹爪运动服务器
+        status_ = 0;
 
-        ROS_INFO("夹爪机器人服务器已启动！");   
+        command_service_ = root_nh.advertiseService("/robot_control",&Agv_hw_interface::Grab_Server,this);//启动夹爪运动服务器
+
+        printf("夹爪机器人服务器已启动！");   
         // ros::spin();
         return true;
     }
@@ -235,7 +256,7 @@ namespace xj_control_ns
                 joint_velocity_state[i]=velocity_unit/(400000*3.14159);//将用户单位速度转换为电机转速
                 joint_position_state[i]=position_unit/(400000*3.14159);//将用户单位位置转换为几何位置
                 // printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
-                // printf("轴%d的位置 Mpos = %lf\n", i, joint_position_state[i]);
+                // printf("轴%d的位置 Mpos = %lf\n", i, position_unit);
             }
             else{
                 joint_velocity_state[i]=velocity_unit/(340000*3.14159);//将用户单位速度转换为电机转速
@@ -247,9 +268,18 @@ namespace xj_control_ns
     void Agv_hw_interface::write(const ros::Time& time, const ros::Duration& period)
     {
         setlocale(LC_ALL,"");
-        status_;
-        ZMC_HANDLE handle = NULL;
+        // ZMC_HANDLE handle = NULL;
         float DAC[4];
+
+        // for (int i = 0; i < 4; i++)
+        // {
+        //     std::cout<<"\033[1;36;40m "<<"joint_velocity_command"<<i<<"="<<joint_velocity_command[i]<<"\033[0m "<<std::endl;
+        // }
+
+        printf("agv_num_joints_ = %d,\n",agv_num_joints_);
+        
+        // status_ =100;
+
         switch (status_)
         {
         case 0:
@@ -297,6 +327,9 @@ namespace xj_control_ns
                     int retSD = ZAux_Direct_SetDAC(handle, i, DAC[i]);
                     commandCheckHandler("ZAux_Direct_SetDAC", retSD);
                 }
+
+            std::cout<<"\033[1;36;40m "<<"DAC"<<i<<"="<<DAC[i]<<"\033[0m "<<std::endl;
+
             }
             break;
         case 5:
@@ -306,6 +339,12 @@ namespace xj_control_ns
                 commandCheckHandler("ZAux_Direct_SetDAC", retSVS);
             }
             break;
+        case 100:
+            {
+                // ZAux_Direct_SetAtype(handle,0,66);
+                ZAux_Direct_SetDAC(handle, 0, 10000);
+                break;
+            }
         default:
             break;
         }

@@ -29,7 +29,9 @@ namespace xj_control_ns
         hardware_interface::JointStateInterface joint_state_interface;
         hardware_interface::VelocityJointInterface velocity_joint_interface;
 
-        ZMC_HANDLE handle = NULL;//连接句柄
+        ZMC_HANDLE handle;//连接句柄
+
+        ros::ServiceServer command_service_;
 
     public:
         Agv_hw_interface(/* args */);
