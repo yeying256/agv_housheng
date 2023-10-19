@@ -99,6 +99,7 @@ namespace xj_control_ns
 
     bool Agv_hw_interface::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
     {
+        setlocale(LC_ALL,"");
         bool ret = robot_hw_nh.getParam("/agv_sim/robot_hw_test/joints", agv_joint_name);//从参数服务器中获取name
         if (ret == true)
         {
@@ -177,15 +178,8 @@ namespace xj_control_ns
         for(int i=0;i < 7;i++)
         {
         
-            if(i==0||i==2){//转向电机参数初始化
+            if(i<4){//AGV电机参数初始化
                 ZAux_Direct_SetAtype(handle, i, 66);//设置各轴的类型为66（EtherCAT总线周期速度模式）
-                // ZAux_Direct_SetDatumIn(handle, i, -1);//设置转向电机原点点开关
-
-            }
-            else if(i==1||i==3){//行走电机参数初始化
-                ZAux_Direct_SetAtype(handle, i, 66);//设置各轴的类型为66（EtherCAT总线周期速度模式）
-
-
             }
         //夹爪参数设置
             else if(i==4){//夹爪上升主动电机参数初始化
@@ -274,6 +268,7 @@ namespace xj_control_ns
             ROS_INFO("***AGV回零***");
             break;
         case 2:
+            ROS_INFO("***夹爪回零***");
             break;
         case 3:
             ROS_INFO("***夹爪与底盘共同运动***");        
