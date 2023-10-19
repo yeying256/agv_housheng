@@ -712,7 +712,7 @@ type="fixed">
 
 <transmission name="tran_turn1">
   <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint_turn_2">
+    <joint name="joint_turn_1">
       <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="motorturn1">
@@ -723,7 +723,7 @@ type="fixed">
 
 <transmission name="tran_turn2">
   <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint_turn_4">
+    <joint name="joint_turn_3">
       <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="motorturn2">
@@ -736,7 +736,7 @@ type="fixed">
 
 <transmission name="tran_wheel1">
   <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint_wheel_2">
+    <joint name="joint_wheel_1">
       <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="motorwheel1">
@@ -747,7 +747,7 @@ type="fixed">
 
 <transmission name="tran_wheel2">
   <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint_wheel_4">
+    <joint name="joint_wheel_3">
       <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="motorwheel2">

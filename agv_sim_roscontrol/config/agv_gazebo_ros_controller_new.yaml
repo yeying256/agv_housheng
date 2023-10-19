@@ -1,7 +1,7 @@
 agv_sim:
   gazebo_ros_control:
     pid_gains:
-      joint_turn_2: {p: 10, i: 0.001, d: 0.0}
-      joint_turn_4: {p: 10, i: 0.001, d: 0.0}
-      joint_wheel_2: {p: 1, i: 0.001, d: 0.0}
-      joint_wheel_4: {p: 1, i: 0.001, d: 0.0}
+      joint_turn_1: {p: 10, i: 0.001, d: 0.0}
+      joint_turn_3: {p: 10, i: 0.001, d: 0.0}
+      joint_wheel_1: {p: 1, i: 0.001, d: 0.0}
+      joint_wheel_3: {p: 1, i: 0.001, d: 0.0}
