@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<launch>
+
+
+  <!-- 此launch文件启动agv的硬件通讯节点，同时启动agv的底盘控制器 -->
+
+  <!-- 几何参数 -->
+  <rosparam file="$(find agv_sim_roscontrol)/config/agv_geometry_param_new.yaml" command="load"></rosparam>
+  <rosparam file="$(find agv_hw)/config/agv_hw.yaml" command="load"></rosparam>
+
+  <!-- 加载控制器，一定不能用ns参数，直接用绝对参数路径才能搞定 -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="/" args="
+    /agv_sim/turn_wheels_controller" />
+
+
+  <node pkg="agv_hw" type="agv_hw_node" name="agv_hw_node" output="screen">
+  </node>
+
+
+  <!-- urdf参数 -->
+  <!-- 加载机器人参数 -->
+  <param name="robot_description" textfile="$(find agv_real)/urdf/agv_real.urdf" />
+
+  <!-- 发布状态 -->
+  <!-- <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <remap from="/joint_states" to="/agv_sim/joint_states" />
+  </node> -->
+
+
+
+  <!-- 打开遥控器节点 -->
+  <!-- <include file="$(find joy)/launch/joy.launch" />
+  <node pkg="hfsm" type="hfsm_node" name="hfsm_node" output = "screen"/> -->
+
+
+</launch>

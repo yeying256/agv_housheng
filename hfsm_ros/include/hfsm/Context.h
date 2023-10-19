@@ -6,19 +6,20 @@
 #include <thread>
 #include <ros/ros.h>
 #include <agv_msg/Button.h>
+#include <agv_msg/grab_agv.h>
 
 class State;
 enum EventS
 {
-	next_ = 0,	  // ��һ��
-	goback_,	  // �ص����
-	stop_,		  // ��ͣ
-	unlock_,	  // ����
-	telecontrol_, // ң��״̬
-	auto_,		  // �Զ�״̬
-	shutdown_,	  // �ػ�״̬
-	checkheart_,  // �������
-	go_			  // ������Ŀ���
+	next_ = 0,
+	goback_,
+	stop_,
+	unlock_,
+	telecontrol_,
+	auto_,
+	shutdown_,
+	checkheart_,
+	go_
 };
 
 struct goal_data
@@ -45,44 +46,42 @@ class Context
 public:
 	friend class State;
 
-	Context();
+	Context(ros::NodeHandle nh) : n(nh)
+	{
+		client = n.serviceClient<agv_msg::grab_agv>("robot_control");
+	};
 
 	~Context();
-	// ��ʼ״̬��
+
 	bool Start(std::string name);
 
-	// ����һ��״̬
-	// [in] state ״̬������Context����ʱ���ڲ��ͷ�state
-	// [in] name  ״̬���ƣ�Ϊ������Ϊtypedname��ֵ
-	// [in] father_name ��״̬������
-	// [out] ����state
 	State *CreateState(State *state, std::string name, std::string father_name = "");
 
-	// ���µ�ǰ״̬
 	void Update();
 
-	// ͬ���¼�
-	// ����һ���¼����ṩ��root״̬�͵�ǰ״̬����
-	// �����ǰ״̬����״̬���򻹻����״̬����
 	void SendEvent(EventData event_data);
 
-	// ��ȡ��ǰ״̬����
+	// 获取当前状态名称
 	std::string GetCurStateName();
 
 	void ButtonCallback(const agv_msg::Button::ConstPtr &msg);
 
+	ros::NodeHandle n;
+	ros::ServiceClient client;
+	agv_msg::grab_agv srv;
+
 private:
-	// ״̬�л�
+	// 状态转换
 	void TransForState(std::string name);
 
-	// �ݹ�send
+	// 发送事件
 	void RecursiveSend(NodeState &node_state, EventData &event_data);
 
-	std::unordered_map<std::string, NodeState> _states; // ״̬�б�
-	NodeState _cur_node_state;							// ��ǰ״̬��
+	std::unordered_map<std::string, NodeState> _states;
+	NodeState _cur_node_state;
 	std::string _cur_name;
 
-	std::string _root_name; // ��״̬��
+	std::string _root_name;
 };
 
 #endif

@@ -28,6 +28,7 @@ namespace xj_control_ns
 
     bool turn_wheels_controller::init(hardware_interface::RobotHW* robot_hw,ros::NodeHandle& nh)
     {
+        printf("\033[1;36;40m  init   \033[0m \n");
         std::vector<std::string> joint_names;
         hardware_interface::VelocityJointInterface* turn_wheel_jointinterface = robot_hw->get<hardware_interface::VelocityJointInterface>();
         //获取速度接口
