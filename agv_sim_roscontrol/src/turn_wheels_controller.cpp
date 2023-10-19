@@ -205,14 +205,14 @@ namespace xj_control_ns
     }
     void turn_wheels_controller::log_thread(int size)
     {
-        auto logger2 = XBot::MatLogger2::MakeLogger("/home/wangxiao/learn_ws/src/agv_sim/agv_sim_roscontrol/log_data_mat/mylog");
-        logger2->set_buffer_mode(XBot::VariableBuffer::Mode::circular_buffer);//设置记录器循环记录模式
-        for (int i = 0; i < size; i++)
-        {
-            logger2->add("xyw_cmd_",log_xyw_cmd_[i]);
-            logger2->add("cmd_turn_vel",log_cmd_turn_vel_[i]);
-            logger2->add("cmd_wheel_vel",log_cmd_wheel_vel_[i]);
-        }
+        // auto logger2 = XBot::MatLogger2::MakeLogger("/home/wangxiao/learn_ws/src/agv_sim/agv_sim_roscontrol/log_data_mat/mylog");
+        // logger2->set_buffer_mode(XBot::VariableBuffer::Mode::circular_buffer);//设置记录器循环记录模式
+        // for (int i = 0; i < size; i++)
+        // {
+        //     logger2->add("xyw_cmd_",log_xyw_cmd_[i]);
+        //     logger2->add("cmd_turn_vel",log_cmd_turn_vel_[i]);
+        //     logger2->add("cmd_wheel_vel",log_cmd_wheel_vel_[i]);
+        // }
     }
 }
 

@@ -198,10 +198,13 @@ add_dependencies(agv_hw_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
 #   ${catkin_LIBRARIES}
 # )
 
+
+link_directories(lib)
+
 target_link_libraries(
   Agv_hw_interface
   zmcaux
-  /home/jacob/agv_grab_ws/src/agv_sim/agv_sim_robot_hw/lib/libzmotion.so
+  libzmotion.so
   ${catkin_LIBRARIES}
 )
 
@@ -211,7 +214,7 @@ target_link_libraries(
   zmcaux
   agv_hw
   zmotion
-  /home/jacob/agv_grab_ws/src/agv_sim/agv_sim_robot_hw/lib/libzmotion.so
+  libzmotion.so
   
   ${catkin_LIBRARIES}
 )

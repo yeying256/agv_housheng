@@ -8,7 +8,7 @@ project(agv_sim_roscontrol)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 # set(matlogger2_DIR "~/catkin_ws/src/MatLogger2/build")
-set(matlogger2_DIR "~/agv_grab_ws/src/MatLogger2/build_dir")
+# set(matlogger2_DIR "~/agv_grab_ws/src/MatLogger2/build_dir")
 
 find_package(catkin REQUIRED COMPONENTS
   controller_manager
@@ -24,7 +24,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 
   robot_dynamic_cal
-  matlogger2
+  # matlogger2
 )
 
 ## System dependencies are found with CMake's conventions
@@ -225,7 +225,7 @@ add_library(turn_wheels_controller
 )
 
 target_link_libraries(turn_wheels_controller
-  matlogger2::matlogger2
+  # matlogger2::matlogger2
   ${catkin_LIBRARIES}
 )
 

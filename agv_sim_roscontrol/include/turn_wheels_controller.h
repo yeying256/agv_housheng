@@ -25,8 +25,8 @@
 #include "robot_dynamic.h"
 
 #include "agv_turn_wheel.h"
-#include <matlogger2/matlogger2.h>
-#include <matlogger2/utils/mat_appender.h>
+// #include <matlogger2/matlogger2.h>
+// #include <matlogger2/utils/mat_appender.h>
 
 
 
@@ -48,7 +48,7 @@ namespace xj_control_ns
         ros::Subscriber sub_cmd_vel;
         Eigen::Vector3d xyw_cmd_;
         Eigen::Vector2d turn_theta_,omega_turn_now_,omega_wheel_now_;
-        XBot::MatLogger2::Ptr logger;
+        // XBot::MatLogger2::Ptr logger;
         ros::Time time_starting_;
         std::vector<Eigen::VectorXd> log_xyw_cmd_,log_cmd_turn_vel_,log_cmd_wheel_vel_;
         bool log_flag_;
