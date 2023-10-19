@@ -40,10 +40,9 @@ namespace xj_control_ns
         void read(const ros::Time& time, const ros::Duration& period);
         void write(const ros::Time& time, const ros::Duration& period);
 
-        bool Grab_Server(agv_msg::grab_agv::Request& req,
-                    agv_msg::grab_agv::Request& resp);
+        bool Grab_Server(agv_msg::grab_agv::Request &req,
+                    agv_msg::grab_agv::Request &resp);
         void commandCheckHandler(const char *command, int ret);
-        int MyDirect_SetSpeed(ZMC_HANDLE handle, int axis, float fValue);
 
     };
     
