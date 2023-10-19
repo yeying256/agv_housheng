@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="lidar_hostname1" default="192.168.1.51" />
+  <arg name="lidar_hostname2" default="192.168.1.52" />
+  <arg name="serial_no_1" default="332522071089" />
+  <arg name="serial_no_2" default="332522072143" />
+
+
+  <!-- 启动机器人状态发布 -->
+  <!-- <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" >
+    <remap from="/joint_states" to="/agv_sim/joint_states"/>
+  </node> -->
+
+  <!-- 启动硬件 -->
+ 
+
+
+
+
+    <!-- 此launch文件启动agv的硬件通讯节点，同时启动agv的底盘控制器 -->
+
+    <rosparam file="$(find agv_sim_roscontrol)/config/agv_defaut_controller.yaml" command="load"></rosparam>
+
+    <!-- 几何参数 -->
+    <rosparam file="$(find agv_sim_roscontrol)/config/agv_geometry_param.yaml" command="load"></rosparam>
+    <rosparam file="$(find agv_hw)/config/agv_hw.yaml" command="load"></rosparam>
+
+
+
+     <!-- urdf参数 -->
+      <!-- 加载机器人参数 -->
+    <param name="robot_description" textfile="$(find agv_real)/urdf/agv_real.urdf" />
+
+  <!-- 发布状态 -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" >
+    <remap from="/joint_states" to="/agv_sim/joint_states"/>
+    </node>
+
+
+  <!-- 启动激光雷达1,2 -->
+  <include file="$(find sick_scan)/launch/sick_tim_5xx_twin.launch" >
+    <arg name="hostname1" value="$(arg lidar_hostname1)" />
+    <arg name="hostname2" value="$(arg lidar_hostname2)" />
+  </include>
+
+
+  <!-- 启动激光雷达融合 -->
+  <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger"
+    output="screen">
+    <param name="destination_frame" value="base_footprint" />
+    <param name="cloud_destination_topic" value="/merged_cloud" />
+    <param name="scan_destination_topic" value="/scan" />
+    <param name="laserscan_topics" value="/scan_1 /scan_2" />
+    <param name="angle_min" value="-2.7" />
+    <param name="angle_max" value="2.7" />
+  </node>
+
+
+</launch>
