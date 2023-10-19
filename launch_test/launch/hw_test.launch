@@ -30,8 +30,8 @@
 
 
   <!-- 打开遥控器节点 -->
-  <!-- <include file="$(find joy)/launch/joy.launch" />
-  <node pkg="hfsm" type="hfsm_node" name="hfsm_node" output = "screen"/> -->
+  <include file="$(find joy)/launch/joy.launch" />
+  <node pkg="hfsm" type="hfsm_node" name="hfsm_node" output = "screen"/>
 
 
 </launch>

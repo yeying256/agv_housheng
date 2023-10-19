@@ -199,6 +199,8 @@ namespace xj_control_ns
             // th_data_log.detach();
             log_flag_ = false;
         }
+
+        // printf("这里是roscontrol的");
         
 
 
