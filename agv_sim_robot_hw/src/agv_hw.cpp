@@ -231,7 +231,7 @@ namespace xj_control_ns
         setlocale(LC_ALL,"");
         float velocity_unit;
         float position_unit;
-        for(int i=0;i<agv_num_joints_;i++)
+        for(int i=0;i<4;i++)
         {
             int retGS =ZAux_Direct_GetMspeed(handle, i, &velocity_unit); //获取轴的速度(unit/s)
             int retGMPOS = ZAux_Direct_GetMpos(handle, i, &position_unit);//获取反馈位置(unit)
@@ -240,12 +240,12 @@ namespace xj_control_ns
             if(i==0||i==2){
                 joint_velocity_state[i]=velocity_unit/(400000*3.14159);//将用户单位速度转换为电机转速
                 joint_position_state[i]=position_unit/(400000*3.14159);//将用户单位位置转换为几何位置
-                printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
-                printf("轴%d的位置 Mpos = %lf\n", i, joint_position_state[i]);
+                // printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
+                // printf("轴%d的位置 Mpos = %lf\n", i, joint_position_state[i]);
             }
             else{
                 joint_velocity_state[i]=velocity_unit/(340000*3.14159);//将用户单位速度转换为电机转速
-                printf("轴%d的速度 Speed = %lf\n", i, joint_velocity_state[i]);
+                // printf("轴%d的速度 Speed = %lf\n", i, joint_velocity_state[i]);
             }
         }
 
