@@ -10,7 +10,7 @@ int main(int argc, char * argv[])
     ros::init(argc, argv, "hw_interface_node");
     
 
-    ros::AsyncSpinner spinner(1);
+    ros::AsyncSpinner spinner(2);
     spinner.start();
     ros::NodeHandle nh;
     xj_control_ns::Agv_hw_interface hw;
@@ -18,9 +18,9 @@ int main(int argc, char * argv[])
 
     ROS_INFO("hw init ret=%d",ret);
     
-    sleep(1);
 
     controller_manager::ControllerManager cm(&hw,nh);
+    sleep(1);
 
 
     

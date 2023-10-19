@@ -9,6 +9,7 @@
 #include <agv_msg/Button.h>
 #include <agv_msg/reltive_pose.h>
 #include <unordered_map>
+#include <agv_msg/grab_agv.h>
 
 bool run = true;
 
@@ -18,12 +19,20 @@ class StartState : public State
 public:
     void start()
     {
-        std::cout << "StartState start" << std::endl;
+        ROS_INFO("StartState start");
+        this->_context->client.waitForExistence();
+        this->_context->srv.request.status = 1;
+        if (this->_context->client.call(this->_context->srv))
+        {
+            ROS_INFO("STEERING WHEEL BACK TO RIGHT");
+        }
+        else
+            ROS_ERROR("STEERING WHEEL BACK FAILED!");
     }
 
     void stop()
     {
-        std::cout << "StartState stop" << std::endl;
+        ROS_INFO("StartState stop");
     }
 
     void update()
@@ -178,8 +187,8 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "hfsm_node");
     ros::AsyncSpinner spinner(2);
     spinner.start();
-    Context *context = new Context();
     ros::NodeHandle nh;
+    Context *context = new Context(nh);
     ros::Subscriber sub = nh.subscribe("/push_button", 100, &Context::ButtonCallback, context);
 
     // 创建状态机

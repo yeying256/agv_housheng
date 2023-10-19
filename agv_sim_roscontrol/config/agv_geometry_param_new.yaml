@@ -31,8 +31,8 @@ agv_sim:
     type: xj_control_ns/turn_wheels_controller
     joints: 
         - joint_turn_1
-        - joint_turn_3
         - joint_wheel_1
+        - joint_turn_3
         - joint_wheel_3
 
 

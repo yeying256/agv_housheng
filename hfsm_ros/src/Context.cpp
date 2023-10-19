@@ -2,10 +2,6 @@
 #include <hfsm/State.h>
 #include <iostream>
 
-Context::Context()
-{
-}
-
 Context::~Context()
 {
 	if (_cur_node_state._state != nullptr)
@@ -115,14 +111,31 @@ void Context::ButtonCallback(const agv_msg::Button::ConstPtr &msg)
 		{
 			// EventData e = EventData((int)unlock_);
 			// this->SendEvent(e);
-			this->TransForState("Lock");
+			client.waitForExistence();
+			srv.request.status = 0;
+			if (client.call(srv))
+			{
+				ROS_INFO("EMERGENCY STOP!");
+				this->TransForState("Lock");
+			}
+			else
+				ROS_ERROR("STOP FAILED!");
+
 			break;
 		}
 		case unlock_:
 		{
 			// EventData e = EventData((int)unlock_);
 			// this->SendEvent(e);
-			this->TransForState("Telecontrol");
+			client.waitForExistence();
+			srv.request.status = 4;
+			if (client.call(srv))
+			{
+				ROS_INFO("AGV UNLOCK!");
+				this->TransForState("Telecontrol");
+			}
+			else
+				ROS_INFO("UNLOCK FAILED");
 			break;
 		}
 		}

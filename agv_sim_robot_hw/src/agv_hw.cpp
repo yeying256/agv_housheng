@@ -125,12 +125,12 @@ namespace xj_control_ns
         for(int i=0; i<agv_num_joints_; i++)
         {
             //State
-            hardware_interface::JointStateHandle jointStateHandle(agv_joint_name[i].c_str(), &joint_position_state[i], &joint_velocity_state[i], &joint_effort_state[i]);
+            hardware_interface::JointStateHandle jointStateHandle(agv_joint_name[i], &joint_position_state[i], &joint_velocity_state[i], &joint_effort_state[i]);
             joint_state_interface.registerHandle(jointStateHandle);
             ROS_INFO("joint_name[%d].c_str()=%s",i,jointStateHandle.getName().c_str());
 
             //Velocity
-            hardware_interface::JointHandle jointVelocityHandle(joint_state_interface.getHandle(agv_joint_name[i].c_str()), &joint_velocity_command[i]);
+            hardware_interface::JointHandle jointVelocityHandle(joint_state_interface.getHandle(agv_joint_name[i]), &joint_velocity_command[i]);
             velocity_joint_interface.registerHandle(jointVelocityHandle);
         }
 
@@ -139,8 +139,7 @@ namespace xj_control_ns
 
 //****************************************************************************************************
         //PCI初始化
-        for(int joint=0; joint<7;joint++)
-        {
+
             uint32 cardnumcardnum = 0;
             //连接返回的句柄
             //PCI接口编号
@@ -157,21 +156,21 @@ namespace xj_control_ns
                 printf("PCI 连接成功!\n");
             }
             //do something.....
-        }
+        
 
 //*********************************************************************************************************
         int AxisEnable;
         for(int axis=0;axis<7; axis++)
         {
-            int retGAE = ZAux_Direct_GetAxisEnable(handle, axis, &AxisEnable);// 读取轴使能： 0 表示关闭，1表示打开
-            commandCheckHandler("ZAux_BusCmd_GetInitStatus", retGAE);
-            printf("总线初始化使能状态为： %d \n", AxisEnable);
-            if (AxisEnable<1)
-            {
+            // int retGAE = ZAux_Direct_GetAxisEnable(handle, axis, &AxisEnable);// 读取轴使能： 0 表示关闭，1表示打开
+            // commandCheckHandler("ZAux_BusCmd_GetInitStatus", retGAE);
+            // printf("总线初始化使能状态为： %d \n", AxisEnable);
+            // if (AxisEnable<1)
+            // {
                 int retSAE = ZAux_Direct_SetAxisEnable(handle, axis, 1);// 设置轴使能： 0 表示关闭， 1 表示打开
                 commandCheckHandler("ZAux_Direct_SetAxisEnable", retSAE);
                 printf("打开使能\n");
-            }
+            // }
         }
 
         //机器人参数初始化********************************************************************************************
@@ -217,7 +216,7 @@ namespace xj_control_ns
         robot_hw_nh.advertiseService("robot_control",&Agv_hw_interface::Grab_Server,this);//启动夹爪运动服务器
 
         ROS_INFO("夹爪机器人服务器已启动！");   
-        ros::spin();
+        // ros::spin();
         return true;
     }
 
@@ -226,7 +225,7 @@ namespace xj_control_ns
         setlocale(LC_ALL,"");
         float velocity_unit;
         float position_unit;
-        for(int i=0;i<agv_num_joints_;i++)
+        for(int i=0;i<4;i++)
         {
             int retGS =ZAux_Direct_GetMspeed(handle, i, &velocity_unit); //获取轴的速度(unit/s)
             int retGMPOS = ZAux_Direct_GetMpos(handle, i, &position_unit);//获取反馈位置(unit)
@@ -235,12 +234,12 @@ namespace xj_control_ns
             if(i==0||i==2){
                 joint_velocity_state[i]=velocity_unit/(400000*3.14159);//将用户单位速度转换为电机转速
                 joint_position_state[i]=position_unit/(400000*3.14159);//将用户单位位置转换为几何位置
-                printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
-                printf("轴%d的位置 Mpos = %lf\n", i, joint_position_state[i]);
+                // printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
+                // printf("轴%d的位置 Mpos = %lf\n", i, joint_position_state[i]);
             }
             else{
                 joint_velocity_state[i]=velocity_unit/(340000*3.14159);//将用户单位速度转换为电机转速
-                printf("轴%d的速度 Speed = %lf\n", i, joint_velocity_state[i]);
+                // printf("轴%d的速度 Speed = %lf\n", i, joint_velocity_state[i]);
             }
         }
 
