@@ -32,9 +32,9 @@ namespace xj_control_ns
         float high_unit = req.high;//将几何参数转换为用户单位输入
         float width_unit = req.width;//将几何参数转换为用户单位输入
         this->status_ = req.status;
+        ROS_INFO("夹爪收到的参数为:high=%.2f,width=%.2f",req.high,req.width);
         ZMC_HANDLE handle = NULL;
-        ROS_INFO("夹爪收到的参数为:high=%.2f,width=%.2f");
-
+        uint32 homestatus; 
         
 
         if(status_ == 3||5){
@@ -42,8 +42,42 @@ namespace xj_control_ns
             ZAux_Direct_Single_MoveAbs(handle,4, high_unit);//上升电机同步运动
             ZAux_Direct_Single_MoveAbs(handle,7, width_unit);//夹取运动电机运动
         }
-        else if(status_ == 1){
-            
+        else if(status_ == 1){//AGV回零             
+            // ZAux_Direct_SetInvertIn(handle, i, 1);//设置需要回零的输入口电平反转
+            // ZAux_Direct_SetDpos( handle, i, 0);//设置需要回零的轴指令位置清0
+            // ZAux_Direct_SetMpos( handle,i, 0);//设置需要回零的轴反馈位置清0
+            int retBD0 = ZAux_BusCmd_Datum(handle, 0,3);
+            while (1)//等待轴 0 回零运动完成
+            {
+                sleep(100);
+                ZAux_Direct_GetHomeStatus(handle,0,&homestatus);//获取回零运动完成状态
+                if (homestatus==1){break;}
+            }
+            commandCheckHandler("ZAux_BusCmd_Datum", retBD0);
+            int retBD2 = ZAux_BusCmd_Datum(handle, 2,3);
+            while (1)//等待轴 2 回零运动完成
+            {
+                sleep(100);
+                ZAux_Direct_GetHomeStatus(handle,0,&homestatus);//获取回零运动完成状态
+                if (homestatus==1){break;}
+            }
+            commandCheckHandler("ZAux_BusCmd_Datum", retBD2);
+        }    
+        else if(status_==2){//夹爪回零
+            int retBD4 = ZAux_BusCmd_Datum(handle, 4,3);while (1)//等待轴 4 回零运动完成
+            {
+                sleep(100);
+                ZAux_Direct_GetHomeStatus(handle,0,&homestatus);//获取回零运动完成状态
+                if (homestatus==1){break;}
+            }
+            commandCheckHandler("ZAux_BusCmd_Datum", retBD4);
+            int retBD6 = ZAux_BusCmd_Datum(handle, 4,3);while (1)//等待轴 6 回零运动完成
+            {
+                sleep(100);
+                ZAux_Direct_GetHomeStatus(handle,0,&homestatus);//获取回零运动完成状态
+                if (homestatus==1){break;}
+            }
+            commandCheckHandler("ZAux_BusCmd_Datum", retBD6);
         }
         else{
             ROS_INFO("夹爪处于静止状态");
@@ -224,23 +258,6 @@ namespace xj_control_ns
             break;
         case 1:
             ROS_INFO("***AGV回零***");
-            uint32 homestatus;
-            for(int i=0;i<agv_num_joints_;i++){
-                if(i==0||i==2){
-                    // ZAux_Direct_SetInvertIn(handle, i, 1);//设置需要回零的输入口电平反转
-                    // ZAux_Direct_SetDpos( handle, i, 0);//设置需要回零的轴指令位置清0
-                    // ZAux_Direct_SetMpos( handle,i, 0);//设置需要回零的轴反馈位置清0
-                    int retBD = ZAux_BusCmd_Datum(handle, i,3);
-                    commandCheckHandler("ZAux_BusCmd_Datum", retBD);
-                    while (1)//等待轴 0 回零运动完成
-                    {
-                        sleep(100);
-                        ZAux_Direct_GetHomeStatus(handle,i,&homestatus);//获取回零运动完成状态
-                        if (homestatus==1){break;}
-                    }
-                }
-                else{break;}
-            }
             break;
         case 2:
             break;
