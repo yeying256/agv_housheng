@@ -500,8 +500,8 @@
     name="joint_laser_1"
     type="fixed">
     <origin
-      xyz="0.4 0.5 0.03"
-      rpy="0 0 1.5708" />
+      xyz="0.586 0.486 0.04"
+      rpy="3.1415 0 2.355" />
     <parent
       link="base_link" />
     <child
@@ -516,8 +516,8 @@
     name="joint_laser_2"
     type="fixed">
     <origin
-      xyz="-0.4 -0.5 0.03"
-      rpy="0 0 1.5708" />
+      xyz="-0.586 -0.486 0.04"
+      rpy="3.1415 0 -0.7865" />
     <parent
       link="base_link" />
     <child
@@ -642,13 +642,13 @@ type="fixed">
           <resolution>1</resolution>
           <!--min_angle>-1.570796</min_angle>
           <max_angle>1.570796</max_angle-->
-          <min_angle>-3.14</min_angle>
-          <max_angle>1.57</max_angle>
+          <min_angle>-0.785398</min_angle>
+          <max_angle>3.92699</max_angle>
         </horizontal>
       </scan>
       <range>
         <min>0.2</min>
-        <max>15.0</max>
+        <max>25.0</max>
         <resolution>0.002</resolution>
       </range>
       <noise>
@@ -682,13 +682,13 @@ type="fixed">
           <resolution>1</resolution>
           <!--min_angle>-1.570796</min_angle>
           <max_angle>1.570796</max_angle-->
-          <min_angle>0</min_angle>
-          <max_angle>4.71</max_angle>
+            <min_angle>-0.785398</min_angle>
+            <max_angle>3.92699</max_angle>
         </horizontal>
       </scan>
       <range>
         <min>0.2</min>
-        <max>15.0</max>
+        <max>25.0</max>
         <resolution>0.002</resolution>
       </range>
       <noise>
