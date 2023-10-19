@@ -261,9 +261,14 @@ namespace xj_control_ns
         {
         case 0:
             ROS_INFO("***急停状态！***");
-            for(int i=0; i<7; i++){
-                int retCM = ZAux_Direct_Single_Cancel(handle, i, 2);
-                commandCheckHandler("ZAux_Direct_Single_Cancel", retCM);}
+            for(int i=0; i<agv_num_joints_; i++){
+                int retSVS = ZAux_Direct_SetDAC(handle, i, 0);
+                commandCheckHandler("ZAux_Direct_SetDAC", retSVS);
+            }
+            for(int i=4; i<7;i++){
+                int retSVS = ZAux_Direct_Single_Cancel(handle, i, 2);
+                commandCheckHandler("ZAux_Direct_SetDAC", retSVS);
+            }
             break;
         case 1:
             ROS_INFO("***AGV回零***");
