@@ -18,7 +18,7 @@ namespace xj_control_ns
     {
         for (int i = 0; i < 4; i++)
         {
-            ZAux_Direct_SetAxisEnable(handle,i,0);
+            ZAux_Direct_Single_Cancel(handle,i,2);
         }
         
         
@@ -38,8 +38,8 @@ namespace xj_control_ns
         float high_unit = req.high*(625000/471);//将几何参数转换为用户单位输入 10000pulse/r
         float width_unit = req.width*(2000/3);//将几何参数转换为用户单位输入
         this->status_ = req.status;
-        ROS_INFO("夹爪收到的参数为:high=%.2f,width=%.2f",req.high,req.width);
-        ZMC_HANDLE handle = NULL;
+        ROS_INFO("夹爪收到的参数为:high=%.2f,width=%.2f,status_ = %d",req.high,req.width,status_);
+        // ZMC_HANDLE handle = NULL;
         uint32 homestatus; 
         
         for (int i = 0; i < 4; i++)
@@ -49,7 +49,7 @@ namespace xj_control_ns
         }
         
 
-        if(status_ == 3||5){
+        if((status_ == 3)||(status_ ==5)){
             ROS_INFO("夹爪处于运动状态");
             ZAux_Direct_Single_MoveAbs(handle,4, high_unit);//上升电机同步运动
             ZAux_Direct_Single_MoveAbs(handle,7, width_unit);//夹取运动电机运动
@@ -59,8 +59,8 @@ namespace xj_control_ns
         else if(status_ == 1){//AGV回零
             ZAux_Direct_SetAtype(handle, 0, 65);
             ZAux_Direct_SetAtype(handle, 2, 65);             
-            ZAux_Direct_SetSpeed(handle, 0, 10000);
-            ZAux_Direct_SetSpeed(handle, 2, 10000);
+            ZAux_Direct_SetSpeed(handle, 0, 20000);
+            ZAux_Direct_SetSpeed(handle, 2, 20000);
             ZAux_Direct_SetCreep(handle, 0, 1000);
             ZAux_Direct_SetCreep(handle, 2, 1000);
             // ZAux_Direct_SetInvertIn(handle, i, 1);//设置需要回零的输入口电平反转
@@ -68,21 +68,32 @@ namespace xj_control_ns
             // ZAux_Direct_SetMpos( handle,i, 0);//设置需要回零的轴反馈位置清0
             ZAux_Direct_SetAxisEnable(handle,1,0);
             int retBD0 = ZAux_BusCmd_Datum(handle, 0,3);
-            while (1)//等待轴 0 回零运动完成
+            printf("*************是否回零，%d***************\n",retBD0);
+
+            while (ros::ok())//等待轴 0 回零运动完成
             {
                 sleep(1);
                 ZAux_Direct_GetHomeStatus(handle,0,&homestatus);//获取回零运动完成状态
-                if (homestatus==1){break;}
+                if (homestatus==1){
+                printf("*************轴0回零了***************\n");
+                    break;}
+                printf("*************轴0正在回零***************\n");
+
             }
             commandCheckHandler("ZAux_BusCmd_Datum", retBD0);
             ZAux_Direct_SetAxisEnable(handle,1,1);
             ZAux_Direct_SetAxisEnable(handle,3,0);
             int retBD2 = ZAux_BusCmd_Datum(handle, 2,3);
-            while (1)//等待轴 2 回零运动完成
+            while (ros::ok())//等待轴 2 回零运动完成
             {
                 sleep(1);
-                ZAux_Direct_GetHomeStatus(handle,0,&homestatus);//获取回零运动完成状态
-                if (homestatus==1){break;}
+                ZAux_Direct_GetHomeStatus(handle,2,&homestatus);//获取回零运动完成状态
+    
+                    if (homestatus==1){
+                printf("*************轴2回零了***************\n");
+                    break;}
+                printf("*************轴2正在回零***************\n");
+                
             }
             commandCheckHandler("ZAux_BusCmd_Datum", retBD2);
             ZAux_Direct_SetAxisEnable(handle,3,1);
@@ -145,7 +156,7 @@ namespace xj_control_ns
             //State
             hardware_interface::JointStateHandle jointStateHandle(agv_joint_name[i], &joint_position_state[i], &joint_velocity_state[i], &joint_effort_state[i]);
             joint_state_interface.registerHandle(jointStateHandle);
-            ROS_INFO("joint_name[%d].c_str()=%s",i,jointStateHandle.getName().c_str());
+            ROS_INFO("joint_name[%d].c_str()=%s",i,jointStateHandle.getName());
 
             //Velocity
             hardware_interface::JointHandle jointVelocityHandle(joint_state_interface.getHandle(agv_joint_name[i]), &joint_velocity_command[i]);
@@ -255,11 +266,8 @@ namespace xj_control_ns
             if(i==0||i==2){
                 joint_velocity_state[i]=velocity_unit/(10000*20/3.14159/2);//将用户单位速度转换为电机转速
                 joint_position_state[i]=position_unit/(10000*20/3.14159/2);//将用户单位位置转换为几何位置
-                // printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
-                if(i==2){
-                printf("轴%d的位置 joint_position_state = %lf\n", i, joint_position_state[2]);
-
-                }
+                printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
+                
             }
             else{
                 joint_velocity_state[i]=velocity_unit/(10000*17/3.14159/2);//将用户单位速度转换为电机转速
@@ -279,7 +287,7 @@ namespace xj_control_ns
         //     std::cout<<"\033[1;36;40m "<<"joint_velocity_command"<<i<<"="<<joint_velocity_command[i]<<"\033[0m "<<std::endl;
         // }
 
-        printf("agv_num_joints_ = %d,\n",agv_num_joints_);
+        // printf("agv_num_joints_ = %d,\n",agv_num_joints_);
         
         // status_ =100;
 
@@ -297,7 +305,7 @@ namespace xj_control_ns
             }
             break;
         case 1:
-            ROS_INFO("***AGV回零***");
+            // ROS_INFO("***AGV回零***");
             break;
         case 2:
             ROS_INFO("***夹爪回零***");
@@ -324,6 +332,12 @@ namespace xj_control_ns
                     DAC[i]=joint_velocity_command[i]*10000*20/3.14159/2;//转向电机用户单位速度转换为电机转速 dac = 速度（rad/s）/（2*pi）*10000（pulse/r）*20（减速比）
                     int retSD = ZAux_Direct_SetDAC(handle, i, DAC[i]);
                     commandCheckHandler("ZAux_Direct_SetDAC", retSD);
+                    float position;
+                    ZAux_Direct_GetMpos(handle,2,&position);
+                    if(i==2){
+                        printf("轴2位置：%.2f",position);
+                    }
+
                 }
                 else{
                     DAC[i]=joint_velocity_command[i]*10000*17/3.14159/2;//行走电机用户单位速度转换为电机转速
@@ -331,7 +345,7 @@ namespace xj_control_ns
                     commandCheckHandler("ZAux_Direct_SetDAC", retSD);
                 }
 
-            std::cout<<"\033[1;36;40m "<<"DAC"<<i<<"="<<DAC[i]<<"\033[0m "<<std::endl;
+            // std::cout<<"\033[1;36;40m "<<"DAC"<<i<<"="<<DAC[i]<<"\033[0m "<<std::endl;
 
             }
             break;

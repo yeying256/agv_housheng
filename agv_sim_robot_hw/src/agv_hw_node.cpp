@@ -24,7 +24,7 @@ int main(int argc, char * argv[])
 
 
     
-    ros::Duration period(1.0/10);
+    ros::Duration period(1.0/1000);
     ROS_INFO("joint hw run");
 
     while (ros::ok())
