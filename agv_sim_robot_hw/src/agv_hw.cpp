@@ -257,7 +257,7 @@ namespace xj_control_ns
                 joint_position_state[i]=position_unit/(10000*20/3.14159/2);//将用户单位位置转换为几何位置
                 // printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
                 if(i==2){
-                printf("轴%d的位置 Mpos = %lf\n", i, position_unit);
+                printf("轴%d的位置 joint_position_state = %lf\n", i, joint_position_state[2]);
 
                 }
             }
