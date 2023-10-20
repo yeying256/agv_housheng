@@ -253,13 +253,13 @@ namespace xj_control_ns
             commandCheckHandler("ZAux_Direct_GetMspeed", retGS);//判断指令是否执行成功
             commandCheckHandler("ZAux_Direct_GetMpos", retGMPOS) ;//判断指令是否执行成功
             if(i==0||i==2){
-                joint_velocity_state[i]=velocity_unit/(10*20/3.14159/2);//将用户单位速度转换为电机转速
-                joint_position_state[i]=position_unit/(10*20/3.14159/2);//将用户单位位置转换为几何位置
+                joint_velocity_state[i]=velocity_unit/(10000*20/3.14159/2);//将用户单位速度转换为电机转速
+                joint_position_state[i]=position_unit/(10000*20/3.14159/2);//将用户单位位置转换为几何位置
                 // printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
                 // printf("轴%d的位置 Mpos = %lf\n", i, position_unit);
             }
             else{
-                joint_velocity_state[i]=velocity_unit/(10*17/3.14159/2);//将用户单位速度转换为电机转速
+                joint_velocity_state[i]=velocity_unit/(10000*17/3.14159/2);//将用户单位速度转换为电机转速
                 // printf("轴%d的速度 Speed = %lf\n", i, joint_velocity_state[i]);
             }
         }
@@ -303,12 +303,12 @@ namespace xj_control_ns
             ROS_INFO("***夹爪与底盘共同运动***");        
             for(int i=0;i<agv_num_joints_; i++){
                 if(i==0||i==2){
-                    DAC[i]=joint_velocity_command[i]*10*20/3.14159/2;//转向电机用户单位速度转换为电机转速
+                    DAC[i]=joint_velocity_command[i]*10000*20/3.14159/2;//转向电机用户单位速度转换为电机转速
                     int retSD = ZAux_Direct_SetDAC(handle, i, DAC[i]);
                     commandCheckHandler("ZAux_Direct_SetDAC", retSD);
                 }
                 else{
-                    DAC[i]=joint_velocity_command[i]*10*17/3.14159/2;//行走电机用户单位速度转换为电机转速
+                    DAC[i]=joint_velocity_command[i]*10000*17/3.14159/2;//行走电机用户单位速度转换为电机转速
                     int retSD = ZAux_Direct_SetDAC(handle, i, DAC[i]);
                     commandCheckHandler("ZAux_Direct_SetDAC", retSD);
                 }
@@ -318,12 +318,12 @@ namespace xj_control_ns
             ROS_INFO("***底盘单独运动***");
             for(int i=0; i<agv_num_joints_; i++){
                 if(i==0||i==2){
-                    DAC[i]=joint_velocity_command[i]*10*20/3.14159/2;//转向电机用户单位速度转换为电机转速 dac = 速度（rad/s）/（2*pi）*10000（pulse/r）*20（减速比）
+                    DAC[i]=joint_velocity_command[i]*10000*20/3.14159/2;//转向电机用户单位速度转换为电机转速 dac = 速度（rad/s）/（2*pi）*10000（pulse/r）*20（减速比）
                     int retSD = ZAux_Direct_SetDAC(handle, i, DAC[i]);
                     commandCheckHandler("ZAux_Direct_SetDAC", retSD);
                 }
                 else{
-                    DAC[i]=joint_velocity_command[i]*10*17/3.14159/2;//行走电机用户单位速度转换为电机转速
+                    DAC[i]=joint_velocity_command[i]*10000*17/3.14159/2;//行走电机用户单位速度转换为电机转速
                     int retSD = ZAux_Direct_SetDAC(handle, i, DAC[i]);
                     commandCheckHandler("ZAux_Direct_SetDAC", retSD);
                 }
