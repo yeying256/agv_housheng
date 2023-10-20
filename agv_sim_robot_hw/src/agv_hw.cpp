@@ -35,7 +35,7 @@ namespace xj_control_ns
     //夹爪服务器
     bool Agv_hw_interface::Grab_Server(agv_msg::grab_agv::Request &req,
                     agv_msg::grab_agv::Request &resp){
-        float high_unit = req.high*(625000/471);//将几何参数转换为用户单位输入
+        float high_unit = req.high*(625000/471);//将几何参数转换为用户单位输入 10000pulse/r
         float width_unit = req.width*(2000/3);//将几何参数转换为用户单位输入
         this->status_ = req.status;
         ROS_INFO("夹爪收到的参数为:high=%.2f,width=%.2f",req.high,req.width);
@@ -256,7 +256,10 @@ namespace xj_control_ns
                 joint_velocity_state[i]=velocity_unit/(10000*20/3.14159/2);//将用户单位速度转换为电机转速
                 joint_position_state[i]=position_unit/(10000*20/3.14159/2);//将用户单位位置转换为几何位置
                 // printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
-                // printf("轴%d的位置 Mpos = %lf\n", i, position_unit);
+                if(i==2){
+                printf("轴%d的位置 Mpos = %lf\n", i, position_unit);
+
+                }
             }
             else{
                 joint_velocity_state[i]=velocity_unit/(10000*17/3.14159/2);//将用户单位速度转换为电机转速
