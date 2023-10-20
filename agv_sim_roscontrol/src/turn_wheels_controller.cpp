@@ -182,6 +182,7 @@ namespace xj_control_ns
         }
 
 
+
         ros::Duration time_es = time-this->time_starting_;
         if (time_es.toSec()<=10.0)
         {
