@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+  
+
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find launch_test)/rviz/larda_test.rviz" required="true" />
+
+  <include file="$(find imu_launch)/launch/imu_msg.launch" />
+
+
+</launch>

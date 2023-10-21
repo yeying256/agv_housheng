@@ -30,6 +30,11 @@
 
 
 
+#include "mean_filter.h"
+
+
+
+
 
 
 
@@ -48,6 +53,8 @@ namespace xj_control_ns
         ros::Subscriber sub_cmd_vel;
         Eigen::Vector3d xyw_cmd_;
         Eigen::Vector2d turn_theta_,omega_turn_now_,omega_wheel_now_;
+        Eigen::Vector2d pos_turn_last_,pos_wheel_last_,pos_wheel_now_;
+
         // XBot::MatLogger2::Ptr logger;
         ros::Time time_starting_;
         std::vector<Eigen::VectorXd> log_xyw_cmd_,log_cmd_turn_vel_,log_cmd_wheel_vel_;
@@ -62,6 +69,8 @@ namespace xj_control_ns
         geometry_msgs::TransformStamped odom_tf_;
         //odom信息
         nav_msgs::Odometry odom_;
+
+        xj_dy_ns::MeanFilter cmd_filter_;
         
         
 

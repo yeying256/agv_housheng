@@ -23,7 +23,11 @@
     <param name="angle_min" value="-2.7" />
     <param name="angle_max" value="2.7" />
   </node>
-
+  <!-- <include file="$(find sick_scan)/launch/sick_tim_5xx.launch" >
+    <param name="hostname" value="$(arg lidar_hostname1)" />
+    <param name="cloud_topic" value="/scan"/>
+    <param name="frame_id" value="map" />
+  </include> -->
   <!-- 启动相机 -->
   <include file="$(find realsense2_camera)/launch/rs_multiple_devices.launch">
     <arg name="serial_no_camera1" value="$(arg serial_no_1)" />

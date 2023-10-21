@@ -19,6 +19,8 @@ namespace xj_control_ns
 
     void turn_wheels_controller::cb_target_pose(const geometry_msgs::Twist& msg)
     {
+
+
         xyw_cmd_[0]=msg.linear.x;
         xyw_cmd_[1]=msg.linear.y;
         xyw_cmd_[2]=msg.angular.z;
@@ -62,6 +64,9 @@ namespace xj_control_ns
         nh.getParam("/agv_sim/B",B);
         nh.getParam("/agv_sim/R",R);
 
+        B =0.625;
+        R = 0.625;
+
         printf("\033[1;36;40m  /agv_sim/lr = %f lf=%f,B=%f,R=%f \033[0m \n",lr,lf,B,R);
         agv_cal_.init(lr,lf,B,R);
 
@@ -76,7 +81,7 @@ namespace xj_control_ns
         // a_init<<M_PI_2,M_PI_2;
 
         // 新机器人参数
-        phi<<(M_PI - 2.3819),(0.7592-M_PI);
+        phi<<0.75976,(0.75976-M_PI);
         b<<0.0625,0.0625;
         r<<0.0625,0.0625;
         l<<0.41379,0.41379;
@@ -95,6 +100,9 @@ namespace xj_control_ns
         
         // odom_pub_ = nh.advertise<nav_msgs::Odometry>("/odom",50);
         odom_pub_.init(nh,"/odom",1,false);
+
+
+        cmd_filter_.init(100,3);
 
 
         log_flag_ = true;
@@ -138,6 +146,15 @@ namespace xj_control_ns
         this->omega_wheel_now_[0]=turn_wheel_joint_handles_[1].getVelocity();//将行走电机的角速度返回
         this->omega_wheel_now_[1]=turn_wheel_joint_handles_[3].getVelocity();//将行走电机的角速度返回
 
+        this->pos_wheel_now_[0] =turn_wheel_joint_handles_[1].getPosition();//将行走电机的角速度返回
+        this->pos_wheel_now_[1]=turn_wheel_joint_handles_[3].getPosition();//将行走电机的角速度返回
+
+        std::cout<<"\033[1;36;40m "<<"turn_theta_="<<turn_theta_<<"\033[0m "<<std::endl;
+
+        agv_cal_.update(omega_wheel_now_,omega_turn_now_,turn_theta_,period);
+
+
+
 
 
 
@@ -147,15 +164,14 @@ namespace xj_control_ns
         // std::cout<<"\033[1;36;40m "<<"vel_4_now="<<vel_4_now<<"\033[0m "<<std::endl;
 
         //读取当前反馈信息,更新运动学内部参数
-        agv_cal_.update(omega_wheel_now_,omega_turn_now_,turn_theta_,period);
         agv_cal_.tf_odom_trans(this->odom_,this->odom_tf_,time,"odom","base_footprint");
         
-        odom_.pose.covariance={1, 0, 0, 0, 0, 0, 
-                        0, 1, 0, 0, 0, 0,
+        odom_.pose.covariance={1e3, 0, 0, 0, 0, 0, 
+                        0, 1e3, 0, 0, 0, 0,
                         0, 0, 1e6, 0, 0, 0,
                         0, 0, 0, 1e6, 0, 0,
                         0, 0, 0, 0, 1e6, 0,
-                        0, 0, 0, 0, 0, 1};
+                        0, 0, 0, 0, 0, 1e3};
         odom_.twist.covariance={1e1, 0, 0, 0, 0, 0, 
                          0, 1e1, 0, 0, 0, 0,
                          0, 0, 1e1, 0, 0, 0,
@@ -165,14 +181,18 @@ namespace xj_control_ns
         //发送消息
         odom_pub_.msg_ = odom_;
         odom_pub_.unlockAndPublish();
-        // odom_broadcaster_.sendTransform(odom_tf_);
+        odom_broadcaster_.sendTransform(odom_tf_);
         
 
 
         Eigen::Vector2d cmd_vel_drive,cmd_vel_steer;
         // agv_cal_.Steer_Wheel_Kinematics(cmd_vel_drive,cmd_vel_steer,turn_theta_,this->xyw_cmd_);//计算逆向运动学
 
-        agv_cal_.Inverse_Kinematics_new(cmd_vel_drive,cmd_vel_steer,turn_theta_,this->xyw_cmd_);
+        Eigen::Vector3d xyw_cmd_tmp;
+
+        xyw_cmd_tmp = cmd_filter_.Filter(xyw_cmd_);
+
+        agv_cal_.Inverse_Kinematics_new(cmd_vel_drive,cmd_vel_steer,turn_theta_,xyw_cmd_tmp);
 
         // Eigen::Vector2d turn_theta_test;
         // Eigen::Vector3d xyw_cmd_test;

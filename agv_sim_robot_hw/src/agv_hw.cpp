@@ -266,7 +266,7 @@ namespace xj_control_ns
             if(i==0||i==2){
                 joint_velocity_state[i]=velocity_unit/(10000*20/3.14159/2);//将用户单位速度转换为电机转速
                 joint_position_state[i]=position_unit/(10000*20/3.14159/2);//将用户单位位置转换为几何位置
-                printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
+                // printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
                 
             }
             else{
@@ -326,7 +326,10 @@ namespace xj_control_ns
             }
             break;
         case 4:
-            ROS_INFO("***底盘单独运动***");
+            // ROS_INFO("***底盘单独运动***");
+
+
+
             for(int i=0; i<agv_num_joints_; i++){
                 if(i==0||i==2){
                     DAC[i]=joint_velocity_command[i]*10000*20/3.14159/2;//转向电机用户单位速度转换为电机转速 dac = 速度（rad/s）/（2*pi）*10000（pulse/r）*20（减速比）
@@ -335,7 +338,7 @@ namespace xj_control_ns
                     float position;
                     ZAux_Direct_GetMpos(handle,2,&position);
                     if(i==2){
-                        printf("轴2位置：%.2f",position);
+                        // printf("轴2位置：%.2f",position);
                     }
 
                 }

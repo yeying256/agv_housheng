@@ -1,11 +1,11 @@
 <launch>
   <param name="use_sim_time" value="false" />
 
-  <include file="$(find agv_run_all)/launch/agv_slam_real.launch"/>
+  <include file="$(find agv_run_all)/launch/agv_slam_real.launch" />
   <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
     <remap from="scan" to="/scan" />
     <param name="base_frame" value="base_footprint" /><!--底盘坐标系-->
-    <param name="odom_frame" value="odom" /> <!--里程计坐标系-->
+    <param name="odom_frame" value="odom_com" /> <!--里程计坐标系-->
     <param name="map_update_interval" value="0.5" />
     <param name="maxUrange" value="16.0" />
     <param name="sigma" value="0.05" />
@@ -51,6 +51,8 @@
   <node pkg="agv_hw" type="agv_hw_node" name="agv_hw_node" output="screen">
   </node>
 
+  <node pkg="tf" type = "static_transform_publisher" name="static_transform_publisher" args="0 0 0 0 0 0 1 map odom 100"/>
+
 
   <!-- urdf参数 -->
   <!-- 加载机器人参数 -->
@@ -63,8 +65,9 @@
 
   <!-- <node pkg="teleop_twist_keyboard" name="teleop_twist_keyboard.py"
   type="teleop_twist_keyboard.py" /> -->
+  <!-- <include file="$(find agvsim_navigation)/launch/amcl.launch" /> -->
   <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
-    <param name="output_frame" value="odom" />
+    <param name="output_frame" value="odom_com" />
     <param name="base_footprint_frame" value="base_footprint" />
     <param name="freq" value="300.0" />
     <param name="sensor_timeout" value="1.0" />
@@ -72,15 +75,13 @@
     <param name="imu_used" value="true" />
     <param name="vo_used" value="false" />
     <param name="topic_imu" value="/IMU_data" />
-
   </node>
 
+  <!-- 打开状态机 -->
+  <node pkg="hfsm" type="hfsm_node" name="hfsm_node" output="screen" />
 
-  <!-- 仿真imu的话题名称 -->
-
-
-  <node pkg="rviz" type="rviz" name="rviz" />
   <!-- 可以保存 rviz 配置并后期直接使用-->
+  <node pkg="rviz" type="rviz" name="rviz" />
   <!--
     <node pkg="rviz" type="rviz" name="rviz" args="-d $(find my_nav_sum)/rviz/gmapping.rviz"/>
     -->
