@@ -32,6 +32,7 @@ namespace xj_control_ns
         ZMC_HANDLE handle;//连接句柄
 
         ros::ServiceServer command_service_;
+        ros::ServiceClient If_zero_;
 
     public:
         Agv_hw_interface(/* args */);

@@ -4,6 +4,7 @@
 #include "zmcaux.h"
 #include "ros/ros.h"
 #include "agv_msg/grab_agv.h"
+#include "agv_msg/hw_srv.h"
 
 
 
@@ -35,6 +36,7 @@ namespace xj_control_ns
     //夹爪服务器
     bool Agv_hw_interface::Grab_Server(agv_msg::grab_agv::Request &req,
                     agv_msg::grab_agv::Request &resp){
+        ros::NodeHandle nh;
         float high_unit = req.high*(625000/471);//将几何参数转换为用户单位输入 10000(pulse/r)*25/3.14/60
         float width_unit = req.width*(2000/3);//将几何参数转换为用户单位输入 10000(pulse/r)/15(mm/r)
         this->status_ = req.status;
@@ -116,6 +118,12 @@ namespace xj_control_ns
             ZAux_Direct_SetAtype(handle, 2, 66);
             ZAux_Direct_SetMpos(handle,1,0);
             ZAux_Direct_SetMpos(handle,3,0);
+            If_zero_ = nh.serviceClient<agv_msg::hw_srv>("ifzero_srv");//回零消息客户端
+            ros::service::waitForService("ifzero_srv");
+            agv_msg::hw_srv iz;
+            iz.request.if_zero = 1;
+
+
         }    
         else if(status_==2){//夹爪回零
             int retBD4 = ZAux_BusCmd_Datum(handle, 4,3);while (1)//等待轴 4 回零运动完成
