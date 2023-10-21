@@ -291,28 +291,18 @@ namespace xj_control_ns
                 joint_position_state[i]=position_unit/(10000*17/3.14159/2);//将用户单位位置转换为几何位置
                 }
             }
-        }
-
     }
+
+
+
     void Agv_hw_interface::write(const ros::Time& time, const ros::Duration& period)
     {
 
-        // for (int i = 0; i < 4; i++)
-        // {
-        //     std::cout<<"\033[1;36;40m "<<"joint_velocity_command"<<i<<"="<<joint_velocity_command[i]<<"\033[0m "<<std::endl;
-        // }
-
-// <<<<<<< HEAD
         printf("agv_num_joints_ = %d,\n",agv_num_joints_);
         setlocale(LC_ALL,"");
         float DAC[4];
         status_;
-// =======
-        // printf("agv_num_joints_ = %d,\n",agv_num_joints_);
-        
-        // status_ =100;
 
-// >>>>>>> 058b5fe718c55906d567e0b9a46c873ed2aff3f9
         switch (status_)
         {
         case 0:
