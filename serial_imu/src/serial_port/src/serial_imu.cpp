@@ -1,12 +1,13 @@
-//serial_imu.cpp
+// serial_imu.cpp
 #include <ros/ros.h>
 #include <serial/serial.h>
 #include <iostream>
 #include <stdio.h>
 #include <sensor_msgs/Imu.h>
 
-#ifdef __cplusplus 
-extern "C"{
+#ifdef __cplusplus
+extern "C"
+{
 #endif
 
 #include <stdint.h>
@@ -14,13 +15,13 @@ extern "C"{
 
 #include "ch_serial.h"
 
-#define IMU_SERIAL   "/dev/ttyUSB0"
-#define BAUD         (115200)
-#define GRA_ACC      (9.8)
-#define DEG_TO_RAD   (0.01745329)
-#define BUF_SIZE     1024
+#define IMU_SERIAL "/dev/ttyUSB0"
+#define BAUD (115200)
+#define GRA_ACC (9.8)
+#define DEG_TO_RAD (0.01745329)
+#define BUF_SIZE 1024
 
-void publish_imu_data(raw_t *data, sensor_msgs::Imu *imu_data);
+	void publish_imu_data(raw_t *data, sensor_msgs::Imu *imu_data);
 
 #ifdef __cplusplus
 }
@@ -31,19 +32,19 @@ ros::Publisher IMU_pub;
 serial::Serial sp;
 sensor_msgs::Imu imu_data;
 
-void callback(const ros::TimerEvent& event)
+void callback(const ros::TimerEvent &event)
 {
 	int rev = 0;
 	size_t num = sp.available();
-	if(num!=0)
+	if (num != 0)
 	{
-		uint8_t buffer[BUF_SIZE]; 
+		uint8_t buffer[BUF_SIZE];
 
-		if(num > BUF_SIZE)
+		if (num > BUF_SIZE)
 			num = BUF_SIZE;
 
 		num = sp.read(buffer, num);
-		if(num > 0)
+		if (num > 0)
 		{
 			imu_data.header.frame_id = "link_imu";
 
@@ -51,9 +52,9 @@ void callback(const ros::TimerEvent& event)
 			{
 				rev = ch_serial_input(&raw, buffer[i]);
 
-				if(raw.item_code[raw.nitem_code - 1] != KItemGWSOL)
+				if (raw.item_code[raw.nitem_code - 1] != KItemGWSOL)
 				{
-					if(rev)
+					if (rev)
 					{
 						imu_data.header.stamp = ros::Time::now();
 						publish_imu_data(&raw, &imu_data);
@@ -65,13 +66,12 @@ void callback(const ros::TimerEvent& event)
 	}
 }
 
-
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "serial_port");
 	ros::NodeHandle n;
 
-    IMU_pub = n.advertise<sensor_msgs::Imu>("/IMU_data", 20);
+	IMU_pub = n.advertise<sensor_msgs::Imu>("/IMU_data", 20);
 
 	serial::Timeout to = serial::Timeout::simpleTimeout(100);
 
@@ -80,19 +80,22 @@ int main(int argc, char** argv)
 	sp.setBaudrate(BAUD);
 
 	sp.setTimeout(to);
-	
 
 	try
 	{
 		sp.open();
+		std::string cmd = "AT+RST\r\n";
+		sp.write(cmd);
+		// sp.write(cmd, sizeof(char) * strlen(cmd));
+		ROS_INFO("RESET IMU");
 	}
-	catch(serial::IOException& e)
+	catch (serial::IOException &e)
 	{
 		ROS_ERROR_STREAM("Unable to open port.");
 		return -1;
 	}
-    
-	if(sp.isOpen())
+
+	if (sp.isOpen())
 	{
 		ROS_INFO_STREAM("/dev/ttyUSB0 is opened.");
 	}
@@ -100,18 +103,18 @@ int main(int argc, char** argv)
 	{
 		return -1;
 	}
-	
+
 	ros::Timer timer = n.createTimer(ros::Duration(0.0025), callback);
 
 	ros::spin();
 
 	sp.close();
- 
+
 	return 0;
 }
 
 void publish_imu_data(raw_t *data, sensor_msgs::Imu *imu_data)
-{	
+{
 	imu_data->orientation.x = data->imu[data->nimu - 1].quat[1];
 	imu_data->orientation.y = data->imu[data->nimu - 1].quat[2];
 	imu_data->orientation.z = data->imu[data->nimu - 1].quat[3];
@@ -123,5 +126,3 @@ void publish_imu_data(raw_t *data, sensor_msgs::Imu *imu_data)
 	imu_data->linear_acceleration.y = data->imu[data->nimu - 1].acc[1] * GRA_ACC;
 	imu_data->linear_acceleration.z = data->imu[data->nimu - 1].acc[2] * GRA_ACC;
 }
-
-

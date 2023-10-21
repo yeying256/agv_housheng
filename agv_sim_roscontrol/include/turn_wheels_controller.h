@@ -32,6 +32,8 @@
 
 #include "mean_filter.h"
 
+#include "agv_msg/hw_srv.h"
+
 
 
 
@@ -51,6 +53,7 @@ namespace xj_control_ns
         std::vector<hardware_interface::JointHandle> turn_wheel_joint_handles_;
         xj_dy_ns::agv_turn_wheel agv_cal_;
         ros::Subscriber sub_cmd_vel;
+        ros::ServiceServer service_goback_zero_;
         Eigen::Vector3d xyw_cmd_;
         Eigen::Vector2d turn_theta_,omega_turn_now_,omega_wheel_now_;
         Eigen::Vector2d pos_turn_last_,pos_wheel_last_,pos_wheel_now_;
@@ -71,6 +74,8 @@ namespace xj_control_ns
         nav_msgs::Odometry odom_;
 
         xj_dy_ns::MeanFilter cmd_filter_;
+        bool flag_zero_;
+        
         
         
 
@@ -84,6 +89,10 @@ namespace xj_control_ns
         void cb_target_pose(const geometry_msgs::Twist& msg);
 
         void log_thread(int size);
+        // bool doReq(demo03_server_client::AddInts::Request& req,
+        //   demo03_server_client::AddInts::Response& resp)
+        bool zero_srv_cb(agv_msg::hw_srv::Request& req,
+                        agv_msg::hw_srv::Response & resp);
     };
     
 

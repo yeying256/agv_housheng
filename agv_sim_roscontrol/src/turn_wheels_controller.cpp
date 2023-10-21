@@ -95,7 +95,7 @@ namespace xj_control_ns
         // nh.subscribe("/cmd_vel",10,);
         // ros::Subscriber subscribe<M>(const std::string &topic, uint32_t queue_size, void (*fp)(const boost::shared_ptr<const M> &), const ros::TransportHints &transport_hints = ros::TransportHints())
         sub_cmd_vel= nh.subscribe("/cmd_vel",10,&turn_wheels_controller::cb_target_pose,this,ros::TransportHints().reliable().tcpNoDelay());
-
+        service_goback_zero_ = nh.advertiseService("/ifzero_srv",&turn_wheels_controller::zero_srv_cb,this);
         //初始化里程计播报
         
         // odom_pub_ = nh.advertise<nav_msgs::Odometry>("/odom",50);
@@ -106,6 +106,7 @@ namespace xj_control_ns
 
 
         log_flag_ = true;
+        flag_zero_ = false;
         return true;
     }
 
@@ -151,9 +152,12 @@ namespace xj_control_ns
 
         std::cout<<"\033[1;36;40m "<<"turn_theta_="<<turn_theta_<<"\033[0m "<<std::endl;
 
-        agv_cal_.update(omega_wheel_now_,omega_turn_now_,turn_theta_,period);
+        // agv_cal_.update(omega_wheel_now_,omega_turn_now_,turn_theta_,period);
+        agv_cal_.update(pos_wheel_now_,
+                        turn_theta_);
+                        //使用微小位移更新
 
-
+        std::cout<<"\033[1;36;40m "<<"pos_wheel_now_="<<pos_wheel_now_<<"\033[0m "<<std::endl;
 
 
 
@@ -264,6 +268,15 @@ namespace xj_control_ns
         //     logger2->add("cmd_turn_vel",log_cmd_turn_vel_[i]);
         //     logger2->add("cmd_wheel_vel",log_cmd_wheel_vel_[i]);
         // }
+    }
+
+    bool turn_wheels_controller::zero_srv_cb(agv_msg::hw_srv::Request& req,
+                        agv_msg::hw_srv::Response & resp)
+    {
+        flag_zero_ = req.if_zero;
+        // 将是否回零设置到私有变量中去
+        resp.result = true;
+
     }
 }
 

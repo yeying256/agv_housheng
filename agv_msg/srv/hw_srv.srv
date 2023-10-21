@@ -1,0 +1,4 @@
+# 是否回零
+bool if_zero
+---
+bool result

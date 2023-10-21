@@ -59,6 +59,7 @@ add_service_files(
   FILES
   reltive_pose.srv
   grab_agv.srv
+  hw_srv.srv
 )
 
 

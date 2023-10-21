@@ -10,7 +10,7 @@ int main(int argc, char * argv[])
     ros::init(argc, argv, "hw_interface_node");
     
 
-    ros::AsyncSpinner spinner(2);
+    ros::AsyncSpinner spinner(3);
     spinner.start();
     ros::NodeHandle nh;
     xj_control_ns::Agv_hw_interface hw;

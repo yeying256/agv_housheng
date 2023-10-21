@@ -24,6 +24,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 
   robot_dynamic_cal
+  agv_msg
   # matlogger2
 )
 
