@@ -35,8 +35,8 @@ namespace xj_control_ns
     //夹爪服务器
     bool Agv_hw_interface::Grab_Server(agv_msg::grab_agv::Request &req,
                     agv_msg::grab_agv::Request &resp){
-        float high_unit = req.high*(625000/471);//将几何参数转换为用户单位输入 10000pulse/r
-        float width_unit = req.width*(2000/3);//将几何参数转换为用户单位输入
+        float high_unit = req.high*(625000/471);//将几何参数转换为用户单位输入 10000(pulse/r)*25/3.14/60
+        float width_unit = req.width*(2000/3);//将几何参数转换为用户单位输入 10000(pulse/r)/15(mm/r)
         this->status_ = req.status;
         ROS_INFO("夹爪收到的参数为:high=%.2f,width=%.2f,status_ = %d",req.high,req.width,status_);
         // ZMC_HANDLE handle = NULL;
@@ -51,10 +51,25 @@ namespace xj_control_ns
 
         if((status_ == 3)||(status_ ==5)){
             ROS_INFO("夹爪处于运动状态");
+            int state[3];
             ZAux_Direct_Single_MoveAbs(handle,4, high_unit);//上升电机同步运动
-            ZAux_Direct_Single_MoveAbs(handle,7, width_unit);//夹取运动电机运动
-            ZAux_Direct_SetAtype(handle, 0, 66);
-            ZAux_Direct_SetAtype(handle, 2, 66);  
+            ZAux_Direct_GetIfIdle(handle,4,state);
+            ZAux_Direct_GetIfIdle(handle,5,state+1);
+            while (1){
+                if(state[0]==1 && state[1]==1){
+                    break;
+                }
+                sleep(1);
+            }
+            ZAux_Direct_Single_MoveAbs(handle,6, width_unit);//夹取运动电机运动
+            ZAux_Direct_GetIfIdle(handle,6,state+1);
+            while (1){
+                if(state[2]==1){
+                    break;
+                }
+                sleep(1);
+            }
+            printf("*********夹爪定位完成***********\n");
         }
         else if(status_ == 1){//AGV回零
             ZAux_Direct_SetAtype(handle, 0, 65);
@@ -98,7 +113,9 @@ namespace xj_control_ns
             commandCheckHandler("ZAux_BusCmd_Datum", retBD2);
             ZAux_Direct_SetAxisEnable(handle,3,1);
             ZAux_Direct_SetAtype(handle, 0, 66);
-            ZAux_Direct_SetAtype(handle, 2, 66);  
+            ZAux_Direct_SetAtype(handle, 2, 66);
+            ZAux_Direct_SetMpos(handle,1,0);
+            ZAux_Direct_SetMpos(handle,3,0);
         }    
         else if(status_==2){//夹爪回零
             int retBD4 = ZAux_BusCmd_Datum(handle, 4,3);while (1)//等待轴 4 回零运动完成
@@ -266,31 +283,36 @@ namespace xj_control_ns
             if(i==0||i==2){
                 joint_velocity_state[i]=velocity_unit/(10000*20/3.14159/2);//将用户单位速度转换为电机转速
                 joint_position_state[i]=position_unit/(10000*20/3.14159/2);//将用户单位位置转换为几何位置
-                // printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
+                printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
                 
             }
             else{
                 joint_velocity_state[i]=velocity_unit/(10000*17/3.14159/2);//将用户单位速度转换为电机转速
-                // printf("轴%d的速度 Speed = %lf\n", i, joint_velocity_state[i]);
+                joint_position_state[i]=position_unit/(10000*17/3.14159/2);//将用户单位位置转换为几何位置
+                }
             }
         }
 
     }
     void Agv_hw_interface::write(const ros::Time& time, const ros::Duration& period)
     {
-        setlocale(LC_ALL,"");
-        // ZMC_HANDLE handle = NULL;
-        float DAC[4];
 
         // for (int i = 0; i < 4; i++)
         // {
         //     std::cout<<"\033[1;36;40m "<<"joint_velocity_command"<<i<<"="<<joint_velocity_command[i]<<"\033[0m "<<std::endl;
         // }
 
+// <<<<<<< HEAD
+        printf("agv_num_joints_ = %d,\n",agv_num_joints_);
+        setlocale(LC_ALL,"");
+        float DAC[4];
+        status_;
+// =======
         // printf("agv_num_joints_ = %d,\n",agv_num_joints_);
         
         // status_ =100;
 
+// >>>>>>> 058b5fe718c55906d567e0b9a46c873ed2aff3f9
         switch (status_)
         {
         case 0:
@@ -359,12 +381,6 @@ namespace xj_control_ns
                 commandCheckHandler("ZAux_Direct_SetDAC", retSVS);
             }
             break;
-        case 100:
-            {
-                // ZAux_Direct_SetAtype(handle,0,66);
-                ZAux_Direct_SetDAC(handle, 0, 10000);
-                break;
-            }
         default:
             break;
         }
