@@ -5,62 +5,13 @@
   <arg name="serial_no_1" default="332522071089" />
   <arg name="serial_no_2" default="332522072143" />
 
-
-  <!-- 启动机器人状态发布 -->
-  <!-- <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" >
-    <remap from="/joint_states" to="/agv_sim/joint_states"/>
-  </node> -->
-
   <!-- 启动硬件 -->
- 
-
-
-
-
-    <!-- 此launch文件启动agv的硬件通讯节点，同时启动agv的底盘控制器 -->
-
-    <rosparam file="$(find agv_sim_roscontrol)/config/agv_defaut_controller.yaml" command="load"></rosparam>
-
-    <!-- 几何参数 -->
-    <rosparam file="$(find agv_sim_roscontrol)/config/agv_geometry_param.yaml" command="load"></rosparam>
-    <rosparam file="$(find agv_sim_robot_hw)/config/agv_hw.yaml" command="load"></rosparam>
-
-    <!-- 加载控制器，一定不能用ns参数，直接用绝对参数路径才能搞定 -->
-    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" ns="/" args=" 
-    /agv_sim/turn_wheels_controller
-    "/>
-
-
-    <node pkg="agv_sim_robot_hw" type="agv_hw_node" name="agv_hw_node" output="screen">
-    </node>
-
-
-     <!-- urdf参数 -->
-      <!-- 加载机器人参数 -->
-    <param name="robot_description" textfile="$(find agv_real)/urdf/agv_real.urdf" />
-
-  <!-- 发布状态 -->
-    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" >
-    <remap from="/joint_states" to="/agv_sim/joint_states"/>
-    </node>
-
 
   <!-- 启动激光雷达1,2 -->
-  <include file="$(find sick_scan)/launch/sick_tim_5xx_twin.launch" >
+  <include file="$(find sick_scan)/launch/sick_tim_5xx_twin.launch">
     <arg name="hostname1" value="$(arg lidar_hostname1)" />
     <arg name="hostname2" value="$(arg lidar_hostname2)" />
   </include>
-  <!-- 启动相机 -->
-  <include file="$(find realsense2_camera)/launch/rs_multiple_devices.launch">
-    <arg name="serial_no_camera1" value="$(arg serial_no_1)" />
-    <arg name="serial_no_camera2" value="$(arg serial_no_2)" />
-  </include>
-  <!-- <include file="$(find realsense2_camera)/launch/rs_camera.launch"/> -->
-  <!-- 启动imu -->
-  <include file="$(find imu_launch)/launch/imu_msg.launch" />
-  <!-- 打开遥控器节点 -->
-  <include file="$(find joy)/launch/joy.launch" />
 
   <!-- 启动激光雷达融合 -->
   <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger"
@@ -73,5 +24,17 @@
     <param name="angle_max" value="2.7" />
   </node>
 
+  <!-- 启动相机 -->
+  <include file="$(find realsense2_camera)/launch/rs_multiple_devices.launch">
+    <arg name="serial_no_camera1" value="$(arg serial_no_1)" />
+    <arg name="serial_no_camera2" value="$(arg serial_no_2)" />
+  </include>
+  <!-- <include file="$(find realsense2_camera)/launch/rs_camera.launch"/> -->
+
+  <!-- 启动imu -->
+  <include file="$(find imu_launch)/launch/imu_msg.launch" />
+
+  <!-- 打开遥控器节点 -->
+  <include file="$(find joy)/launch/joy.launch" />
 
 </launch>

@@ -124,12 +124,24 @@ namespace xj_control_ns
         Eigen::Vector4d vel_4_now;
         for (int i = 0; i < turn_theta_.size(); i++)
         {
-            this->turn_theta_[i]=turn_wheel_joint_handles_[i].getPosition();//将角度返回
-            this->omega_turn_now_[i]=turn_wheel_joint_handles_[i].getVelocity();//将转向电机的角速度返回
+            // this->turn_theta_[i]=turn_wheel_joint_handles_[i].getPosition();//将角度返回
+            // this->omega_turn_now_[i]=turn_wheel_joint_handles_[i].getVelocity();//将转向电机的角速度返回
             this->omega_wheel_now_[i]=turn_wheel_joint_handles_[i+2].getVelocity();//将行走电机的角速度返回
 
-
         }
+        this->turn_theta_[0]=turn_wheel_joint_handles_[0].getPosition();//将角度返回
+        this->turn_theta_[1]=turn_wheel_joint_handles_[2].getPosition();//将角度返回
+
+        this->omega_turn_now_[0]=turn_wheel_joint_handles_[0].getVelocity();//将转向电机的角速度返回
+        this->omega_turn_now_[1]=turn_wheel_joint_handles_[2].getVelocity();//将转向电机的角速度返回
+
+        this->omega_wheel_now_[0]=turn_wheel_joint_handles_[1].getVelocity();//将行走电机的角速度返回
+        this->omega_wheel_now_[1]=turn_wheel_joint_handles_[3].getVelocity();//将行走电机的角速度返回
+
+
+
+
+
 
         // std::cout<<"\033[1;36;40m "<<"turn_theta_="<<turn_theta_<<"\033[0m "<<std::endl;
         // std::cout<<"\033[1;36;40m "<<"vel_4_now="<<vel_4_now<<"\033[0m "<<std::endl;
@@ -172,14 +184,29 @@ namespace xj_control_ns
 
         Eigen::Vector4d cmd_turn_drive;
         cmd_turn_drive<<cmd_vel_steer,cmd_vel_drive;
+        cmd_turn_drive[0] = cmd_vel_steer[0];
+        cmd_turn_drive[1] = cmd_vel_drive[0];
+        cmd_turn_drive[2] = cmd_vel_steer[1];
+        cmd_turn_drive[3] = cmd_vel_drive[1];
+
 
         for (int i = 0; i < turn_wheel_joint_handles_.size(); i++)
         {
             turn_wheel_joint_handles_[i].setCommand(cmd_turn_drive[i]);
+            // turn_wheel_joint_handles_[i].setCommand(10);
+
 
             // std::cout<<"\033[1;36;40m "<<"cmd_turn_drive"<<i<<"="<<cmd_turn_drive[i]<<"\033[0m "<<std::endl;
 
         }
+
+            // turn_wheel_joint_handles_[1].setCommand(1.0);
+
+            // omega_turn_now_[0];
+
+            // std::cout<<"\033[1;36;40m "<<"omega_turn_now_"<<0<<"="<<omega_turn_now_[0]<<"\033[0m "<<std::endl;
+
+
 
 
 
