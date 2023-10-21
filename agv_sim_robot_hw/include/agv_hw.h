@@ -6,6 +6,7 @@
 #include <ros/ros.h>
 #include "zmotion.h"
 #include "agv_msg/grab_agv.h"
+#include "agv_msg/hw_srv.h"
 
 namespace xj_control_ns
 {
@@ -33,6 +34,8 @@ namespace xj_control_ns
 
         ros::ServiceServer command_service_;
         ros::ServiceClient If_zero_;
+        ros::NodeHandle nh;
+
 
     public:
         Agv_hw_interface(/* args */);

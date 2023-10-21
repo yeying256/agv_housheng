@@ -291,12 +291,14 @@ namespace xj_control_ns
             if(i==0||i==2){
                 joint_velocity_state[i]=velocity_unit/(10000*20/3.14159/2);//将用户单位速度转换为电机转速
                 joint_position_state[i]=position_unit/(10000*20/3.14159/2);//将用户单位位置转换为几何位置
-                printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
+                // printf("轴%d的速度 Speed = %lfrad/s\n", i, joint_velocity_state[i]);
                 
             }
             else{
                 joint_velocity_state[i]=velocity_unit/(10000*17/3.14159/2);//将用户单位速度转换为电机转速
                 joint_position_state[i]=position_unit/(10000*17/3.14159/2);//将用户单位位置转换为几何位置
+                printf("轴%d位置 position = %lfrad\n", i, joint_position_state[i]);
+
                 }
             }
     }
