@@ -27,7 +27,7 @@
       <param name="update_min_a" value="0.05"/>
 
 
-      <param name="odom_frame_id" value="odom"/> <!--odom坐标系 -->
+      <param name="odom_frame_id" value="odom_com"/> <!--odom坐标系 -->
       <param name="base_frame_id" value="base_footprint"/><!-- 添加机器人基坐标系 -->
       <param name="global_frame_id" value="map"/><!-- 添加地图坐标系 -->
       <!-- <node name="map2odom" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 map odom 50"/> -->

@@ -1,7 +1,7 @@
 <launch>
   <param name="use_sim_time" value="false" />
 
-  <include file="$(find agv_run_all)/launch/agv_slam_real.launch" />
+  <include file="$(find agv_run_all)/launch/agv_real.launch" />
   <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
     <remap from="scan" to="/scan" />
     <param name="base_frame" value="base_footprint" /><!--底盘坐标系-->

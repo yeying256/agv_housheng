@@ -2,7 +2,6 @@
 
   <arg name="plot" default="false" />
 
-  <param name="/use_sim_time" value="true"/>
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" clear_params="true">
       <rosparam file="$(find agvsim_navigation)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
       <rosparam file="$(find agvsim_navigation)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
@@ -24,7 +23,9 @@
       <!-- <param name="clearing_rotation_allowed" value="false" /> Our carlike robot is not able to rotate in place -->
 
       <!-- <param name="MpcLocalPlannerROS/controller/publish_ocp_results" value="true" if="$(arg plot)" /> -->
-  <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+
+      <!-- 调试 -->
+  <!-- <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" /> -->
 
 
   </node>
