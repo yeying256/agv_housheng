@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node pkg="agv_relative_move" type="visual_reltive_move" name="visual_reltive_move" output="screen">
+        
+    </node>
+
+</launch>

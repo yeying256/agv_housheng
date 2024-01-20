@@ -1,4 +1,5 @@
 <launch>
+
     <!-- 设置地图的配置文件 -->
     <arg name="map" default="easy_map.yaml" />
     <!-- 运行地图服务器，并且加载设置的地图-->

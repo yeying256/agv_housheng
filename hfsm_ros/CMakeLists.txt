@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   move_base_msgs
   agv_msg
+  mecheye_ros_interface
 )
 
 ## System dependencies are found with CMake's conventions
@@ -125,9 +126,14 @@ include_directories(
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/hfsm.cpp
-# )
+add_library(hfsm_lib
+  src/ShutdownState.cpp
+  src/AdjustState.cpp
+  src/param.cpp
+  src/StartState.cpp
+  src/TelecontrolState.cpp
+  src/AutoState.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -151,6 +157,7 @@ add_executable(${PROJECT_NAME}_node src/main.cpp src/Context.cpp src/State.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
+  hfsm_lib
   ${catkin_LIBRARIES}
 )
 

@@ -1,0 +1,17 @@
+
+material Artag/Artag1   # //这个名称会在模型的sdf文件用到
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture arcode1.png
+            # //和textures存放的图片名称要一致
+        filtering anistropic
+        max_anisotropy 16
+      }
+    }
+  }
+}

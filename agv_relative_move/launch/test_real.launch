@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+    
+
+
+    <include file="$(find ar_track_alvar)/launch/steel_wheel_artrack_real.launch">
+        
+    </include>
+
+    <node pkg="agv_relative_move" type="reltive_move" name="reltive_move" output="screen">
+        
+    </node>
+
+
+
+
+
+</launch>

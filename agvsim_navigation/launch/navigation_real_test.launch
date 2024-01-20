@@ -1,0 +1,68 @@
+<launch>
+
+    <param name="/use_sim_time" value="false"/>
+
+    <!-- 设置地图的配置文件 -->
+    <arg name="map" default="real_map.yaml" />
+    <!-- 运行地图服务器，并且加载设置的地图-->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find agvsim_navigation)/maps/real_map.yaml">
+        <param name="frame_id" value="map"></param>
+    </node>
+
+      <!-- urdf参数 -->
+  <!-- 加载机器人参数 -->
+  <param name="robot_description" textfile="$(find agv_real)/urdf/agv_real.urdf" />
+
+
+  <!-- <node pkg="joint_state_publisher" name="joint_state_publisher" type="joint_state_publisher"/> -->
+  <node pkg="robot_state_publisher" name="robot_state_publisher" type="robot_state_publisher" />
+    
+
+    <!-- 启动AMCL定位节点 -->
+    <include file="$(find agvsim_navigation)/launch/amcl.launch" />
+    <!-- 运行rviz -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find agvsim_navigation)/rviz/navigation.rviz" output="screen"/>
+    <!-- 参数实时修改 -->
+    <node pkg="rqt_reconfigure" type="rqt_reconfigure" name="rqt_reconfigure" />
+
+    <!-- 启动局部规划器和全局规划器 -->
+    <include file="$(find agvsim_navigation)/launch/move_base_test.launch" />
+
+    <!-- 几何参数 -->
+    <rosparam file="$(find agv_sim_roscontrol)/config/agv_geometry_param_new.yaml" command="load"></rosparam>
+    <!-- 硬件抽象层关节信息加载 -->
+    <rosparam file="$(find agv_hw)/config/agv_hw.yaml" command="load"></rosparam>
+  
+    <!-- 加载控制器，一定不能用ns参数，直接用绝对参数路径才能搞定 -->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="true"
+    output="screen" ns="/" args="
+      /agv_sim/turn_wheels_controller" />
+
+
+    <!-- 启动机器人所有硬件 -->
+    <include file="$(find agv_run_all)/launch/agv_real.launch" />
+    <!-- 启动硬件抽象层 -->
+    <node pkg="agv_hw" type="agv_hw_node" name="agv_hw_node" output="screen">
+    <!-- <node pkg="agv_hw" type="agv_hw_node" name="agv_hw_node"> -->
+    </node>
+
+  <!-- <node pkg="tf" type = "static_transform_publisher" name="static_transform_publisher" args="0 0 0 0 0 0 1 map odom 100"/> -->
+
+  <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+    <param name="output_frame" value="odom_com" />
+    <param name="base_footprint_frame" value="base_footprint" />
+    <param name="freq" value="300.0" />
+    <param name="sensor_timeout" value="1.0" />
+    <param name="odom_used" value="true" />
+    <param name="imu_used" value="true" />
+    <param name="vo_used" value="false" />
+    <param name="topic_imu" value="/IMU_data" />
+  </node>
+
+  <!-- 打开状态机 -->
+  <node pkg="hfsm" type="hfsm_node" name="hfsm_node" output="screen" />
+
+    <!-- 键盘控制节点 -->
+    <!-- <node pkg="teleop_twist_keyboard" name="teleop_twist_keyboard.py" type="teleop_twist_keyboard.py" /> -->
+
+</launch>

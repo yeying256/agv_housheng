@@ -19,13 +19,13 @@ TebLocalPlannerROS:
     
  # Robot
          
- max_vel_x: 0.4
- max_vel_x_backwards: 0.2
- max_vel_y: 0.4
+ max_vel_x: 0.3
+ max_vel_x_backwards: 0.0
+ max_vel_y: 0.3
  max_vel_theta: 0.3
- acc_lim_x: 0.5
- acc_lim_y: 0.5
- acc_lim_theta: 0.5
+ acc_lim_x: 0.05
+ acc_lim_y: 0.05
+ acc_lim_theta: 0.08
  min_turning_radius: 0.0 # diff-drive robot (can turn on place!)
 
  footprint_model:
@@ -33,15 +33,16 @@ TebLocalPlannerROS:
 
  # GoalTolerance
     
- xy_goal_tolerance: 0.2
- yaw_goal_tolerance: 0.1
+ xy_goal_tolerance: 0.1
+ yaw_goal_tolerance: 0.05
  free_goal_vel: False
  complete_global_plan: True
     
  # Obstacles
     
- min_obstacle_dist: 0.5 # This value must also include our robot radius, since footprint_model is set to "point".
- inflation_dist: 1.2
+# 最小障碍物距离
+ min_obstacle_dist: 1.2 # This value must also include our robot radius, since footprint_model is set to "point".
+ inflation_dist: 1.6
  include_costmap_obstacles: True
  costmap_obstacles_behind_robot_dist: 1.2
  obstacle_poses_affected: 15
@@ -61,13 +62,14 @@ TebLocalPlannerROS:
  optimization_verbose: False
  penalty_epsilon: 0.1
  obstacle_cost_exponent: 4
- weight_max_vel_x: 2
- weight_max_vel_theta: 1
+ weight_max_vel_x: 10
+ weight_max_vel_y: 10
+ weight_max_vel_theta: 3
  weight_acc_lim_x: 1
- weight_acc_lim_y: 0
+ weight_acc_lim_y: 1
  weight_acc_lim_theta: 1
- weight_kinematics_nh: 1 #全向权重
- weight_kinematics_forward_drive: 1
+ weight_kinematics_nh: 1 #全向权重这个数据越大越靠近阿克曼的结构
+ weight_kinematics_forward_drive: 1 
  weight_kinematics_turning_radius: 0
  weight_optimaltime: 1 # must be > 0
  weight_shortest_path: 0

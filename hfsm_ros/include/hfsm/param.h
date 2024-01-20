@@ -1,20 +1,40 @@
+#ifndef __PARAM_H
+#define __PARAM_H
 #include <unordered_map>
+#include <vector>
+namespace hfsm_ns
+{
 
-struct workbench
+struct pose
 {
     float bias_x;
     float bias_y;
-    float dist;
+    float theta;
+    float err[3];
 };
 
-std::unordered_map<int8_t, workbench> retUmap()
+struct workbench
 {
-    workbench w1{0,0,1};
-    workbench w2{1,0,1};
-    workbench w3{0,1,2};
-    std::unordered_map<int8_t, workbench> tempUmap{
-        {1, w1},
-        {2, w2},
-        {3, w3}};
-    return tempUmap;
+    std::vector<pose> p;
+    int left_ar;
+    int right_ar;
+};
+
+// pose: 
+//   x: 1.3025910252302508
+//   y: 0.010416443354787438
+//   theta: 0.006375339095745183
+
+std::unordered_map<int8_t, workbench> retUmap();
+
+
+void printf_yellow(const char *s);
+
+
+void printf_green(const char *s);
+
+
 }
+
+
+#endif

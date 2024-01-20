@@ -1,0 +1,7 @@
+int32 left_ar_id
+int32 right_ar_id
+---
+# 请求目标点ar码连线的中点相对相机坐标系的期望位姿
+geometry_msgs/Pose2D pose
+bool success
+string msg

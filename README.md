@@ -1,5 +1,20 @@
 # 舵轮机器人功能包
 
+## 获取完整功能包
+如果首次克隆仓库及其模块，使用：
+```
+git clone --recursive 仓库地址
+```
+
+对于仓库首次拉取模块，可以使用:
+```
+git submodule update --init --recursive
+```
+
+更新子模块:
+```
+git submodule update --recursive --remote
+```
 
 ## 使用
 在新环境下，请安装依赖的功能包
@@ -27,7 +42,20 @@ https://github.com/osrf/gazebo_models
 https://blog.csdn.net/weixin_45498383/article/details/128938766
 ```
 
+可能需要提前编译一些自定义文件
+```
+catkin_make -DCATKIN_WHITELIST_PACKAGES="agv_msg"
+```
 
+```
+catkin_make -DCATKIN_WHITELIST_PACKAGES="ar_track_alvar_msgs"
+```
+然后运行
+```
+catkin_make -DCATKIN_WHITELIST_PACKAGES=""
+
+```
+改回来，要不然以后只是编译这两个功能包
 
 ## 依赖的功能包
 需要将这些功能包编译然后加载到动态链接库中
@@ -58,6 +86,7 @@ https://github.com/ADVRHumanoids/MatLogger2
 
 ```
 ### ros-control
+提示 找不到#include <combined_robot_hw/combined_robot_hw.h>
 ```
 sudo apt-get install ros-noetic-ros-control
 ```
@@ -72,6 +101,11 @@ sudo apt-get install ros-noetic-pcl-conversions
 ```
 sudo apt-get install ros-noetic-pcl-ros
 
+```
+
+### bfi
+```
+https://blog.csdn.net/qq_39779233/article/details/128406859
 ```
 
 ### amcl

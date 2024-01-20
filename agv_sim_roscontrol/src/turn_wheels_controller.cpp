@@ -58,6 +58,13 @@ namespace xj_control_ns
         nh.getParam("/agv_sim/B", B);
         nh.getParam("/agv_sim/R", R);
 
+        
+        nh.getParam("/use_sim_time",this->flag_sim_);
+
+
+
+        // 如果是仿真环境，这个参数是true，直接回零，否则需要等待回零
+
         B = 0.625;
         R = 0.625;
 
@@ -95,7 +102,16 @@ namespace xj_control_ns
         cmd_filter_.init(100, 3);
 
         log_flag_ = true;
-        flag_zero_ = false;
+        if (flag_sim_ == true)
+        {
+            flag_zero_ = true;
+        }else
+        {flag_zero_ =false;}
+
+        test_msg_pub_ = nh.advertise<agv_msg::Test_msg>("/test_data_topic",10);
+        
+
+
         return true;
     }
 
@@ -156,18 +172,18 @@ namespace xj_control_ns
         // 读取当前反馈信息,更新运动学内部参数
         agv_cal_.tf_odom_trans(this->odom_, this->odom_tf_, time, "odom", "base_footprint");
 
-        odom_.pose.covariance = {0.01, 0, 0, 0, 0, 0,
-                                 0, 0.01, 0, 0, 0, 0,
+        odom_.pose.covariance = {1e-6, 0, 0, 0, 0, 0,
+                                 0, 1e-6, 0, 0, 0, 0,
                                  0, 0, 1e6, 0, 0, 0,
                                  0, 0, 0, 1e6, 0, 0,
                                  0, 0, 0, 0, 1e6, 0,
-                                 0, 0, 0, 0, 0, 0.01};
-        odom_.twist.covariance = {1e1, 0, 0, 0, 0, 0,
-                                  0, 1e1, 0, 0, 0, 0,
+                                 0, 0, 0, 0, 0, 1e-6};
+        odom_.twist.covariance = {1e-6, 0, 0, 0, 0, 0,
+                                  0, 1e-6, 0, 0, 0, 0,
                                   0, 0, 1e1, 0, 0, 0,
                                   0, 0, 0, 1e6, 0, 0,
                                   0, 0, 0, 0, 1e6, 0,
-                                  0, 0, 0, 0, 0, 1e1};
+                                  0, 0, 0, 0, 0, 1e-6};
         // 发送消息
         odom_pub_.msg_ = odom_;
         odom_pub_.unlockAndPublish();
@@ -182,10 +198,12 @@ namespace xj_control_ns
         xyw_cmd_tmp = cmd_filter_.Filter(xyw_cmd_);
 
 
-        agv_cal_.Inverse_Kinematics_new(cmd_vel_drive, cmd_vel_steer, turn_theta_, xyw_cmd_tmp);
+        // agv_cal_.Inverse_Kinematics_new(cmd_vel_drive, cmd_vel_steer, turn_theta_, xyw_cmd_tmp);
+        agv_cal_.Inverse_Kinematics_new3(cmd_vel_drive, cmd_vel_steer, turn_theta_, xyw_cmd_tmp);
+
         Eigen::Vector3d xyw_forword_cal = agv_cal_.Forward_Kinematics2(cmd_vel_drive,cmd_vel_steer,turn_theta_);
 
-        // std::cout<<"xyw_cmd_tmp = "<<xyw_cmd_tmp<<"xyw_forword = "<<xyw_forword_cal <<std::endl;
+        // std::cout<<"============="<<std::endl<<"xyw_cmd_tmp = "<<xyw_cmd_tmp<<"xyw_forword = "<<xyw_forword_cal <<std::endl;
 
 
         // Eigen::Vector2d turn_theta_test;
@@ -232,6 +250,13 @@ namespace xj_control_ns
             // th_data_log.detach();
             log_flag_ = false;
         }
+
+        agv_msg::Test_msg test_msg;
+        test_msg.turn_cmd_vel =cmd_turn_drive[0];
+        test_msg.turn_real_vel=omega_turn_now_[0];
+        test_msg.wheel_cmd_vel = cmd_turn_drive[1];
+        test_msg.wheel_real_vel = omega_wheel_now_[0];
+        test_msg_pub_.publish(test_msg);
 
         // printf("这里是roscontrol的");
     }

@@ -52,14 +52,22 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   Button.msg
+  Test_msg.msg
+  Visual_fb.msg
+  YoloResult.msg
+  error_log.msg
 )
 
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
   reltive_pose.srv
+  reltive_pose_ar.srv
   grab_agv.srv
   hw_srv.srv
+  reltive_pose_ar_get.srv
+  reltive_pose_visual.srv
+  visual_point_move.srv
 )
 
 
@@ -122,7 +130,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+include
   ${catkin_INCLUDE_DIRS}
 )
 

@@ -1,0 +1,4 @@
+[submodule "yolo_ros"]
+	path = yolo_ros
+	url = git@codeup.aliyun.com:657e5b45b488fff322e7d116/xjtu_robot_wx/wangxiao/DLagv/yolo_ros.git
+	branch = dev

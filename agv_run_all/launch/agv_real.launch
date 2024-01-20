@@ -4,6 +4,7 @@
   <arg name="lidar_hostname2" default="192.168.1.52" />
   <arg name="serial_no_1" default="332522071089" />
   <arg name="serial_no_2" default="332522072143" />
+  <arg name="mech_camera_ip" default = "192.168.137.101" />
 
   <!-- 启动硬件 -->
 
@@ -15,7 +16,7 @@
 
   <!-- 启动激光雷达融合 -->
   <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger"
-    output="screen">
+    output="screen" respawn="true">
     <param name="destination_frame" value="base_footprint" />
     <param name="cloud_destination_topic" value="/merged_cloud" />
     <param name="scan_destination_topic" value="/scan" />
@@ -28,17 +29,32 @@
     <param name="cloud_topic" value="/scan"/>
     <param name="frame_id" value="map" />
   </include> -->
+
   <!-- 启动相机 -->
-  <include file="$(find realsense2_camera)/launch/rs_multiple_devices.launch">
+  <!-- 多相机realsense D435 -->
+  <!-- <include file="$(find realsense2_camera)/launch/rs_multiple_devices.launch">
     <arg name="serial_no_camera1" value="$(arg serial_no_1)" />
-    <arg name="serial_no_camera2" value="$(arg serial_no_2)" />
-  </include>
+    <arg name="serial_no_camera2" value="$(arg serial_no_2)" /> -->
+  <!-- </include> -->
+
+  <!-- 单相机realsense D435 -->
   <!-- <include file="$(find realsense2_camera)/launch/rs_camera.launch"/> -->
+
+  <!-- Kinect DK -->
+  <!-- <include file="$(find azure_kinect_ros_driver)/launch/driver.launch" /> -->
+
+  <!-- mech-mind LSR L -->
+  <include file="$(find mecheye_ros_interface)/launch/start_camera.launch" >
+    <arg name="camera_ip" value="$(arg mech_camera_ip)" /> 
+  </include>
 
   <!-- 启动imu -->
   <include file="$(find imu_launch)/launch/imu_msg.launch" />
 
   <!-- 打开遥控器节点 -->
   <include file="$(find joy)/launch/joy.launch" />
+
+  <!-- 启动agv -->
+  <include file="$(find agv_hw)/launch/hw_real.launch" />
 
 </launch>

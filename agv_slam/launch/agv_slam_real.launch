@@ -51,7 +51,7 @@
   <node pkg="agv_hw" type="agv_hw_node" name="agv_hw_node" output="screen">
   </node>
 
-  <node pkg="tf" type = "static_transform_publisher" name="static_transform_publisher" args="0 0 0 0 0 0 1 map odom 100"/>
+  <!-- <node pkg="tf" type = "static_transform_publisher" name="static_transform_publisher" args="0 0 0 0 0 0 1 map odom 100"/> -->
 
 
   <!-- urdf参数 -->

@@ -1,6 +1,7 @@
 #include <hfsm/Context.h>
 #include <hfsm/State.h>
 #include <iostream>
+#include <actionlib_msgs/GoalStatus.h>
 
 Context::~Context()
 {
@@ -18,6 +19,7 @@ Context::~Context()
 		}
 	}
 	_states.clear();
+	system("rosnode kill /map_server");
 }
 
 bool Context::Start(std::string name)
@@ -83,7 +85,7 @@ void Context::TransForState(std::string name)
 	}
 }
 
-void Context::ButtonCallback(const agv_msg::Button::ConstPtr &msg)
+void Context::buttonCallback(const agv_msg::Button::ConstPtr &msg)
 {
 	for (int n = 0; n < msg->button_type.size(); n++)
 	{
@@ -91,28 +93,35 @@ void Context::ButtonCallback(const agv_msg::Button::ConstPtr &msg)
 		ROS_INFO("response %s request", msg->button_func[n].c_str());
 		switch (msg->button_type[n])
 		{
-		case next_:
+		case next_: // 按A 下一步
 		{
-			// EventData e = EventData((int)unlock_);
-			// this->SendEvent(e);
 			this->Update();
 			break;
 		}
-		case goback_:
-		{
-			this->TransForState("Auto");
-			EventData e = EventData((int)go_);
-			goal_data start = {0.0, 0.0, 1.0};
-			e.SetData(&start);
-			this->SendEvent(e);
-			break;
-		}
+		// case goback_:
+		// {
+		// 	this->TransForState("Auto");
+		// 	geometry_msgs::Quaternion q;
+		// 	q.w = 1;
+		// 	q.z = 0;
+		// 	q.y = 0;
+		// 	q.x = 0;
+		// 	EventData e = EventData((int)go_);
+		// 	goal_data start = {0.0, 0.0, q};
+		// 	e.SetData(&start);
+		// 	this->SendEvent(e);
+		// 	break;
+		// }
 		case stop_:
 		{
 			// EventData e = EventData((int)unlock_);
 			// this->SendEvent(e);
 			client.waitForExistence();
 			srv.request.status = 0;
+
+			EventData e = EventData((int)stop_);
+			this->SendEvent(e);
+
 			if (client.call(srv))
 			{
 				ROS_INFO("EMERGENCY STOP!");
@@ -127,17 +136,167 @@ void Context::ButtonCallback(const agv_msg::Button::ConstPtr &msg)
 		{
 			// EventData e = EventData((int)unlock_);
 			// this->SendEvent(e);
-			client.waitForExistence();
-			srv.request.status = 4;
-			if (client.call(srv))
+			std::string current_state = this->GetCurStateName();
+			if (current_state == "Idle")
 			{
-				ROS_INFO("AGV UNLOCK!");
-				this->TransForState("Telecontrol");
+				client.waitForExistence();
+				srv.request.status = 4;
+				if (client.call(srv))
+				{
+					ROS_INFO("AGV UNLOCK!");
+					this->TransForState("Telecontrol");
+				}
+				else
+					ROS_ERROR("UNLOCK FAILED");
+				break;
 			}
 			else
-				ROS_INFO("UNLOCK FAILED");
+				ROS_ERROR("StateTrans error, current state is %s", current_state);
+		}
+		case grab_reset_:
+		{
+			client.waitForExistence();
+			srv.request.status = 2;
+			if (client.call(srv))
+			{
+				ROS_INFO("grab_result = : %d", srv.response.grab_result);
+				if (srv.response.grab_result == 1)
+				{
+					ROS_INFO("GRAB READY!");
+					this->TransForState("Telecontrol");
+				}
+				else
+					ROS_INFO("GRAB RESET FAILED!");
+			}
+			break;
+		}
+		case lift_:
+		{
+			client.waitForExistence();
+			srv.request.status = 5;
+			srv.request.high = 420;
+			srv.request.width = 0;
+			if (client.call(srv))
+			{
+				ROS_INFO("GRAB MOVE!");
+				// if (srv.response.grab_result == 1)
+				// {
+				// 	ROS_INFO("GRAB LIFT OK!");
+				this->TransForState("Telecontrol");
+				// }
+			}
+			else
+				ROS_INFO("GRAB LIFT FAILED!");
+			break;
+		}
+		case task_: // A健 按着右边的按键
+		{
+			this->TransForState("Auto");
+			geometry_msgs::Quaternion q;
+			// 测试
+			// q.w = 0.8241698824972953;
+			// q.z = -0.5663426566879758;
+			// q.y = 0;
+			// q.x = 0;
+			// EventData e = EventData((int)go_);
+			// goal_data start = {10.870451444661438, 4.875714719729624, q};
+
+			// 现场
+			// ---
+			// position:
+			//     x: -4.487979013164646
+			//     y: 3.4279136259250427
+			//     z: 0.0
+			// orientation:
+			//     x: 0.0
+			//     y: 0.0
+			//     z: -0.9998475203881446
+			//     w: 0.01746241603211958
+			q.w = 0.01746241603211958;
+			q.z = -0.9998475203881446;
+			q.y = 0;
+			q.x = 0;
+			EventData e = EventData((int)go_);
+			goal_data start = {-4.487979013164646, 3.4279136259250427, q};
+			e.SetData(&start);
+			this->SendEvent(e);
+			break;
+		}
+		case grab_open_: // B
+		{
+			client.waitForExistence();
+			srv.request.status = 5;
+			srv.request.high = 212;
+			srv.request.width = 305;
+			if (client.call(srv))
+			{
+				ROS_INFO("GRAB MOVE!");
+				// if (srv.response.grab_result == 1)
+				// {
+				// 	ROS_INFO("GRAB LIFT OK!");
+				this->TransForState("Telecontrol");
+				// }
+			}
+			else
+				ROS_INFO("GRAB OPEN FAILED!");
+			// grab_move(target_length,pre_height,true);
 			break;
 		}
 		}
 	}
+}
+
+/**
+ * @brief
+ *
+ * @param msg
+ */
+void Context::statusCallback(const move_base_msgs::MoveBaseActionResult &msg)
+{
+	if (msg.status.status == 3)
+	{
+		std::cout << "the goal was achieved successfully!" << std::endl;
+
+		this->nav_flag = 0; // 导航结束，发布下一个命令
+
+		// this->TransForState("Adjust");//导航结束就跳转到调整命令？？？？
+	}
+}
+
+/**
+ * @brief Yolo信息的回调函数
+ *
+ * @param msg 储存着结果，有目标数量
+ */
+void Context::yoloCallback(const agv_msg::YoloResult &msg)
+{
+	// std::cout << "detector pub!" << std::endl;
+	// ros::Time t = ros::Time::now();
+	// ros::Time t_error = t - ros::Duration(0.05);
+	// detector_flag = (msg.header.stamp > t_error) ? true : false;
+	if (msg.object_num == 0)
+	{
+		detector_flag = false;
+		return;
+	}
+
+	object_list.clear();
+	float len = 0.0;
+	int n = msg.position.size();
+
+	for (int i = 0; i < n; i++)
+	{
+		Object obj;
+		obj.pose = msg.position[i];
+		obj.length = msg.length[i];
+		len += obj.length;
+		object_list.push_back(obj);
+	}
+
+	single_flag = (n == 1) ? true : false;
+
+	if (OBJ_LEN - len < 0.2)
+		detector_flag = true;
+	else
+		detector_flag = false;
 }

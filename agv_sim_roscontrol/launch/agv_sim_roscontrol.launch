@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
 
-    <rosparam file="$(find agv_sim_roscontrol)/config/agv_geometry_param.yaml" command="load"></rosparam>
-    <rosparam file="$(find agv_sim_roscontrol)/config/agv_gazebo_ros_controller.yaml" command="load"></rosparam>
+    <rosparam file="$(find agv_sim_roscontrol)/config/agv_geometry_param_new.yaml" command="load"></rosparam>
+    <rosparam file="$(find agv_sim_roscontrol)/config/agv_gazebo_ros_controller_new.yaml" command="load"></rosparam>
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen" ns="/agv_sim" args=" 
     turn_wheels_controller"/>
@@ -12,13 +12,13 @@
     <remap from="/joint_states" to="/agv_sim/joint_states"/>
   </node> -->
 
-  <include file="$(find agv_urdf_test)/launch/gazebo.launch">
+  <include file="$(find agv_real)/launch/gazebo.launch">
     
   </include>
 
 
   <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
-    <param name="output_frame" value="odom"/>
+    <param name="output_frame" value="odom_com"/>
     <param name="base_footprint_frame" value="base_footprint"/>
     <param name="freq" value="1000.0"/>
     <param name="sensor_timeout" value="1.0"/>  

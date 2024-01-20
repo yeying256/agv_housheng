@@ -125,4 +125,13 @@ void publish_imu_data(raw_t *data, sensor_msgs::Imu *imu_data)
 	imu_data->linear_acceleration.x = data->imu[data->nimu - 1].acc[0] * GRA_ACC;
 	imu_data->linear_acceleration.y = data->imu[data->nimu - 1].acc[1] * GRA_ACC;
 	imu_data->linear_acceleration.z = data->imu[data->nimu - 1].acc[2] * GRA_ACC;
+
+	for (int i = 0; i < 9; i++)
+	{
+		imu_data->angular_velocity_covariance[i] = 1e-6;
+		imu_data->linear_acceleration_covariance[i] = 1e-6;
+		imu_data->orientation_covariance[i] = 1e-6;
+	}
+	
+	
 }

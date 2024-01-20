@@ -127,6 +127,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  /usr/include/eigen3
 )
 
 ## Declare a C++ library
@@ -159,6 +160,21 @@ target_link_libraries(reltive_move
   reltive_move_lib
   ${catkin_LIBRARIES}
 )
+
+add_executable(visual_reltive_move src/main_visual.cpp)
+add_dependencies(visual_reltive_move ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(visual_reltive_move
+  reltive_move_lib
+  ${catkin_LIBRARIES}
+)
+
+add_executable(main_visual_point src/main_visual_point.cpp)
+add_dependencies(main_visual_point ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(main_visual_point
+  reltive_move_lib
+  ${catkin_LIBRARIES}
+)
+
 
 #############
 ## Install ##

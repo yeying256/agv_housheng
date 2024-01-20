@@ -1,6 +1,5 @@
 #include <hfsm/Context.h>
 #include <hfsm/State.h>
-#include <hfsm/SendGoal.hpp>
 #include <hfsm/param.h>
 #include <iostream>
 #include <functional>
@@ -8,196 +7,58 @@
 #include <ros/ros.h>
 #include <agv_msg/Button.h>
 #include <agv_msg/reltive_pose.h>
+#include <agv_msg/error_log.h>
 #include <unordered_map>
 #include <agv_msg/grab_agv.h>
+#include <agv_msg/reltive_pose_visual.h>
+#include <agv_msg/visual_point_move.h>
+#include <std_msgs/String.h>
+
+#include <hfsm/ShutdownState.h>
+#include "hfsm/AdjustState.h"
+
+#include "hfsm/StartState.h"
+#include "hfsm/idle_state.hpp"
+#include "hfsm/charge_state.hpp"
+#include "hfsm/TelecontrolState.h"
+#include "hfsm/AutoState.h"
+#include "hfsm/hardware_init_state.hpp"
+
+#include "signal.h"
+
+using namespace hfsm_ns;
 
 bool run = true;
 
-// 开始状态
-class StartState : public State
+void hardwareLoggerCallback(const agv_msg::error_log &msg)
 {
-public:
-    void start()
-    {
-        ROS_INFO("StartState start");
-        this->_context->client.waitForExistence();
-        this->_context->srv.request.status = 1;
-        if (this->_context->client.call(this->_context->srv))
-        {
-            ROS_INFO("STEERING WHEEL BACK TO RIGHT");
-        }
-        else
-            ROS_ERROR("STEERING WHEEL BACK FAILED!");
-    }
-
-    void stop()
-    {
-        ROS_INFO("StartState stop");
-    }
-
-    void update()
-    {
-        TransState("Lock");
-    }
-};
-
-// 锁定状态（不可移动状态）
-class LockState : public State
-{
-public:
-    void start()
-    {
-        std::cout << "LockState start" << std::endl;
-    }
-
-    void stop()
-    {
-        std::cout << "LockState stop" << std::endl;
-    }
-
-    void update()
-    {
-        TransState("Telecontrol");
-    }
-};
-
-// 遥控状态
-class TelecontrolState : public State
-{
-public:
-    void start()
-    {
-        std::cout << "TelecontrolState start" << std::endl;
-    }
-
-    void stop()
-    {
-        std::cout << "TelecontrolState stop" << std::endl;
-    }
-
-    void update()
-    {
-        TransState("Auto");
-    }
-};
-
-// 自动状态 （ROS接管状态）
-class AutoState : public State
-{
-public:
-    NavState nav;
-    void start()
-    {
-        ROS_INFO("AutoState start");
-        // nav.set_goal(10, 10, 1);
-        std::function<EventDeal(EventData &)> func = std::bind(&AutoState::DealEvent, this, std::placeholders::_1);
-        set_event_func(func);
-    }
-
-    EventDeal DealEvent(EventData &event_data)
-    {
-        if ((EventS)event_data._event_type == checkheart_)
-        {
-            ROS_INFO("AUTO WORKING");
-        }
-        if ((EventS)event_data._event_type == go_)
-        {
-            ROS_INFO("send goal");
-            goal_data *goal = event_data.GetData<goal_data>();
-            int ret = nav.set_goal(goal->set_x, goal->set_y, goal->orientation);
-            if (ret)
-                TransState("Adjust");
-        }
-        return tail;
-    }
-
-    void stop()
-    {
-        std::cout << "AutoState stop" << std::endl;
-    }
-
-    void update()
-    {
-        ROS_INFO("WAITING");
-    }
-};
-
-// 自动状态-调整状态
-class AdjustState : public AutoState
-{
-public:
-    ros::NodeHandle n;
-    ros::ServiceClient client;
-    agv_msg::reltive_pose::Request req;
-    agv_msg::reltive_pose::Response resp;
-    std::unordered_map<int8_t, workbench> workbench_map;
-    AdjustState(ros::NodeHandle nh) : n(nh) { client = nh.serviceClient<agv_msg::reltive_pose>("ar_track_target"); };
-    void start()
-    {
-        ROS_INFO("Adjust start");
-    }
-
-    void stop()
-    {
-        ROS_INFO("Adjust stop");
-    }
-
-    void update()
-    {
-        ROS_INFO("SEARCHING FOR AR MARK...");
-        workbench find_ar = workbench_map.find(1)->second;
-        req.pose.x = find_ar.bias_x;
-        req.pose.y = find_ar.bias_y;
-        req.pose.theta = 0;
-        bool ok = client.call(req, resp);
-        if (ok)
-        {
-            ROS_INFO("client: send bias = %f, bias = %f", req.pose.x, req.pose.y);
-        }
-        else
-        {
-            ROS_ERROR("failed to send ar_target service");
-        }
-        TransState("Auto");
-    }
-};
-
-// 关机状态
-class ShutdownState : public State
-{
-public:
-    void start()
-    {
-        std::cout << "ShutdownState start" << std::endl;
-    }
-
-    void stop()
-    {
-        std::cout << "ShutdownState stop" << std::endl;
-    }
-
-    void update()
-    {
-        ROS_INFO("agent shutdown");
-    }
-};
+    ROS_INFO("%s", msg.error_msg);
+}
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "hfsm_node");
-    ros::AsyncSpinner spinner(2);
+    ros::AsyncSpinner spinner(5);
     spinner.start();
     ros::NodeHandle nh;
+
     Context *context = new Context(nh);
-    ros::Subscriber sub = nh.subscribe("/push_button", 100, &Context::ButtonCallback, context);
+    ros::Subscriber sub = nh.subscribe("/push_button", 10, &Context::buttonCallback, context);
+    ros::Subscriber goal_sub = nh.subscribe("move_base/result", 10, &Context::statusCallback, context);
+    ros::Subscriber yolo_sub = nh.subscribe("/DetectorResult_", 10, &Context::yoloCallback, context);
+    ros::Subscriber hw_error_sub = nh.subscribe("/hardware_logger", 10, hardwareLoggerCallback);
 
     // 创建状态机
+    State *hardware_init = new HardwareInitState();
+    context->CreateState(hardware_init, "HardwareInit");
     State *start = new StartState();
     context->CreateState(start, "Start");
-    State *lock = new LockState();
-    context->CreateState(lock, "Lock");
+    State *idle = new IdleState();
+    context->CreateState(idle, "Idle");
     State *tele = new TelecontrolState();
     context->CreateState(tele, "Telecontrol");
+    State *charge = new ChargeState();
+    context->CreateState(charge, "Charge");
     State *automation = new AutoState();
     context->CreateState(automation, "Auto");
     State *adjust = new AdjustState(nh);
@@ -206,19 +67,224 @@ int main(int argc, char **argv)
     context->CreateState(shutdown, "Shutdown");
 
     // 开始状态机
-    context->Start("Start");
+    sleep(2);
+    context->Start("HardwareInit");
 
     int time = 0;
-    while (ros::ok())
+    int way_point = 1;
+    int detect_times = 0;
+    while (ros::ok() && (context->run_ == true))
     {
         time++;
         ros::Duration(0.1).sleep();
+        // std::cout<<"现在进入了主循环"<<std::endl;
+
+        // std::cout<<"context->GetCurStateName() = "<<context->GetCurStateName()<<std::endl;
+
+        std::string current_state = context->GetCurStateName();
 
         // 如果为自动状态，每隔1s发出心跳事件
-        if (context->GetCurStateName() == "Auto" && time % 10 == 0)
+        if (current_state == "Auto")
         {
-            EventData e = EventData((int)checkheart_);
-            context->SendEvent(e);
+            // std::cout<<"现在进入了auto"<<std::endl;
+            if (time % 10 == 0)
+            {
+                EventData e = EventData((int)checkheart_);
+                context->SendEvent(e);
+            }
+            // wangxiao
+
+            // wangxiao
+
+            // if (context->nav_flag == 0)
+            // {
+            //     // if (way_point == 1)
+            //     // {
+            //     //     std::cout << "send waypoint" << std::endl;
+            //     //     // 途经点
+            //     //     // position:
+            //     //     //   x: 3.250909663628529
+            //     //     //   y: 1.1240992506836955
+            //     //     //   z: 0.0
+            //     //     // orientation:
+            //     //     //   x: 0.0
+            //     //     //   y: 0.0
+            //     //     //   z: -0.5693786770583407
+            //     //     //   w: 0.8220753749573659
+
+            //     //     geometry_msgs::Quaternion q;
+            //     //     q.w = 0.8220753749573659;
+            //     //     q.z = -0.5693786770583407;
+            //     //     q.y = 0;
+            //     //     q.x = 0;
+            //     //     EventData e = EventData((int)go_);
+            //     //     goal_data put = {3.250909663628529, 1.1240992506836955, q};
+            //     //     e.SetData(&put);
+            //     //     context->SendEvent(e);
+            //     //     way_point = 0;
+            //     //     // continue;
+            //     //     // context->take_flag = 0;
+            //     // }
+
+            //     if (context->take_flag == 1)
+            //     {
+            //         // 放
+            //         // position:
+            //         // x: 4.201893556236952
+            //         // y: -0.9959773657127725
+            //         // z: 0.0
+            //         // orientation:
+            //         // x: 0.0
+            //         // y: 0.0
+            //         // z: -0.5843139394532142
+            //         // w: 0.811527707574218
+
+            //         geometry_msgs::Quaternion q;
+            //         q.w = 0.811527707574218;
+            //         q.z = -0.5843139394532142;
+            //         q.y = 0;
+            //         q.x = 0;
+            //         EventData e = EventData((int)go_);
+            //         goal_data put = {4.201893556236952, -0.9959773657127725, q};
+            //         e.SetData(&put);
+            //         context->SendEvent(e);
+            //         // context->take_flag = 0;
+            //     }
+
+            //     if (context->put_flag == 1)
+            //     {
+            //         // 放
+            //         // position:
+            //         //   x: 4.441739180668326
+            //         //   y: -1.5032635120511704
+            //         //   z: 0.0
+            //         // orientation:
+            //         //   x: 0.0
+            //         //   y: 0.0
+            //         //   z: -0.5738386402429688
+            //         //   w: 0.8189683845937525
+            //         std::cout << "go to put down" << std::endl;
+
+            //         geometry_msgs::Quaternion q;
+            //         q.w = 0.8241698824972953;
+            //         q.z = -0.5663426566879758;
+            //         q.y = 0;
+            //         q.x = 0;
+            //         EventData e = EventData((int)go_);
+            //         goal_data start = {10.870451444661438, 4.875714719729624, q};
+            //         e.SetData(&start);
+            //         context->SendEvent(e);
+            //         // context->take_flag = 0;
+            //     }
+            // }
+
+            // if (context->nav.ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED && way_point == 1)
+            // {
+            //     way_point = 0;
+            //     continue;
+            // }
+
+            // if (context->nav.ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+            // {
+            //     context->nav_flag = 0;
+
+            //     context->TransForState("Adjust");
+            // }
+
+            // 前面导航进入取料位置
+            if (context->nav_flag == 0)
+            {
+                context->nav_flag = 1;
+            }
+
+            // 如果前面运行过了，并且拿起来了
+            if (context->nav_flag == 1)
+            {
+                // 如果
+                // if(context->take_flag == 1)
+                {
+                    // 放料
+                    EventData e = EventData((int)put_);
+                    context->SendEvent(e);
+
+                    // 把这个消息发过去
+                    std::vector<geometry_msgs::Pose> way_point;
+                    geometry_msgs::Pose point1;
+                    // 第一个点，退出
+                    point1.position.x = 2.8881201451787653;
+                    point1.position.y = 3.2236157804702135;
+                    point1.orientation.x = 0.0;
+                    point1.orientation.y = 0.0;
+                    point1.orientation.z = 0.6292847017063496;
+                    point1.orientation.w = 0.7771748607606596;
+
+                    way_point.push_back(point1);
+
+                    // 第二个点：原地转个圈
+                    point1.orientation.z = -0.8033431988003251;
+                    point1.orientation.w = 0.5955163347392424;
+
+                    way_point.push_back(point1);
+
+                    // 有几个途径点就写几个
+
+                    e.SetData(&way_point);
+                    context->SendEvent(e);
+
+                    // 动夹爪
+                    // e = EventData((int)automove_grabmove_);
+                    // grab_move gb_msg;
+                    // e.SetData(&gb_msg);
+                    // context->SendEvent(e);
+
+                    // 退出
+                    way_point.clear();
+
+                    // e.SetData(&way_point);
+                    // context->SendEvent(e);
+
+                    // 重置takeflag
+                    context->take_flag = 0;
+                }
+
+                context->nav_flag = 2;
+            }
+        }
+        else if (context->GetCurStateName() == "Adjust")
+        {
+            EventData e = EventData((int)task_);
+            ar_data send;
+            // if (context->take_flag == 0)
+            // pre hight width
+            send = {894, 400, 1000, 400, 0};
+
+            // else if (context->put_flag == 1)
+            // {
+            //     send = {420, 999, 420, 280, 0};
+            //     context->put_flag = 0;
+            //     context->take_flag = 0;
+            // }
+            // else
+            // {
+            //     send = {0, 999, 0, 999, 1};
+            //     context->put_flag = 1;
+            // }
+            // std::cout<<"single_flag = "<<context->single_flag<<std::endl;
+            if (context->single_flag == true)
+            {
+                e.SetData(&send);
+                context->SendEvent(e);
+            }
+        }
+        else if (current_state == "Idle")
+        {
+            if (!context->detector_flag)
+            {
+                EventData e = EventData((int)photo_);
+                context->SendEvent(e);
+            }
+
+            ros::Duration(1.0).sleep();
         }
     }
 
@@ -227,13 +293,12 @@ int main(int argc, char **argv)
         delete context;
         context = nullptr;
         delete start;
-        delete lock;
+        delete idle;
         delete tele;
         delete automation;
         delete shutdown;
+        // system("roslaunch agvsim_navigation nav_vision.launch --shutdown");
     }
-
-    std::cout << "state close" << std::endl;
     spinner.stop();
     return 0;
 }

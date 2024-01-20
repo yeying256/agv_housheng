@@ -31,7 +31,7 @@ from agv_msg.msg import Button
 from agv_msg.srv import grab_agv
 
 # X:急停(2)、Y:解锁(3)、A:下一步(0)、B:回初始点(1)
-func_list = ["next_step", "go_back", "stop", "unlock"]
+func_list = ["next_step", "go_back", "stop", "unlock", "lift", "grab_reset", "task start", "grab_open"]
 
 
 class JoyTeleop:
@@ -60,16 +60,38 @@ class JoyTeleop:
             self.velocity.angular = Vector3(0.0, 0.0, 0.0)
             self.active = 0
             self.cmdVelPublisher.publish(self.velocity)
+
+            # 四种状态
             self.button.button_type = []
             self.button.button_func = []
-            for i in range(4):
-                if joy_data.buttons[i] == 1:
-                    if i == 2:
-                        self.enable = 0
-                    if i == 3:
-                        self.enable = 1
-                    self.button.button_type.append(i)
-                    self.button.button_func.append(func_list[i])
+            
+                    
+            # 夹爪抬升
+            if joy_data.buttons[5] == 1:
+                for i in range(4):
+                    if joy_data.buttons[i] == 1:
+                        if i == 2:
+                            self.button.button_type.append(4)
+                            self.button.button_func.append(func_list[4])
+                        if i == 3:
+                            self.button.button_type.append(5)
+                            self.button.button_func.append(func_list[5])
+                        if i == 0:
+                            self.button.button_type.append(6)
+                            self.button.button_func.append(func_list[6])
+                        if i == 1:
+                            self.button.button_type.append(7)
+                            self.button.button_func.append(func_list[7])
+            else:
+                for i in range(4):
+                    if joy_data.buttons[i] == 1:
+                        if i == 2:
+                            self.enable = 0
+                        if i == 3:
+                            self.enable = 1
+                        self.button.button_type.append(i)
+                        self.button.button_func.append(func_list[i])
+
             if len(self.button.button_type):
                 self.cmdButtonPublisher.publish(self.button)
 

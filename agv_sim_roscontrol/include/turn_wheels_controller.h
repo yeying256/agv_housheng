@@ -33,6 +33,7 @@
 #include "mean_filter.h"
 
 #include "agv_msg/hw_srv.h"
+#include "agv_msg/Test_msg.h"
 
 
 
@@ -75,6 +76,10 @@ namespace xj_control_ns
 
         xj_dy_ns::MeanFilter cmd_filter_;
         bool flag_zero_;
+        bool flag_sim_;
+
+
+        ros::Publisher test_msg_pub_;
         
         
         

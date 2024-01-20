@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node pkg="agv_relative_move" type="main_visual_point" name="main_visual_point" output="screen">
+        
+    </node>
+
+</launch>

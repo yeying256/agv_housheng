@@ -1,0 +1,69 @@
+<launch>
+
+  <arg name="plot" default="false" />
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" clear_params="true">
+
+    <rosparam file="$(find agvsim_navigation)/param/move_base_params.yaml" command="load" />
+      <rosparam file="$(find agvsim_navigation)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+      <rosparam file="$(find agvsim_navigation)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+      <rosparam file="$(find agvsim_navigation)/param/local_costmap_params.yaml" command="load" />
+      <rosparam file="$(find agvsim_navigation)/param/global_costmap_params.yaml" command="load" />
+
+
+
+      <!-- <rosparam file="$(find agvsim_navigation)/param/base_local_planner_params.yaml" command="load" /> -->
+      <rosparam file="$(find agvsim_navigation)/param/dwa_local_planner_params.yaml" command="load" />
+
+      <!-- 全局的参数 -->
+      <rosparam file="$(find agvsim_navigation)/param/navfn_global_planner_params.yaml" command="load" />
+
+
+      <!-- teb参数 -->
+
+      <!-- <rosparam file="$(find agvsim_navigation)/param/teb_local_planner_params.yaml" command="load" /> -->
+      <!-- <rosparam file="$(find agvsim_navigation)/param/teb_yuan.yaml" command="load" /> -->
+
+
+      <!-- 定义全局路径规划器 -->
+      <!-- <param name="base_global_planner" value="my_global_planner_plugin/MyGlobalPlannerPlugin" /> -->
+
+      <!-- <param name="base_global_planner" value="global_planner/GlobalPlanner" /> -->
+      <!-- 测试全局路径规划 -->
+      <param name="base_global_planner" value="navfn/NavfnROS" />
+      <!-- 测试dwa -->
+      <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+
+
+
+      <param name="planner_frequency" value="1.0" />
+      <param name="planner_patience" value="5.0" />
+
+      <!-- <rosparam file="$(find agvsim_navigation)/param/mpc_local_planner_params.yaml" command="load" />
+      <param name="base_local_planner" value="mpc_local_planner/MpcLocalPlannerROS" /> -->
+
+      <param name="controller_frequency" value="5.0" />
+      <param name="controller_patience" value="15.0" />
+
+      <!-- <param name="clearing_rotation_allowed" value="false" /> Our carlike robot is not able to rotate in place -->
+
+      <!-- <param name="MpcLocalPlannerROS/controller/publish_ocp_results" value="true" if="$(arg plot)" /> -->
+
+      <!-- 调试 -->
+      <!-- teb -->
+  <!-- <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" /> -->
+  <!-- <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" /> -->
+  <!-- <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" /> -->
+
+
+
+
+
+  </node>
+
+
+
+
+
+
+</launch>

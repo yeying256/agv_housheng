@@ -1,8 +1,13 @@
 <launch>
-  <include
-    file="$(find gazebo_ros)/launch/empty_world.launch" />
+  <!-- <include
+    file="$(find gazebo_ros)/launch/empty_world.launch" /> -->
 
-  <param name="robot_description" textfile="$(find agv_real)/urdf/agv_real.urdf" />
+    <arg name="world_name" value="$(find agv_urdf_test)/world/world_room.world"/>
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="world_name" value="$(arg world_name)" />
+      <!-- <arg name="use_sim_time" value="false"/> -->
+    </include>
+
 
   <node
     name="spawn_model"
@@ -15,14 +20,17 @@
       <remap from="/joint_states" to="/agv_sim/joint_states"/>
     </node>
 
-    <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
-      <param name="destination_frame" value="base_footprint"/>
-      <param name="cloud_destination_topic" value="/merged_cloud"/>
-      <param name="scan_destination_topic" value="/scan"/>
-      <param name="laserscan_topics" value ="/scan1 /scan2" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
-      <param name="angle_min" value="-3.1415926"/>
-      <param name="angle_max" value="3.1415926"/>
+    <!-- 激光雷达融合节点 -->
+  <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
+    <param name="destination_frame" value="base_footprint"/>
+    <param name="cloud_destination_topic" value="/merged_cloud"/>
+    <param name="scan_destination_topic" value="/scan"/>
+    <param name="laserscan_topics" value ="/scan_1 /scan_2" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
+    <param name="angle_min" value="-3.1415926"/>
+    <param name="angle_max" value="3.1415926"/>
 
-    </node>
+  </node>
+
+
 
 </launch>

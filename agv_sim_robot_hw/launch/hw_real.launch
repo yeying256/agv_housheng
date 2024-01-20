@@ -1,34 +1,26 @@
 <?xml version="1.0"?>
 <launch>
-    <!-- 此launch文件启动agv的硬件通讯节点，同时启动agv的底盘控制器 -->
+  <!-- 此launch文件启动agv的硬件通讯节点，同时启动agv的底盘控制器 -->
+  <!-- <rosparam file="$(find agv_sim_roscontrol)/config/agv_defaut_controller.yaml" command="load"></rosparam> -->
 
-    <rosparam file="$(find agv_sim_roscontrol)/config/agv_defaut_controller.yaml" command="load"></rosparam>
+  <!-- 几何参数 -->
+  <rosparam file="$(find agv_sim_roscontrol)/config/agv_geometry_param_new.yaml" command="load" />
+  <!-- 硬件抽象层关节信息加载 -->
+  <rosparam file="$(find agv_hw)/config/agv_hw.yaml" command="load" />
+  <!-- 加载控制器，一定不能用ns参数，直接用绝对参数路径才能搞定 -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="true"
+    output="screen" ns="/" args="/agv_sim/turn_wheels_controller" />
+  <!-- 启动硬件抽象层 -->
+  <node pkg="agv_hw" type="agv_hw_node" name="agv_hw_node" respawn="true" output="screen">
+  </node>
 
-    <!-- 几何参数 -->
-    <rosparam file="$(find agv_sim_roscontrol)/config/agv_geometry_param.yaml" command="load"></rosparam>
-    <rosparam file="$(find agv_hw)/config/agv_hw.yaml" command="load"></rosparam>
+  <!-- urdf参数 -->
+  <!-- <param name="robot_description" textfile="$(find agv_urdf_test)/urdf/agv_urdf_test.urdf" /> -->
 
-    <!-- 加载控制器，一定不能用ns参数，直接用绝对参数路径才能搞定 -->
-    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" args=" 
-    /agv_sim/turn_wheels_controller
-    "/>
+  <!-- <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <remap from="/joint_states" to="/agv_sim/joint_states" />
+  </node> -->
 
-
-    <node pkg="agv_hw" type="agv_hw_node" name="agv_hw_node" output="screen">
-    </node>
-
-
-    <!-- urdf参数 -->
-    <param name="robot_description" textfile="$(find agv_urdf_test)/urdf/agv_urdf_test.urdf" />
-  
-    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" >
-    <remap from="/joint_states" to="/agv_sim/joint_states"/>
-    </node>
-      
-      <!-- <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" /> -->
-  
-
-
-
+  <!-- <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher"
+  /> -->
 </launch>

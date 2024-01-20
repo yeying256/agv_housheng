@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(ar_track_alvar)
 
-set(CMAKE_BUILD_TYPE DEBUG)
+# set(CMAKE_BUILD_TYPE DEBUG)
 
 find_package(catkin REQUIRED COMPONENTS
         ${PROJECT_NAME}_msgs

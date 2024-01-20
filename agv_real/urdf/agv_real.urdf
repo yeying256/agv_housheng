@@ -545,7 +545,7 @@
 
 <!-- 相机 -->
 <link
-name="link_camera">
+name="camera1_link">
 </link>
 
 <link name="camera_link_fake">
@@ -561,12 +561,12 @@ type="fixed">
 <parent
   link="base_link" />
 <child
-  link="link_camera" />
+  link="camera1_link" />
 </joint>
 
 <joint name="camera_joint_fake" type="fixed">
   <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708 "/>
-  <parent link="link_camera"/>
+  <parent link="camera1_link"/>
   <child link="camera_link_fake"/>
 </joint>
 
@@ -579,7 +579,7 @@ type="fixed">
 
 
 
-<gazebo reference="link_camera">
+<gazebo reference="camera1_link">
   <sensor type="depth" name="kinect_camera">
     <always_on>true</always_on>
     <update_rate>20.0</update_rate>
@@ -662,7 +662,7 @@ type="fixed">
       </noise>
     </ray>
     <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
-      <topicName>/scan1</topicName>
+      <topicName>/scan_1</topicName>
       <frameName>laser_1</frameName>
     </plugin>
   </sensor>
@@ -702,7 +702,7 @@ type="fixed">
       </noise>
     </ray>
     <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
-      <topicName>/scan2</topicName>
+      <topicName>/scan_2</topicName>
       <frameName>laser_2</frameName>
     </plugin>
   </sensor>

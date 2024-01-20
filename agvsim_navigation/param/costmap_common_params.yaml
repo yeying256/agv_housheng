@@ -21,7 +21,9 @@ obstacle_layer:
 #膨胀半径，扩展在碰撞区域以外的代价区域，使得机器人规划路径避开障碍物
 inflation_radius: 1.2
 # #代价比例系数，越大则代价值越小
+# cost_scaling_factor: 1.0
 cost_scaling_factor: 1.0
+
 
 #地图类型
 map_type: costmap
@@ -36,8 +38,8 @@ observation_sources: rplidar_sensor1 rplidar_sensor2
 
 
 
-rplidar_sensor1: {sensor_frame: link_laser_1, data_type: LaserScan, topic: scan1, marking: true, clearing: true}
-rplidar_sensor2: {sensor_frame: link_laser_2, data_type: LaserScan, topic: scan2, marking: true, clearing: true}
+rplidar_sensor1: {sensor_frame: laser_1, data_type: LaserScan, topic: /scan_1, marking: true, clearing: true}
+rplidar_sensor2: {sensor_frame: laser_2, data_type: LaserScan, topic: /scan_2, marking: true, clearing: true}
 
 
 inflation_layer:
