@@ -128,31 +128,9 @@ sudo apt-get install ros-noetic-move-base
 
 ## 使用
 
-### 导航可以直接运行
+### 仿真环境启动
 ```
-roslaunch agvsim_navigation navigation_gazebo.launch
-```
-### 导航+ar码识别+相对运动运行
-launch文件
-```
-roslaunch agv_relative_move test.launch 
-```
-调用srv
-```
-rosservice call /ar_track_target
-```
-然后按tab补全,如果补全不出来，则source一下此工作空间下的环境变量。
-完整代码：
-```
-rosservice call /ar_track_target "pose:
-  x: 1.7
-  y: 0.3
-  theta: 0.0
-high: 0.0
-width: 0.0
-target_ar_id: 0" 
-success: True
-msg: "reltive move success"
+roslaunch agv_run_all agv_sim_all.launch
 ```
 
 
