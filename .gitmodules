@@ -1,4 +1,7 @@
 [submodule "yolo_ros"]
 	path = yolo_ros
 	url = git@codeup.aliyun.com:657e5b45b488fff322e7d116/xjtu_robot_wx/wangxiao/DLagv/yolo_ros.git
-	branch = dev
+	branch = main
+[submodule "traj_plan_wx"]
+	path = traj_plan_wx
+	url = git@codeup.aliyun.com:657e5b45b488fff322e7d116/xjtu_robot_wx/wangxiao/traj_plan_wx.git

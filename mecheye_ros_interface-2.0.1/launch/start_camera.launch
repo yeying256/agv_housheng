@@ -3,10 +3,10 @@
     <arg name="save_file" default="false" />
     <arg name="camera_ip" default="169.254.59.15" />      <!-- change to your camera ip -->
     <arg name="use_external_intri" default="false" />
-    <arg name="fx" default="1727.4641025602748" />
-    <arg name="fy" default="1727.4586926701952" />
-    <arg name="u" default="655.8180825729554" />
-    <arg name="v" default="516.6306500606158" />
+    <arg name="fx" default="1543.49" />
+    <arg name="fy" default="1543.49" />
+    <arg name="u" default="798.715" />
+    <arg name="v" default="763.939" />
     <arg name="tf_x" default="0" />
     <arg name="tf_y" default="0" />
     <arg name="tf_z" default="0" />

@@ -4,7 +4,7 @@
   <arg name="lidar_hostname2" default="192.168.1.52" />
   <arg name="serial_no_1" default="332522071089" />
   <arg name="serial_no_2" default="332522072143" />
-  <arg name="mech_camera_ip" default = "192.168.137.101" />
+  <arg name="mech_camera_ip" default = "192.168.1.130" />
 
   <!-- 启动硬件 -->
 

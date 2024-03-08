@@ -62,7 +62,7 @@ int main(int argc, char **argv)
     State *automation = new AutoState();
     context->CreateState(automation, "Auto");
     State *adjust = new AdjustState(nh);
-    context->CreateState(adjust, "Adjust");
+    context->CreateState(adjust, "Adjust", "Idle");
     State *shutdown = new ShutdownState();
     context->CreateState(shutdown, "Shutdown");
 
@@ -252,6 +252,15 @@ int main(int argc, char **argv)
         }
         else if (context->GetCurStateName() == "Adjust")
         {
+            if (!context->single_flag)
+            {
+                ROS_INFO("take photo");
+                EventData e = EventData((int)photo_);
+                context->SendEvent(e);
+                ros::Duration(1.0).sleep();
+                continue;
+            }
+
             EventData e = EventData((int)task_);
             ar_data send;
             // if (context->take_flag == 0)
@@ -280,11 +289,11 @@ int main(int argc, char **argv)
         {
             if (!context->detector_flag)
             {
+                ROS_INFO("take photo");
                 EventData e = EventData((int)photo_);
                 context->SendEvent(e);
+                ros::Duration(1.0).sleep();
             }
-
-            ros::Duration(1.0).sleep();
         }
     }
 

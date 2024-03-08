@@ -109,6 +109,10 @@ namespace mecheye_ros_interface
             showError(device.getDeviceIntri(intri));
         }
 
+        //set exposure time
+        mmind::api::ErrorStatus status = device.setScan2DExposureTime(400);
+        showError(status);
+
         add_user_set_service = nh.advertiseService("add_user_set", &MechMindCamera::add_user_set_callback, this);
         capture_color_map_service =
             nh.advertiseService("capture_color_map", &MechMindCamera::capture_color_map_callback, this);

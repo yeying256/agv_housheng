@@ -42,7 +42,7 @@ namespace hfsm_ns
                         continue;
                     else
                     {
-                        ROS_ERROR("node %s start failed!", target_node);
+                        ROS_ERROR("node %s start failed!", target_node.c_str());
                         std::string cmd = "rosnode kill " + target_node;
                         system(cmd.c_str());
                         tmp++;

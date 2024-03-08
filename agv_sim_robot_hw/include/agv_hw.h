@@ -18,6 +18,10 @@
 #define FRONT_WHEEL 4
 #define BACK_STEER 5
 #define BACK_WHEEL 6
+#define FRONT_STEER_2 7
+#define FRONT_WHEEL_2 8
+#define BACK_STEER_2 9
+#define BACK_WHEEL_2 10
 
 namespace xj_control_ns
 {

@@ -2,6 +2,8 @@
 #include <hfsm/State.h>
 #include <iostream>
 #include <actionlib_msgs/GoalStatus.h>
+#include <numeric>
+#include <math.h>
 
 Context::~Context()
 {
@@ -191,27 +193,10 @@ void Context::buttonCallback(const agv_msg::Button::ConstPtr &msg)
 		}
 		case task_: // A健 按着右边的按键
 		{
+			// if (detector_flag)
+
 			this->TransForState("Auto");
 			geometry_msgs::Quaternion q;
-			// 测试
-			// q.w = 0.8241698824972953;
-			// q.z = -0.5663426566879758;
-			// q.y = 0;
-			// q.x = 0;
-			// EventData e = EventData((int)go_);
-			// goal_data start = {10.870451444661438, 4.875714719729624, q};
-
-			// 现场
-			// ---
-			// position:
-			//     x: -4.487979013164646
-			//     y: 3.4279136259250427
-			//     z: 0.0
-			// orientation:
-			//     x: 0.0
-			//     y: 0.0
-			//     z: -0.9998475203881446
-			//     w: 0.01746241603211958
 			q.w = 0.01746241603211958;
 			q.z = -0.9998475203881446;
 			q.y = 0;
@@ -279,24 +264,65 @@ void Context::yoloCallback(const agv_msg::YoloResult &msg)
 		detector_flag = false;
 		return;
 	}
-
-	object_list.clear();
-	float len = 0.0;
 	int n = msg.position.size();
 
-	for (int i = 0; i < n; i++)
+	object_list.clear();
+	switch (detector_type)
 	{
-		Object obj;
-		obj.pose = msg.position[i];
-		obj.length = msg.length[i];
-		len += obj.length;
-		object_list.push_back(obj);
+	case sleep_:
+		break;
+
+	case detecting_:
+	{
+		float sum_len = 0.0;
+		for (int i = 0; i < n; i++)
+		{
+			Object obj;
+			obj.pose = msg.position[i];
+			obj.length = msg.length[i];
+			sum_len += obj.length;
+			object_list.push_back(obj);
+		}
+
+		detector_flag = (OBJ_LEN - sum_len < 500) ? true : false;
+
+		break;
 	}
 
-	single_flag = (n == 1) ? true : false;
+	case feedback_:
+	{
+		single_flag = (n == 1) ? true : false;
+		if (single_flag)
+		{
+			length_result_buffer.pop_front();
+			length_result_buffer.push_back(msg.length[0]);
+			double var = VectorVar(length_result_buffer);
 
-	if (OBJ_LEN - len < 0.2)
-		detector_flag = true;
-	else
-		detector_flag = false;
+			if (var < 0.5)
+			{
+				Object obj;
+				obj.pose = msg.position[0];
+				obj.length = msg.length[0];
+				object_list.push_back(obj);
+			}
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+double VectorVar(const std::deque<double> &A)
+{
+	double sum = std::accumulate(std::begin(A), std::end(A), 0.0);
+	double mean = sum / A.size();
+
+	double variance = 0.0;
+	for (uint16_t i = 0; i < A.size(); i++)
+	{
+		variance = variance + pow(A[i] - mean, 2);
+	}
+	variance = variance / A.size();
+	return variance;
 }

@@ -15,7 +15,7 @@ namespace xj_control_ns
 
     Agv_hw_interface::~Agv_hw_interface()
     {
-        for (int i = 0; i < 7; i++)
+        for (int i = GRAB_OPEN; i <= BACK_WHEEL_2; i++)
         {
             int tmp;
             ZAux_Direct_GetIfIdle(handle, i, &tmp);
@@ -153,11 +153,11 @@ namespace xj_control_ns
 
             printf("***夹爪定位完成***\n");
         }
-        
+
         if (status_ == 1)
         {
             resp.agv_result = 0;
-            // AGV回零:0->FRONT_STEER,2->BACK_STEER
+
             ZAux_Direct_SetAtype(handle, FRONT_STEER, 65);
             ZAux_Direct_SetAtype(handle, BACK_STEER, 65);
             ZAux_Direct_SetSpeed(handle, FRONT_STEER, 72);
@@ -165,16 +165,12 @@ namespace xj_control_ns
             ZAux_Direct_SetCreep(handle, FRONT_STEER, 36);
             ZAux_Direct_SetCreep(handle, BACK_STEER, 36);
 
-            // 1->FRONT_WHEEL
-
+            // 前轮转向电机回零运动
             ZAux_Direct_SetAxisEnable(handle, FRONT_WHEEL, 0);
             ZAux_Direct_SetAxisEnable(handle, BACK_STEER, 0);
             ZAux_Direct_SetAxisEnable(handle, BACK_WHEEL, 0);
-
-            // 0->FRONT_STEER
             int retBD0 = ZAux_BusCmd_Datum(handle, FRONT_STEER, 22);
             commandCheckHandler("ZAux_BusCmd_Datum", retBD0);
-            // 前轮转向电机回零运动：0->FRONT_STEER
             if (!retBD0)
             {
                 int tmp = 0;
@@ -187,9 +183,6 @@ namespace xj_control_ns
                     // ZAux_Direct_GetMpos(handle,FRONT_STEER,&tmp_position);
                     // int tmp_enable;
                     // ZAux_Direct_GetAxisEnable(handle,FRONT_STEER,&tmp_enable);
-
-                    // ROS_INFO("***position FRONT_STEER =%f***\n",tmp_position);
-                    // ROS_INFO("***enable FRONT_STEER =%d***\n",tmp_enable); //0是失败 1成功
 
                     if (homestatus == 1)
                     {
@@ -210,14 +203,14 @@ namespace xj_control_ns
             }
             ZAux_Direct_SetAxisEnable(handle, BACK_STEER, 1);
 
-            // 后轮转向电机回零运动：2->BACK_STEER, 3->BACK_WHEEL
+            // 后轮转向电机回零运动
             ZAux_Direct_SetAxisEnable(handle, BACK_WHEEL, 1);
             ZAux_Direct_SetAxisEnable(handle, FRONT_STEER, 0);
             ZAux_Direct_SetAxisEnable(handle, FRONT_WHEEL, 0);
 
             int retBD2 = ZAux_BusCmd_Datum(handle, BACK_STEER, 22);
             commandCheckHandler("ZAux_BusCmd_Datum", retBD2);
-            // 后轮转向电机回零运动：2->BACK_STEER
+            // 后轮转向电机回零运动
             if (!retBD2)
             {
                 int tmp = 0;
@@ -267,8 +260,8 @@ namespace xj_control_ns
             If_zero_.call(iz);
             return true;
         }
-        if (req.status == 2)
-        { // 夹爪回零 4->GRAB_OPEN
+        if (status_ == 2)
+        { // 夹爪回零
             resp.grab_result = 0;
             ZAux_Direct_Single_Vmove(handle, GRAB_OPEN, -1);
             int tmp = 0;
@@ -277,6 +270,7 @@ namespace xj_control_ns
                 sleep(1);
                 tmp++;
                 ZAux_Direct_GetAxisStatus(handle, GRAB_OPEN, &axisstatus); // 获取回零运动完成状态
+                ROS_INFO("axis status: %d", axisstatus);
                 if (axisstatus == 32 && tmp < 20)
                 {
                     ZAux_Direct_SetMpos(handle, GRAB_OPEN, 0);
@@ -413,7 +407,6 @@ namespace xj_control_ns
         }
 
         // 机器人参数初始化********************************************************************************************
-        // 0->FRONT_STEER,1->FRONT_WHEEL,2->BACK_STEER,3->BACK_WHEEL
         for (int i = 0; i < 7; i++)
         {
             if (i == FRONT_STEER || i == BACK_STEER)
@@ -430,7 +423,7 @@ namespace xj_control_ns
             if (i == GRAB_LEFT)
             {                                                  // 夹爪上升主动电机参数初始化
                 ZAux_Direct_SetAtype(handle, i, 65);           // 设置各轴的类型为65（EtherCAT总线周期位置模式）
-                ZAux_Direct_SetUnits(handle, i, 625000 / 471); // 设置各轴脉冲当量
+                ZAux_Direct_SetUnits(handle, i, 625000 / 471.0); // 设置各轴脉冲当量
                 ZAux_Direct_SetSpeed(handle, i, 50);           // 设置各轴速度
                 ZAux_Direct_SetAccel(handle, i, 100);          // 设置各轴加速度
                 ZAux_Direct_SetDecel(handle, i, 100);          // 设置各轴减速度
@@ -444,7 +437,7 @@ namespace xj_control_ns
             if (i == GRAB_RIGHT)
             {                                                  // 夹爪上升从动电机参数初始化
                 ZAux_Direct_SetAtype(handle, i, 65);           // 设置各轴的类型为65（EtherCAT总线周期位置模式）
-                ZAux_Direct_SetUnits(handle, i, 625000 / 471); // 设置各轴脉冲当量
+                ZAux_Direct_SetUnits(handle, i, 625000 / 471.0); // 设置各轴脉冲当量
                 ZAux_Direct_SetFwdIn(handle, i, 160);
                 ZAux_Direct_SetRevIn(handle, i, 144);
             }

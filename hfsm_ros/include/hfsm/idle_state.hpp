@@ -1,3 +1,11 @@
+/*
+ * @Author: LHYLHYY 876814061@qq.com
+ * @Date: 2024-01-30 18:12:50
+ * @LastEditors: LHYLHYY 876814061@qq.com
+ * @LastEditTime: 2024-02-02 16:34:04
+ * @FilePath: /catkin_ws/src/agv_sim/hfsm_ros/include/hfsm/idle_state.hpp
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 #ifndef IDLE_STATE_HPP
 #define IDLE_STATE_HPP
 
@@ -21,6 +29,7 @@ namespace hfsm_ns
         void start()
         {
             printf_yellow("IdleState start");
+            _context->detector_type = DetectorType((int)detecting_);
             bool ret = ros::service::waitForService("capture_color_map", 10);
             if (!ret)
             {
@@ -31,6 +40,8 @@ namespace hfsm_ns
             if (!ret)
                 ROS_ERROR("DepthMap capture service start failed");
             camera_state_ = true;
+            std::function<EventDeal(EventData &)> func = std::bind(&IdleState::DealEvent, this, std::placeholders::_1);
+            set_event_func(func);
         }
 
         void stop()
@@ -68,8 +79,8 @@ namespace hfsm_ns
 
     private:
         ros::NodeHandle n_;
-        ros::ServiceClient color_map_client_ = n_.serviceClient<mecheye_ros_interface::CaptureColorMap>("capture_color_map");
-        ros::ServiceClient depth_map_client_ = n_.serviceClient<mecheye_ros_interface::CaptureDepthMap>("capture_depth_map");
+        ros::ServiceClient color_map_client_ = n_.serviceClient<mecheye_ros_interface::CaptureColorMap>("/capture_color_map");
+        ros::ServiceClient depth_map_client_ = n_.serviceClient<mecheye_ros_interface::CaptureDepthMap>("/capture_depth_map");
         bool camera_state_ = false;
     };
 

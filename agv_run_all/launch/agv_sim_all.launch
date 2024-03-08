@@ -21,7 +21,7 @@
     <node pkg="rqt_reconfigure" type="rqt_reconfigure" name="rqt_reconfigure" />
 
     <!-- 启动局部规划器和全局规划器 -->
-    <include file="$(find agvsim_navigation)/launch/move_base_test.launch" />
+    <!-- <include file="$(find agvsim_navigation)/launch/move_base_test.launch" /> -->
 
     <!-- 加载机器人几何参数 -->
     <rosparam file="$(find agv_sim_roscontrol)/config/agv_geometry_param_new.yaml" command="load"></rosparam>
