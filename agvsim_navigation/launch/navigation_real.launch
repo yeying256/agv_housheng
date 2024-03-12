@@ -9,6 +9,8 @@
 
   <!-- 启动机器人所有硬件 -->
   <include file="$(find agv_run_all)/launch/agv_real.launch" />
+  <include file="$(find traj_plan_wx)/launch/plan_wx.launch" />
+
 
   <!-- <node pkg="joint_state_publisher" name="joint_state_publisher" type="joint_state_publisher"/> -->
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
