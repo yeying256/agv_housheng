@@ -19,7 +19,7 @@
     <!-- 启动局部规划器和全局规划器 -->
     <!-- <include file="$(find agvsim_navigation)/launch/move_base.launch" /> -->
     <!-- 测试 -->
-    <include file="$(find agvsim_navigation)/launch/move_base_test.launch" />
+    <!-- <include file="$(find agvsim_navigation)/launch/move_base_test.launch" /> -->
 
     <!-- <node pkg="tf" type="static_transform_publisher" name="static_transform_publisher"
   args="0 0 0 0 0 0 1 map odom 100" /> -->
