@@ -128,9 +128,9 @@ void publish_imu_data(raw_t *data, sensor_msgs::Imu *imu_data)
 
 	for (int i = 0; i < 9; i++)
 	{
-		imu_data->angular_velocity_covariance[i] = 1e-6;
-		imu_data->linear_acceleration_covariance[i] = 1e-6;
-		imu_data->orientation_covariance[i] = 1e-6;
+		imu_data->angular_velocity_covariance[i] = 1e-3;
+		imu_data->linear_acceleration_covariance[i] = 1e-3;
+		imu_data->orientation_covariance[i] = 1e-3;
 	}
 	
 	

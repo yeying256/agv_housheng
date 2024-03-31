@@ -39,17 +39,17 @@
   <!-- 此launch文件启动agv的硬件通讯节点，同时启动agv的底盘控制器 -->
 
   <!-- 几何参数 -->
-  <rosparam file="$(find agv_sim_roscontrol)/config/agv_geometry_param_new.yaml" command="load"></rosparam>
-  <rosparam file="$(find agv_hw)/config/agv_hw.yaml" command="load"></rosparam>
+  <!-- <rosparam file="$(find agv_sim_roscontrol)/config/agv_geometry_param_new.yaml" command="load"></rosparam>
+  <rosparam file="$(find agv_hw)/config/agv_hw.yaml" command="load"></rosparam> -->
 
   <!-- 加载控制器，一定不能用ns参数，直接用绝对参数路径才能搞定 -->
-  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+  <!-- <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen" ns="/" args="
-      /agv_sim/turn_wheels_controller" />
+      /agv_sim/turn_wheels_controller" /> -->
 
 
-  <node pkg="agv_hw" type="agv_hw_node" name="agv_hw_node" output="screen">
-  </node>
+  <!-- <node pkg="agv_hw" type="agv_hw_node" name="agv_hw_node" output="screen">
+  </node> -->
 
   <!-- <node pkg="tf" type = "static_transform_publisher" name="static_transform_publisher" args="0 0 0 0 0 0 1 map odom 100"/> -->
 
@@ -66,7 +66,7 @@
   <!-- <node pkg="teleop_twist_keyboard" name="teleop_twist_keyboard.py"
   type="teleop_twist_keyboard.py" /> -->
   <!-- <include file="$(find agvsim_navigation)/launch/amcl.launch" /> -->
-  <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+  <!-- <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
     <param name="output_frame" value="odom_com" />
     <param name="base_footprint_frame" value="base_footprint" />
     <param name="freq" value="300.0" />
@@ -75,7 +75,7 @@
     <param name="imu_used" value="true" />
     <param name="vo_used" value="false" />
     <param name="topic_imu" value="/IMU_data" />
-  </node>
+  </node> -->
 
   <!-- 打开状态机 -->
   <node pkg="hfsm" type="hfsm_node" name="hfsm_node" output="screen" />

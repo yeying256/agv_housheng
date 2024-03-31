@@ -153,7 +153,7 @@ void Context::buttonCallback(const agv_msg::Button::ConstPtr &msg)
 				break;
 			}
 			else
-				ROS_ERROR("StateTrans error, current state is %s", current_state);
+				ROS_ERROR("StateTrans error, current state is %s", current_state.c_str());
 		}
 		case grab_reset_:
 		{
