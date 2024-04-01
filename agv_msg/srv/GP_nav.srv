@@ -1,0 +1,6 @@
+# 请求目标相对相机坐标系的期望位姿
+geometry_msgs/PoseStamped pose
+int32 state #1是运行，0是停止 2是查询状态
+---
+bool success #在查询状态中，true是可以给我发指令 false是程序正在运行
+string msg #返回状态信息

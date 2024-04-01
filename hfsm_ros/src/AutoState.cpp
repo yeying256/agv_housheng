@@ -19,8 +19,9 @@ namespace hfsm_ns
         //std::function <>中的内容EventDeal是函数的返回值，EventData是传入参数，std::placeholders::_1是占位符
         std::function<EventDeal(EventData &)> func = std::bind(&AutoState::DealEvent, this, std::placeholders::_1);
         set_event_func(func);
-        //进来的时候就让自动导航可以运行
-        _context->nav_flag =0;
+
+        // //进来的时候就让自动导航可以运行
+        // _context->nav_flag =0;
     }
 
     EventDeal AutoState::DealEvent(EventData &event_data)
@@ -31,7 +32,11 @@ namespace hfsm_ns
         }
         if ((EventS)event_data._event_type == go_)
         {
+            #ifdef USE_MOVE_BASE
             actionlib::SimpleClientGoalState state = this->_context->nav.ac.getState();
+            #else
+
+            #endif
 
             agv_msg::grab_agv srv;
             //agv单独运动
@@ -45,53 +50,158 @@ namespace hfsm_ns
 
             ROS_INFO("send goal");
             goal_data *goal = event_data.GetData<goal_data>();
-            int ret = this->_context->nav.set_goal(goal->set_x, goal->set_y, goal->orientation);
-            this->_context->nav_flag = 1;
 
+            int ret = this->_context->nav.set_goal(goal->set_x, goal->set_y, goal->orientation);
+            
+            #ifdef USE_MOVE_BASE
             std::cout << "ac return " << state.toString() << std::endl;
+            #endif
+
+
+            while(ros::ok())
+            {
+                sleep(0.1);
+                // std::cout<<"正在前往目标点"<<std::endl;
+                // std::cout<<this->_context->GetCurStateName()<<std::endl;
+                if (this->_context->GetCurStateName() == "Lock"||this->_context->GetCurStateName() == "Idle")
+                {
+                printf_yellow("lock1");
+
+                    #ifdef USE_MOVE_BASE
+                    this->_context->nav.ac.cancelGoal();
+                    #else
+                    agv_msg::GP_nav gp_nav;
+                    gp_nav.request.state=0;
+                    _context->nav.GP_srv_.call(gp_nav);
+                    #endif
+
+                    event_data._event_type = stop_;
+                    break;
+                }
+                #ifdef USE_MOVE_BASE
+                if (this->_context->nav.ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED || this->_context->GetCurStateName() == "Lock")
+                {
+                    break;
+                }
+                #else
+                // 查询是否结束
+
+                agv_msg::GP_nav gp_nav;
+                gp_nav.request.state = 2;
+                _context->nav.GP_srv_.call(gp_nav);
+                
+                if (gp_nav.response.success == true)
+                {   
+                    // 如果查询结果成功了，那么就跳出循环
+                    break;
+                }
+                #endif
+            }
+            // this->_context->nav_flag = 1;
         }
         //放料
         if ((EventS)event_data._event_type == put_)
         {
             _context->nav_flag = 1;
+            geometry_msgs::Pose test1;
             std::vector<geometry_msgs::Pose>* way_point = event_data.GetData<std::vector<geometry_msgs::Pose>>();
+
+            printf_yellow("put_ event test");
+            printf("way_point->size() = %d \n",way_point->size());
+            printf_yellow("put_ event test");
+
+            
+
             
             for (int i = 0; i < way_point->size(); i++)
             {
                 way_point->at(i);
                 //发送目标点
                 int ret = this->_context->nav.set_goal(way_point->at(i).position.x, way_point->at(i).position.y, way_point->at(i).orientation);
+                printf_yellow("put_ event test2");
                 
-                do
+                while(ros::ok())
                 {
                     sleep(0.1);
-                    std::cout<<"正在前往目标点"<<std::endl;
+                    // std::cout<<"正在前往目标点"<<std::endl;
+                    // std::cout<<this->_context->GetCurStateName()<<std::endl;
+
                     
-                    if (this->_context->GetCurStateName() == "Lock")
+                    if (this->_context->GetCurStateName() == "Lock"||this->_context->GetCurStateName() == "Idle")
                     {
+                    printf_yellow("lock1");
+
+                        #ifdef USE_MOVE_BASE
                         this->_context->nav.ac.cancelGoal();
+                        #else
+                        agv_msg::GP_nav gp_nav;
+                        gp_nav.request.state=0;
+                        _context->nav.GP_srv_.call(gp_nav);
+                        #endif
+
                         event_data._event_type = stop_;
                         break;
                     }
-                } while (this->_context->nav.ac.getState() != actionlib::SimpleClientGoalState::SUCCEEDED && this->_context->GetCurStateName() != "Lock");
+                    #ifdef USE_MOVE_BASE
+                    if (this->_context->nav.ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED || this->_context->GetCurStateName() == "Lock")
+                    {
+                        break;
+                    }
+                    
+
+                    #else
+                    // 查询是否结束
+
+                    agv_msg::GP_nav gp_nav;
+                    gp_nav.request.state = 2;
+                    _context->nav.GP_srv_.call(gp_nav);
+                    
+                    if (gp_nav.response.success == true)
+                    {   
+                        // 如果查询结果成功了，那么就跳出循环
+                        break;
+                    }
+                    #endif
+
+                }
                 //当 没到目标点并且 不是锁定状态时 跳出循环。
 
                 
                 //当状态等于锁定的时候，停止运动并跳出for循环
-                if (this->_context->GetCurStateName() == "Lock")
+                if (this->_context->GetCurStateName() == "Lock"||this->_context->GetCurStateName() == "Idle")
                 {
+                    printf_yellow("lock2");
+                    #ifdef USE_MOVE_BASE
                     this->_context->nav.ac.cancelGoal();
+                    this->_context->nav.ac.waitForResult();
+                    #else
+                    agv_msg::GP_nav gp_nav;
+                    gp_nav.request.state=0;
+                    _context->nav.GP_srv_.call(gp_nav);
+                    #endif
+
                     event_data._event_type = stop_;
 
-                    this->_context->nav.ac.waitForResult();
+                    #ifdef USE_MOVE_BASE
                     if (this->_context->nav.ac.getState() == actionlib::SimpleClientGoalState::ACTIVE)
                     {
                         ROS_INFO("You have canceled the goal!");
                     }
+                    #else
+                    // 查询状态是否还在运行中
+                    gp_nav.request.state = 2;
+                    _context->nav.GP_srv_.call(gp_nav);
+                    if (gp_nav.response.success == true)
+                    {
+                        // 如果状态已经success了，说明可以继续发布指令了，说明急停成功
+                        ROS_INFO("You have canceled the goal!");
+                    }
+                    #endif
                     else
                     {
                         ROS_ERROR("The cancel goal failed for some reason");
                     }
+
                     break;
                 }
                 
@@ -112,6 +222,7 @@ namespace hfsm_ns
         if ((EventS)event_data._event_type == stop_)
         {
             ROS_INFO("stop navigation!");
+            #ifdef USE_MOVE_BASE
             this->_context->nav.ac.cancelGoal();
             actionlib::SimpleClientGoalState state = this->_context->nav.ac.getState();
             std::cout << "current nav state is : " << state.toString() << std::endl;
@@ -125,6 +236,36 @@ namespace hfsm_ns
             {
                 ROS_ERROR("cancel_goal failed");
             }
+            #else
+
+            agv_msg::GP_nav gp_nav;
+
+            // 生成急停命令
+            gp_nav.request.state=0;
+            _context->nav.GP_srv_.call(gp_nav);
+
+            // 查询状态
+            gp_nav.request.state=2;
+            _context->nav.GP_srv_.call(gp_nav);
+
+            while (ros::ok())
+            {
+                // 检查是否真的成功了
+                if (gp_nav.response.success == true)
+                {
+                    ROS_INFO("you have canceled the goal!");
+                    break;
+                }else{
+                    sleep(0.1);
+                    // 再发一个指令
+                    _context->nav.GP_srv_.call(gp_nav);
+                    ROS_INFO_STREAM(gp_nav.response.msg);
+                }
+                
+            }
+            
+
+            #endif
         }
         
         return tail;

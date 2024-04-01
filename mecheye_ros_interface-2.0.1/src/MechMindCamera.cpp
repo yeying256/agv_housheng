@@ -110,7 +110,7 @@ namespace mecheye_ros_interface
         }
 
         //set exposure time
-        mmind::api::ErrorStatus status = device.setScan2DExposureTime(400);
+        mmind::api::ErrorStatus status = device.setScan2DExposureTime(30);
         showError(status);
 
         add_user_set_service = nh.advertiseService("add_user_set", &MechMindCamera::add_user_set_callback, this);

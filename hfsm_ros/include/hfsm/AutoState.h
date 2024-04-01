@@ -15,6 +15,8 @@
 #include <agv_msg/visual_point_move.h>
 #include <hfsm/AdjustState.h>
 
+// #define USE_MOVE_BASE
+
 
 
 namespace hfsm_ns

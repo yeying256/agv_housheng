@@ -68,6 +68,7 @@ add_service_files(
   reltive_pose_ar_get.srv
   reltive_pose_visual.srv
   visual_point_move.srv
+  GP_nav.srv
 )
 
 

@@ -96,87 +96,86 @@ int main(int argc, char **argv)
 
             // wangxiao
 
-            // if (context->nav_flag == 0)
-            // {
-            //     // if (way_point == 1)
-            //     // {
-            //     //     std::cout << "send waypoint" << std::endl;
-            //     //     // 途经点
-            //     //     // position:
-            //     //     //   x: 3.250909663628529
-            //     //     //   y: 1.1240992506836955
-            //     //     //   z: 0.0
-            //     //     // orientation:
-            //     //     //   x: 0.0
-            //     //     //   y: 0.0
-            //     //     //   z: -0.5693786770583407
-            //     //     //   w: 0.8220753749573659
+            if (context->nav_flag == 0)
+            {
+                if (way_point == 1)
+                {
+                    std::cout << "send waypoint" << std::endl;
+                    // 途经点
+                        // 		x: 3.060587364997074
+                        //   y: -0.5225231791775863
+                        //   z: 0.0
+                        // orientation: 
+                        //   x: 0.0
+                        //   y: 0.0
+                        //   z: 0.5805667186466207
+                        //   w: 0.8142126781129704
 
-            //     //     geometry_msgs::Quaternion q;
-            //     //     q.w = 0.8220753749573659;
-            //     //     q.z = -0.5693786770583407;
-            //     //     q.y = 0;
-            //     //     q.x = 0;
-            //     //     EventData e = EventData((int)go_);
-            //     //     goal_data put = {3.250909663628529, 1.1240992506836955, q};
-            //     //     e.SetData(&put);
-            //     //     context->SendEvent(e);
-            //     //     way_point = 0;
-            //     //     // continue;
-            //     //     // context->take_flag = 0;
-            //     // }
+                    geometry_msgs::Quaternion q;
+                    q.w = 0.8142126781129704;
+                    q.z = 0.5805667186466207;
+                    q.y = 0;
+                    q.x = 0;
+                    EventData e = EventData((int)go_);
+                    goal_data put = {3.060587364997074, -0.5225231791775863, q};
+                    e.SetData(&put);
+                    context->SendEvent(e);
+                    way_point = 0;
+                    // continue;
+                    // context->take_flag = 0;
+                }
 
-            //     if (context->take_flag == 1)
-            //     {
-            //         // 放
-            //         // position:
-            //         // x: 4.201893556236952
-            //         // y: -0.9959773657127725
-            //         // z: 0.0
-            //         // orientation:
-            //         // x: 0.0
-            //         // y: 0.0
-            //         // z: -0.5843139394532142
-            //         // w: 0.811527707574218
+                // if (context->take_flag == 1)
+                // {
+                //     // 放
+                //     // position:
+                //     // x: 4.201893556236952
+                //     // y: -0.9959773657127725
+                //     // z: 0.0
+                //     // orientation:
+                //     // x: 0.0
+                //     // y: 0.0
+                //     // z: -0.5843139394532142
+                //     // w: 0.811527707574218
 
-            //         geometry_msgs::Quaternion q;
-            //         q.w = 0.811527707574218;
-            //         q.z = -0.5843139394532142;
-            //         q.y = 0;
-            //         q.x = 0;
-            //         EventData e = EventData((int)go_);
-            //         goal_data put = {4.201893556236952, -0.9959773657127725, q};
-            //         e.SetData(&put);
-            //         context->SendEvent(e);
-            //         // context->take_flag = 0;
-            //     }
+                //     geometry_msgs::Quaternion q;
+                //     q.w = 0.811527707574218;
+                //     q.z = -0.5843139394532142;
+                //     q.y = 0;
+                //     q.x = 0;
+                //     EventData e = EventData((int)go_);
+                //     goal_data put = {4.201893556236952, -0.9959773657127725, q};
+                //     e.SetData(&put);
+                //     context->SendEvent(e);
+                //     // context->take_flag = 0;
+                // }
 
-            //     if (context->put_flag == 1)
-            //     {
-            //         // 放
-            //         // position:
-            //         //   x: 4.441739180668326
-            //         //   y: -1.5032635120511704
-            //         //   z: 0.0
-            //         // orientation:
-            //         //   x: 0.0
-            //         //   y: 0.0
-            //         //   z: -0.5738386402429688
-            //         //   w: 0.8189683845937525
-            //         std::cout << "go to put down" << std::endl;
+                // if (context->put_flag == 1)
+                // {
+                //     // 放
+                //     // position:
+                //     //   x: 4.441739180668326
+                //     //   y: -1.5032635120511704
+                //     //   z: 0.0
+                //     // orientation:
+                //     //   x: 0.0
+                //     //   y: 0.0
+                //     //   z: -0.5738386402429688
+                //     //   w: 0.8189683845937525
+                //     std::cout << "go to put down" << std::endl;
 
-            //         geometry_msgs::Quaternion q;
-            //         q.w = 0.8241698824972953;
-            //         q.z = -0.5663426566879758;
-            //         q.y = 0;
-            //         q.x = 0;
-            //         EventData e = EventData((int)go_);
-            //         goal_data start = {10.870451444661438, 4.875714719729624, q};
-            //         e.SetData(&start);
-            //         context->SendEvent(e);
-            //         // context->take_flag = 0;
-            //     }
-            // }
+                //     geometry_msgs::Quaternion q;
+                //     q.w = 0.8241698824972953;
+                //     q.z = -0.5663426566879758;
+                //     q.y = 0;
+                //     q.x = 0;
+                //     EventData e = EventData((int)go_);
+                //     goal_data start = {10.870451444661438, 4.875714719729624, q};
+                //     e.SetData(&start);
+                //     context->SendEvent(e);
+                //     // context->take_flag = 0;
+                // }
+            }
 
             // if (context->nav.ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED && way_point == 1)
             // {
@@ -192,10 +191,10 @@ int main(int argc, char **argv)
             // }
 
             // 前面导航进入取料位置
-            if (context->nav_flag == 0)
-            {
-                context->nav_flag = 1;
-            }
+            // if (context->nav_flag == 0)
+            // {
+            //     context->nav_flag = 1;
+            // }
 
             // 如果前面运行过了，并且拿起来了
             if (context->nav_flag == 1)
@@ -205,7 +204,6 @@ int main(int argc, char **argv)
                 {
                     // 放料
                     EventData e = EventData((int)put_);
-                    context->SendEvent(e);
 
                     // 把这个消息发过去
                     std::vector<geometry_msgs::Pose> way_point;
@@ -265,6 +263,11 @@ int main(int argc, char **argv)
             ar_data send;
             // if (context->take_flag == 0)
             // pre hight width
+            // pre_height – 预备状态夹爪的高度
+            // pre_width – 预备状态夹爪宽度
+            // grab_width – 动作的时候夹爪的宽度
+            // grab_height – 动作时候夹爪的高度
+            // workbench_id
             send = {894, 400, 1000, 400, 0};
 
             // else if (context->put_flag == 1)

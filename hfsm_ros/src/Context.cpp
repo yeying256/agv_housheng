@@ -116,8 +116,6 @@ void Context::buttonCallback(const agv_msg::Button::ConstPtr &msg)
 		// }
 		case stop_:
 		{
-			// EventData e = EventData((int)unlock_);
-			// this->SendEvent(e);
 			client.waitForExistence();
 			srv.request.status = 0;
 
@@ -127,7 +125,7 @@ void Context::buttonCallback(const agv_msg::Button::ConstPtr &msg)
 			if (client.call(srv))
 			{
 				ROS_INFO("EMERGENCY STOP!");
-				this->TransForState("Lock");
+				this->TransForState("Idle");
 			}
 			else
 				ROS_ERROR("STOP FAILED!");
@@ -139,7 +137,7 @@ void Context::buttonCallback(const agv_msg::Button::ConstPtr &msg)
 			// EventData e = EventData((int)unlock_);
 			// this->SendEvent(e);
 			std::string current_state = this->GetCurStateName();
-			if (current_state == "Idle")
+			if (current_state == "Idle" || current_state == "Telecontrol")
 			{
 				client.waitForExistence();
 				srv.request.status = 4;
@@ -197,12 +195,24 @@ void Context::buttonCallback(const agv_msg::Button::ConstPtr &msg)
 
 			this->TransForState("Auto");
 			geometry_msgs::Quaternion q;
-			q.w = 0.01746241603211958;
-			q.z = -0.9998475203881446;
+
+	// 		x: 3.060587364997074
+    //   y: -0.5225231791775863
+    //   z: 0.0
+    // orientation: 
+    //   x: 0.0
+    //   y: 0.0
+    //   z: 0.5805667186466207
+    //   w: 0.8142126781129704
+
+
+			q.w = 0.8142126781129704;
+			q.z = 0.5805667186466207;
 			q.y = 0;
 			q.x = 0;
 			EventData e = EventData((int)go_);
-			goal_data start = {-4.487979013164646, 3.4279136259250427, q};
+			std::cout<<"进入task_"<<std::endl;
+			goal_data start = {3.060587364997074, -0.5225231791775863, q};
 			e.SetData(&start);
 			this->SendEvent(e);
 			break;
