@@ -109,6 +109,8 @@ public:
 
 	void SendEvent(EventData event_data);
 
+	void update_feedback();
+
 	// 获取当前状态名称
 	std::string GetCurStateName();
 

@@ -34,6 +34,7 @@ namespace hfsm_ns
     void AdjustState::stop()
     {
         printf_green("Adjust stop");
+        _context->detector_type = DetectorType((int)sleep_);
     }
 
     double AdjustState::RealData2SrvData(double RealData, Data_type Types)
@@ -200,7 +201,7 @@ namespace hfsm_ns
         // 一直查询是否结束运动
         do
         {
-            if (this->_context->GetCurStateName() == "Lock")
+            if (this->_context->GetCurStateName() == "Lock" || this->_context->GetCurStateName() == "Idle")
                 break; // 跳出循环
             req.state = 2;
             // 相对运动查询状态：1是运行，0是停止 2是查询状态
@@ -218,7 +219,7 @@ namespace hfsm_ns
         // 当没运动结束并且是调整状态的时候，持续执行循环
 
         // 如果进入了锁定状态，那么久发送0停止
-        if (this->_context->GetCurStateName() == "Lock")
+        if (this->_context->GetCurStateName() == "Lock" || this->_context->GetCurStateName() == "Idle")
         {
             // req.state = 0;
             // //发送0，停止
@@ -296,15 +297,22 @@ namespace hfsm_ns
         //     x: 1.1960333585739136
         // y: 0.08133205771446228
         // theta: 0.023117946460843086
-
-        // 进入预备点
-        if (!relative_move_cmd(1.196033, 0.081332, 0.0231179, _context->object_list[0].pose))
+        
+        this->_context->update_feedback();
+        std::cout << "_context->object_listsize  =" << _context->object_list.size() << std::endl;
+        while (ros::ok())
         {
-            return;
+            if (!relative_move_cmd(1.23245, -0.26491, 0.02329, _context->object_list[0].pose))
+                return;
+
+            if (this->_context->GetCurStateName() == "Lock" || this->_context->GetCurStateName() == "Idle")
+                return;
         }
 
+        // 进入预备点
+
         // 预备向里面伸进去，将宽度改变为料的宽度
-        double target_length = _context->object_list[0].length + 85.0;
+        double target_length = _context->object_list[0].length + 45.0;
         if (grab_move(target_length, pre_height, true))
         {
             ROS_INFO("GRAB MOVE!");
@@ -315,14 +323,38 @@ namespace hfsm_ns
         }
 
         // 调整一下
-        if (!relative_move_cmd(1.196033, 0.081332, 0.0231179, _context->object_list[0].pose))
+        this->_context->update_feedback();
+
+        while (ros::ok())
         {
-            return;
+            if (!relative_move_cmd(1.23245, -0.26491, 0.02329, _context->object_list[0].pose))
+                return;
+
+            if (this->_context->GetCurStateName() == "Lock" || this->_context->GetCurStateName() == "Idle")
+                return;
+
+            sleep(5);
         }
+
         // 再调整一下
-        if (!relative_move_cmd(1.196033, 0.081332, 0.0231179, _context->object_list[0].pose))
+        this->_context->update_feedback();
+
+        while (ros::ok())
         {
-            return;
+
+            if (_context->object_list.size() != 0)
+            {
+                if (!relative_move_cmd(1.23245, -0.26491, 0.02329, _context->object_list[0].pose))
+                {
+                    return;
+                }
+                break;
+            }
+
+            if (this->_context->GetCurStateName() == "Lock" || this->_context->GetCurStateName() == "Idle")
+                return;
+
+            sleep(5);
         }
 
         // 重新调整夹爪宽度
@@ -339,20 +371,39 @@ namespace hfsm_ns
         //     y: 0.04687689617276192
         //     theta: 0.006656110752373934
         // 进去
-        if (!relative_move_cmd(0.797191, 0.04687689, 0.0066561, _context->object_list[0].pose))
-        {
-            return;
-        }
+        this->_context->update_feedback();
+
+        // while (ros::ok())
+        // {
+
+        //     if (_context->object_list.size() != 0)
+        //     {
+        //         if (!relative_move_cmd(0.797191, -0.26491, 0.00029, _context->object_list[0].pose))
+        //         {
+        //             return;
+        //         }
+        //         break;
+        //     }else
+        //     {
+        //         e = EventData((int)photo_);
+        //         this -> _context ->SendEvent(e);
+        //     }
+
+        //     if (this->_context->GetCurStateName() == "Lock" || this->_context->GetCurStateName() == "Idle")
+        //     return;
+
+        //     sleep(1);
+        // }
 
         sleep(2.0);
 
         // 抬升
-        if (grab_move(999, grab_height, false))
-        {
-            ROS_INFO("GRAB MOVE!");
-        }
-        else
-            ROS_INFO("GRAB LIFT FAILED!");
+        // if (grab_move(999, grab_height, false))
+        // {
+        //     ROS_INFO("GRAB MOVE!");
+        // }
+        // else
+        //     ROS_INFO("GRAB LIFT FAILED!");
 
         //         x: 1.3383946418762207
         // y: 0.026927808299660683
@@ -443,8 +494,8 @@ namespace hfsm_ns
         */
 
         // 相对运动停止
-        /*
-        if (this->_context->GetCurStateName() == "Lock")
+
+        if (this->_context->GetCurStateName() == "Lock" || this->_context->GetCurStateName() == "Idle")
         {
             // req.state = 0;
             // //发送0，停止
@@ -460,8 +511,6 @@ namespace hfsm_ns
             }
             return;
         }
-
-        */
 
         // if (this->_context->take_flag != 1)
         // {

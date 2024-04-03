@@ -56,6 +56,22 @@ void Context::SendEvent(EventData event_data)
 	RecursiveSend(_cur_node_state, event_data);
 }
 
+void Context::update_feedback()
+{
+	if (detector_type == feedback_ && GetCurStateName() == "Adjust")
+	{
+		EventData e = EventData((int)photo_);
+		do
+		{
+			ROS_INFO("take photo");
+			SendEvent(e);
+			ros::Duration(0.5).sleep();
+		} while (!single_flag);
+	}
+	else
+		ROS_ERROR("Detetor State Error");
+}
+
 std::string Context::GetCurStateName()
 {
 	return _cur_name;
@@ -100,20 +116,20 @@ void Context::buttonCallback(const agv_msg::Button::ConstPtr &msg)
 			this->Update();
 			break;
 		}
-		// case goback_:
-		// {
-		// 	this->TransForState("Auto");
-		// 	geometry_msgs::Quaternion q;
-		// 	q.w = 1;
-		// 	q.z = 0;
-		// 	q.y = 0;
-		// 	q.x = 0;
-		// 	EventData e = EventData((int)go_);
-		// 	goal_data start = {0.0, 0.0, q};
-		// 	e.SetData(&start);
-		// 	this->SendEvent(e);
-		// 	break;
-		// }
+		case goback_:
+		{
+			this->TransForState("Auto");
+			geometry_msgs::Quaternion q;
+			q.w = 1;
+			q.z = 0;
+			q.y = 0;
+			q.x = 0;
+			EventData e = EventData((int)go_);
+			goal_data start = {0.0, 0.0, q};
+			e.SetData(&start);
+			this->SendEvent(e);
+			break;
+		}
 		case stop_:
 		{
 			client.waitForExistence();
@@ -196,22 +212,21 @@ void Context::buttonCallback(const agv_msg::Button::ConstPtr &msg)
 			this->TransForState("Auto");
 			geometry_msgs::Quaternion q;
 
-	// 		x: 3.060587364997074
-    //   y: -0.5225231791775863
-    //   z: 0.0
-    // orientation: 
-    //   x: 0.0
-    //   y: 0.0
-    //   z: 0.5805667186466207
-    //   w: 0.8142126781129704
-
+			// 		x: 3.060587364997074
+			//   y: -0.5225231791775863
+			//   z: 0.0
+			// orientation:
+			//   x: 0.0
+			//   y: 0.0
+			//   z: 0.5805667186466207
+			//   w: 0.8142126781129704
 
 			q.w = 0.8142126781129704;
 			q.z = 0.5805667186466207;
 			q.y = 0;
 			q.x = 0;
 			EventData e = EventData((int)go_);
-			std::cout<<"进入task_"<<std::endl;
+			std::cout << "进入task_" << std::endl;
 			goal_data start = {3.060587364997074, -0.5225231791775863, q};
 			e.SetData(&start);
 			this->SendEvent(e);
@@ -221,8 +236,9 @@ void Context::buttonCallback(const agv_msg::Button::ConstPtr &msg)
 		{
 			client.waitForExistence();
 			srv.request.status = 5;
-			srv.request.high = 212;
-			srv.request.width = 305;
+			// (1190-940)/2
+			srv.request.high = 190;
+			srv.request.width = 180;
 			if (client.call(srv))
 			{
 				ROS_INFO("GRAB MOVE!");
@@ -265,7 +281,7 @@ void Context::statusCallback(const move_base_msgs::MoveBaseActionResult &msg)
  */
 void Context::yoloCallback(const agv_msg::YoloResult &msg)
 {
-	// std::cout << "detector pub!" << std::endl;
+	std::cout << int(detector_type) << std::endl;
 	// ros::Time t = ros::Time::now();
 	// ros::Time t_error = t - ros::Duration(0.05);
 	// detector_flag = (msg.header.stamp > t_error) ? true : false;
@@ -288,7 +304,12 @@ void Context::yoloCallback(const agv_msg::YoloResult &msg)
 		for (int i = 0; i < n; i++)
 		{
 			Object obj;
-			obj.pose = msg.position[i];
+			// 来的数据为mm要改成m
+			// obj.pose = msg.position[i];
+			obj.pose.x = msg.position[i].x / 1000.0;
+			obj.pose.y = msg.position[i].y / 1000.0;
+			obj.pose.theta = msg.position[i].theta;
+
 			obj.length = msg.length[i];
 			sum_len += obj.length;
 			object_list.push_back(obj);
@@ -302,22 +323,32 @@ void Context::yoloCallback(const agv_msg::YoloResult &msg)
 	case feedback_:
 	{
 		single_flag = (n == 1) ? true : false;
+		std::cout<<"n = "<<n<<",,,single_flag = "<<single_flag<<std::endl;
 		if (single_flag)
 		{
 			length_result_buffer.pop_front();
 			length_result_buffer.push_back(msg.length[0]);
 			double var = VectorVar(length_result_buffer);
+			std::cout<<"var = "<<var<<std::endl;
 
 			if (var < 0.5)
 			{
 				Object obj;
-				obj.pose = msg.position[0];
+				// obj.pose = msg.position[0];
+				obj.pose.x = msg.position[0].x / 1000.0;
+				obj.pose.y = msg.position[0].y / 1000.0;
+				obj.pose.theta = msg.position[0].theta;
 				obj.length = msg.length[0];
+				std::cout<<"obj.length = "<<obj.length<<std::endl;
+
 				object_list.push_back(obj);
 			}
+			else
+				single_flag = false;
 		}
 		break;
 	}
+
 	default:
 		break;
 	}

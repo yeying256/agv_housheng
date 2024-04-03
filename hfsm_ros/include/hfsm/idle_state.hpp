@@ -2,7 +2,7 @@
  * @Author: LHYLHYY 876814061@qq.com
  * @Date: 2024-01-30 18:12:50
  * @LastEditors: LHYLHYY 876814061@qq.com
- * @LastEditTime: 2024-02-02 16:34:04
+ * @LastEditTime: 2024-04-03 11:47:37
  * @FilePath: /catkin_ws/src/agv_sim/hfsm_ros/include/hfsm/idle_state.hpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -47,6 +47,7 @@ namespace hfsm_ns
         void stop()
         {
             printf_green("IdleState stop");
+            _context->detector_type = DetectorType((int)sleep_);
         }
 
         EventDeal DealEvent(EventData &event_data)

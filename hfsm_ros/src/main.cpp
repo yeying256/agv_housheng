@@ -102,22 +102,22 @@ int main(int argc, char **argv)
                 {
                     std::cout << "send waypoint" << std::endl;
                     // 途经点
-                        // 		x: 3.060587364997074
-                        //   y: -0.5225231791775863
-                        //   z: 0.0
-                        // orientation: 
-                        //   x: 0.0
-                        //   y: 0.0
-                        //   z: 0.5805667186466207
-                        //   w: 0.8142126781129704
+                    // 		x: 3.060587364997074
+                    //   y: -0.5225231791775863
+                    //   z: 0.0
+                    // orientation: 
+                    //   x: 0.0
+                    //   y: 0.0
+                    //   z: 0.5805667186466207
+                    //   w: 0.8142126781129704
 
                     geometry_msgs::Quaternion q;
-                    q.w = 0.8142126781129704;
-                    q.z = 0.5805667186466207;
+                    q.w = 0.8130156795809587;
+                    q.z = 0.5822417923470556;
                     q.y = 0;
                     q.x = 0;
                     EventData e = EventData((int)go_);
-                    goal_data put = {3.060587364997074, -0.5225231791775863, q};
+                    goal_data put = {2.91035048977949, -0.4558212749612451, q};
                     e.SetData(&put);
                     context->SendEvent(e);
                     way_point = 0;
@@ -250,15 +250,6 @@ int main(int argc, char **argv)
         }
         else if (context->GetCurStateName() == "Adjust")
         {
-            if (!context->single_flag)
-            {
-                ROS_INFO("take photo");
-                EventData e = EventData((int)photo_);
-                context->SendEvent(e);
-                ros::Duration(1.0).sleep();
-                continue;
-            }
-
             EventData e = EventData((int)task_);
             ar_data send;
             // if (context->take_flag == 0)
@@ -268,25 +259,9 @@ int main(int argc, char **argv)
             // grab_width – 动作的时候夹爪的宽度
             // grab_height – 动作时候夹爪的高度
             // workbench_id
-            send = {894, 400, 1000, 400, 0};
-
-            // else if (context->put_flag == 1)
-            // {
-            //     send = {420, 999, 420, 280, 0};
-            //     context->put_flag = 0;
-            //     context->take_flag = 0;
-            // }
-            // else
-            // {
-            //     send = {0, 999, 0, 999, 1};
-            //     context->put_flag = 1;
-            // }
-            // std::cout<<"single_flag = "<<context->single_flag<<std::endl;
-            if (context->single_flag == true)
-            {
-                e.SetData(&send);
-                context->SendEvent(e);
-            }
+            send = {850, 950, 1000, 950, 0};
+            e.SetData(&send);
+            context->SendEvent(e);
         }
         else if (current_state == "Idle")
         {
