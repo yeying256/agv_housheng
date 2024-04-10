@@ -37,6 +37,8 @@ namespace hfsm_ns
             #else
 
             #endif
+            ROS_INFO("GO!!!");
+
 
             agv_msg::grab_agv srv;
             //agv单独运动
@@ -60,9 +62,10 @@ namespace hfsm_ns
 
             while(ros::ok())
             {
-                sleep(0.1);
+                // sleep(0.1);
+                ros::Duration(0.1).sleep();
                 // std::cout<<"正在前往目标点"<<std::endl;
-                // std::cout<<this->_context->GetCurStateName()<<std::endl;
+                // std::cout<<"this->_context->GetCurStateName() = "<<this->_context->GetCurStateName()<<std::endl;
                 if (this->_context->GetCurStateName() == "Lock"||this->_context->GetCurStateName() == "Idle")
                 {
                 printf_yellow("lock1");

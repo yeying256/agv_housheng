@@ -8,11 +8,14 @@
 #include <ros/ros.h>
 #include <agv_msg/Button.h>
 #include <agv_msg/grab_agv.h>
-#include <agv_msg/YoloResult.h>
+#include <agv_msg/detector.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <hfsm/SendGoal.h>
+// 记录数据用的
+#include "eigen2file.h"
 
 #define OBJ_LEN 5000
+// #define USE_MOVE_BASE
 
 class State;
 enum EventS
@@ -109,7 +112,7 @@ public:
 
 	void SendEvent(EventData event_data);
 
-	void update_feedback();
+	bool update_feedback(Object &obj);
 
 	// 获取当前状态名称
 	std::string GetCurStateName();
@@ -120,7 +123,7 @@ public:
 	// 状态回调。action的回调。
 	void statusCallback(const move_base_msgs::MoveBaseActionResult &msg);
 
-	void yoloCallback(const agv_msg::YoloResult &msg);
+	void yoloCallback(const agv_msg::detector::Response &msg);
 
 	// 状态转换
 	void TransForState(std::string name);

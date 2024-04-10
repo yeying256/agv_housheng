@@ -4,6 +4,7 @@
 #include <iostream>
 #include <functional>
 #include <vector>
+#include <thread>
 #include <ros/ros.h>
 #include <agv_msg/Button.h>
 #include <agv_msg/reltive_pose.h>
@@ -23,8 +24,10 @@
 #include "hfsm/TelecontrolState.h"
 #include "hfsm/AutoState.h"
 #include "hfsm/hardware_init_state.hpp"
+#include "hfsm/GohomeState.h"
 
 #include "signal.h"
+#include "geometry_msgs/Twist.h"
 
 using namespace hfsm_ns;
 
@@ -35,18 +38,40 @@ void hardwareLoggerCallback(const agv_msg::error_log &msg)
     ROS_INFO("%s", msg.error_msg);
 }
 
+xj_dy_ns::Eigen2file vel_log_;
+void cmd_vel_cb(const geometry_msgs::Twist& msg)
+{
+    Eigen::VectorXd vel(3);
+    vel(0)=msg.linear.x;
+    vel(1)=msg.linear.y;
+    vel(2)=msg.angular.z;
+
+    // vel_log_.data_in(vel);
+}
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "hfsm_node");
-    ros::AsyncSpinner spinner(5);
+    ros::AsyncSpinner spinner(6);
     spinner.start();
     ros::NodeHandle nh;
 
+    // 记录数据用
+    // vel_log_.init("/home/easycell/catkin_ws/data/","cmd_vel.csv");
+    // std::vector<std::string> name;
+    // name.push_back("vx");
+    // name.push_back("vy");
+    // name.push_back("vw");
+    // vel_log_.title(name);
+
+
     Context *context = new Context(nh);
+
     ros::Subscriber sub = nh.subscribe("/push_button", 10, &Context::buttonCallback, context);
     ros::Subscriber goal_sub = nh.subscribe("move_base/result", 10, &Context::statusCallback, context);
-    ros::Subscriber yolo_sub = nh.subscribe("/DetectorResult_", 10, &Context::yoloCallback, context);
+    // ros::Subscriber yolo_sub = nh.subscribe("/DetectorResult_", 1, &Context::yoloCallback, context);
     ros::Subscriber hw_error_sub = nh.subscribe("/hardware_logger", 10, hardwareLoggerCallback);
+    // ros::Subscriber cmd_vel_datalog = nh.subscribe("/cmd_vel",10,cmd_vel_cb);
 
     // 创建状态机
     State *hardware_init = new HardwareInitState();
@@ -65,6 +90,8 @@ int main(int argc, char **argv)
     context->CreateState(adjust, "Adjust", "Idle");
     State *shutdown = new ShutdownState();
     context->CreateState(shutdown, "Shutdown");
+    State *gohome = new GohomeState();
+    context->CreateState(gohome, "Gohome");
 
     // 开始状态机
     sleep(2);
@@ -252,7 +279,6 @@ int main(int argc, char **argv)
         {
             EventData e = EventData((int)task_);
             ar_data send;
-            // if (context->take_flag == 0)
             // pre hight width
             // pre_height – 预备状态夹爪的高度
             // pre_width – 预备状态夹爪宽度
@@ -273,6 +299,21 @@ int main(int argc, char **argv)
                 ros::Duration(1.0).sleep();
             }
         }
+        else if (current_state == "Gohome")
+        {
+
+			context->TransForState("Auto");
+            geometry_msgs::Quaternion q;
+            q.w = 1;
+            q.z = 0;
+            q.y = 0;
+            q.x = 0;
+            EventData e = EventData((int)go_);
+            goal_data home = {0, 0, q};
+            e.SetData(&home);
+            context->SendEvent(e);
+        }
+
     }
 
     if (context)

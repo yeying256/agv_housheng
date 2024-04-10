@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   move_base_msgs
   agv_msg
   mecheye_ros_interface
+  robot_dynamic_cal
 )
 
 ## System dependencies are found with CMake's conventions
@@ -133,6 +134,7 @@ add_library(hfsm_lib
   src/StartState.cpp
   src/TelecontrolState.cpp
   src/AutoState.cpp
+  src/GohomeState.cpp
 )
 
 ## Add cmake target dependencies of the library

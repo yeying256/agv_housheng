@@ -297,22 +297,17 @@ namespace hfsm_ns
         //     x: 1.1960333585739136
         // y: 0.08133205771446228
         // theta: 0.023117946460843086
-        
-        this->_context->update_feedback();
-        std::cout << "_context->object_listsize  =" << _context->object_list.size() << std::endl;
-        while (ros::ok())
-        {
-            if (!relative_move_cmd(1.23245, -0.26491, 0.02329, _context->object_list[0].pose))
-                return;
+        Object obj;
+        this->_context->update_feedback(obj);
+        std::cout<<"obj.pose = "<<obj.pose<<std::endl;
 
-            if (this->_context->GetCurStateName() == "Lock" || this->_context->GetCurStateName() == "Idle")
-                return;
-        }
+        if (!relative_move_cmd(1.23245, -0.25491, 0.02329, obj.pose))
+            return;
 
         // 进入预备点
 
         // 预备向里面伸进去，将宽度改变为料的宽度
-        double target_length = _context->object_list[0].length + 45.0;
+        double target_length = obj.length + 15.0;
         if (grab_move(target_length, pre_height, true))
         {
             ROS_INFO("GRAB MOVE!");
@@ -322,40 +317,34 @@ namespace hfsm_ns
             ROS_ERROR("GRAB LIFT FAILED!");
         }
 
+        sleep(1);
         // 调整一下
-        this->_context->update_feedback();
+        this->_context->update_feedback(obj);
+        std::cout<<"obj.pose = "<<obj.pose<<std::endl;
 
-        while (ros::ok())
-        {
-            if (!relative_move_cmd(1.23245, -0.26491, 0.02329, _context->object_list[0].pose))
-                return;
 
-            if (this->_context->GetCurStateName() == "Lock" || this->_context->GetCurStateName() == "Idle")
-                return;
+        if (!relative_move_cmd(1.23245, -0.25491, 0.02329, obj.pose))
+            return;
 
-            sleep(5);
-        }
+
+        sleep(1);
 
         // 再调整一下
-        this->_context->update_feedback();
-
-        while (ros::ok())
+        this->_context->update_feedback(obj);
+        std::cout<<"obj.pose = "<<obj.pose<<std::endl;
+        
+        if (!relative_move_cmd(1.23245, -0.25491, 0.02829, obj.pose))
         {
+            return;
+        }
 
-            if (_context->object_list.size() != 0)
-            {
-                if (!relative_move_cmd(1.23245, -0.26491, 0.02329, _context->object_list[0].pose))
-                {
-                    return;
-                }
-                break;
-            }
+        
 
-            if (this->_context->GetCurStateName() == "Lock" || this->_context->GetCurStateName() == "Idle")
-                return;
+        if (this->_context->GetCurStateName() == "Lock" || this->_context->GetCurStateName() == "Idle")
+            return;
 
             sleep(5);
-        }
+        
 
         // 重新调整夹爪宽度
         if (grab_move(target_length, pre_height, true))
@@ -371,7 +360,7 @@ namespace hfsm_ns
         //     y: 0.04687689617276192
         //     theta: 0.006656110752373934
         // 进去
-        this->_context->update_feedback();
+        this->_context->update_feedback(obj);
 
         // while (ros::ok())
         // {

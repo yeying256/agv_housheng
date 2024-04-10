@@ -9,7 +9,10 @@
 
   <!-- 启动机器人所有硬件 -->
   <include file="$(find agv_run_all)/launch/agv_real.launch" />
-  <include file="$(find traj_plan_wx)/launch/plan_wx.launch" />
+  <!-- <include file="$(find traj_plan_wx)/launch/plan_wx.launch" /> -->
+
+  <!-- 启动局部规划器和全局规划器 -->
+  <include file="$(find agvsim_navigation)/launch/move_base_test.launch" />
 
 
   <!-- <node pkg="joint_state_publisher" name="joint_state_publisher" type="joint_state_publisher"/> -->

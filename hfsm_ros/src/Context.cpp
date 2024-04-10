@@ -56,20 +56,37 @@ void Context::SendEvent(EventData event_data)
 	RecursiveSend(_cur_node_state, event_data);
 }
 
-void Context::update_feedback()
+bool Context::update_feedback(Object &obj)
 {
+	Object tmp;
+	object_list.clear();
 	if (detector_type == feedback_ && GetCurStateName() == "Adjust")
 	{
 		EventData e = EventData((int)photo_);
 		do
 		{
-			ROS_INFO("take photo");
-			SendEvent(e);
-			ros::Duration(0.5).sleep();
-		} while (!single_flag);
+			tmp = obj;
+			do
+			{
+				ROS_INFO("take photo (update_feedback)");
+				SendEvent(e);
+				ros::Duration(1.5).sleep();
+
+				if (this->GetCurStateName() == "Idle")
+				{
+					return false;
+				}
+			} while (!single_flag);
+			obj = object_list[0];
+		} while (abs(obj.pose.x - tmp.pose.x) < 0.00005);
+
+		std::cout << "this is update_feedback() obj = " << obj.pose << std::endl;
+		return true;
 	}
 	else
 		ROS_ERROR("Detetor State Error");
+
+	return false;
 }
 
 std::string Context::GetCurStateName()
@@ -118,16 +135,19 @@ void Context::buttonCallback(const agv_msg::Button::ConstPtr &msg)
 		}
 		case goback_:
 		{
-			this->TransForState("Auto");
-			geometry_msgs::Quaternion q;
-			q.w = 1;
-			q.z = 0;
-			q.y = 0;
-			q.x = 0;
-			EventData e = EventData((int)go_);
-			goal_data start = {0.0, 0.0, q};
-			e.SetData(&start);
-			this->SendEvent(e);
+			this->TransForState("Gohome");
+			// geometry_msgs::Quaternion q;
+			// q.w = 1;
+			// q.z = 0;
+			// q.y = 0;
+			// q.x = 0;
+			// EventData e = EventData((int)go_);
+			// goal_data start = {0.0, 0.0, q};
+			// e.SetData(&start);
+			// std::cout<<"goback_test1"<<std::endl;
+			// this->SendEvent(e);
+			// std::cout<<"goback_test2"<<std::endl;
+
 			break;
 		}
 		case stop_:
@@ -255,6 +275,7 @@ void Context::buttonCallback(const agv_msg::Button::ConstPtr &msg)
 		}
 		}
 	}
+	std::cout<<"buttonCallback end"<<std::endl;
 }
 
 /**
@@ -279,17 +300,17 @@ void Context::statusCallback(const move_base_msgs::MoveBaseActionResult &msg)
  *
  * @param msg 储存着结果，有目标数量
  */
-void Context::yoloCallback(const agv_msg::YoloResult &msg)
+void Context::yoloCallback(const agv_msg::detector::Response &msg)
 {
 	std::cout << int(detector_type) << std::endl;
-	// ros::Time t = ros::Time::now();
-	// ros::Time t_error = t - ros::Duration(0.05);
+
 	// detector_flag = (msg.header.stamp > t_error) ? true : false;
 	if (msg.object_num == 0)
 	{
 		detector_flag = false;
 		return;
 	}
+	// 获取到图像数量
 	int n = msg.position.size();
 
 	object_list.clear();
@@ -306,11 +327,12 @@ void Context::yoloCallback(const agv_msg::YoloResult &msg)
 			Object obj;
 			// 来的数据为mm要改成m
 			// obj.pose = msg.position[i];
-			obj.pose.x = msg.position[i].x / 1000.0;
-			obj.pose.y = msg.position[i].y / 1000.0;
+			obj.pose.x = msg.position[i].x;
+			obj.pose.y = msg.position[i].y;
 			obj.pose.theta = msg.position[i].theta;
 
-			obj.length = msg.length[i];
+			obj.length = msg.length[i]*1000.0;
+			
 			sum_len += obj.length;
 			object_list.push_back(obj);
 		}
@@ -322,29 +344,29 @@ void Context::yoloCallback(const agv_msg::YoloResult &msg)
 
 	case feedback_:
 	{
+		// 获取到目标的数量 如果等于1，则有效
 		single_flag = (n == 1) ? true : false;
-		std::cout<<"n = "<<n<<",,,single_flag = "<<single_flag<<std::endl;
+
 		if (single_flag)
 		{
 			length_result_buffer.pop_front();
 			length_result_buffer.push_back(msg.length[0]);
 			double var = VectorVar(length_result_buffer);
-			std::cout<<"var = "<<var<<std::endl;
 
-			if (var < 0.5)
-			{
-				Object obj;
-				// obj.pose = msg.position[0];
-				obj.pose.x = msg.position[0].x / 1000.0;
-				obj.pose.y = msg.position[0].y / 1000.0;
-				obj.pose.theta = msg.position[0].theta;
-				obj.length = msg.length[0];
-				std::cout<<"obj.length = "<<obj.length<<std::endl;
+			// if (var < 0.5)
+			// {
+			Object obj;
+			// obj.pose = msg.position[0];
+			obj.pose.x = msg.position[0].x;
+			obj.pose.y = msg.position[0].y;
+			obj.pose.theta = msg.position[0].theta;
+			obj.length = msg.length[0]*1000.0;
+			std::cout << "obj.length = " << obj.length << std::endl;
 
-				object_list.push_back(obj);
-			}
-			else
-				single_flag = false;
+			object_list.push_back(obj);
+			// }
+			// else
+			// 	single_flag = false;
 		}
 		break;
 	}

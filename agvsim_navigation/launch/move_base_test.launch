@@ -13,7 +13,7 @@
 
 
       <!-- <rosparam file="$(find agvsim_navigation)/param/base_local_planner_params.yaml" command="load" /> -->
-      <rosparam file="$(find agvsim_navigation)/param/dwa_local_planner_params.yaml" command="load" />
+      <!-- <rosparam file="$(find agvsim_navigation)/param/dwa_local_planner_params.yaml" command="load" /> -->
 
       <!-- 全局的参数 -->
       <rosparam file="$(find agvsim_navigation)/param/navfn_global_planner_params.yaml" command="load" />
@@ -21,7 +21,7 @@
 
       <!-- teb参数 -->
 
-      <!-- <rosparam file="$(find agvsim_navigation)/param/teb_local_planner_params.yaml" command="load" /> -->
+      <rosparam file="$(find agvsim_navigation)/param/teb_local_planner_params.yaml" command="load" />
       <!-- <rosparam file="$(find agvsim_navigation)/param/teb_yuan.yaml" command="load" /> -->
 
 

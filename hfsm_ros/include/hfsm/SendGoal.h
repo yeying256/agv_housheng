@@ -2,7 +2,7 @@
  * @Author: LHYLHYY 876814061@qq.com
  * @Date: 2024-01-30 18:12:50
  * @LastEditors: LHYLHYY 876814061@qq.com
- * @LastEditTime: 2024-03-31 20:36:38
+ * @LastEditTime: 2024-04-06 18:28:46
  * @FilePath: /catkin_ws/src/agv_sim/hfsm_ros/include/hfsm/SendGoal.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,6 +13,9 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 #include "agv_msg/GP_nav.h"
+#include "hfsm/Context.h"
+// #define USE_MOVE_BASE
+
 /*
  move_base_msgs::MoveBaseAction
  move_base在world中的目标
@@ -27,18 +30,15 @@ private:
 
 
 public:
-#ifdef USE_MOVE_BASE
+
     MoveBaseClient ac;
-#endif
+
     ros::ServiceClient GP_srv_;
     ros::NodeHandle nh_;
 
 public:
     // 创建action客户端，参数1：action名，参数2：true，不需要手动调用ros::spin()，会在它的线程中自动调用。
-    NavState()
-    #ifdef USE_MOVE_BASE
-     : ac("move_base", true)
-    #endif
+    NavState(): ac("move_base", true)
     {
 
         // visual_client = n.serviceClient<agv_msg::visual_point_move>("/visual_point_move");
