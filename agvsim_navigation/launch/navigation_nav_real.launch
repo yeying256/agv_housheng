@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+  <param name="/use_sim_time" value="false" />
+  <!-- 加载机器人参数 -->
+  <param name="robot_description" textfile="$(find agv_real)/urdf/agv_real.urdf" />
+
+  <!-- 打开状态机 -->
+  <node pkg="hfsm" type="test_nav" name="test_nav" output="screen" required="true" />
+
+  <!-- 启动机器人所有硬件 -->
+  <include file="$(find agv_run_all)/launch/agv_real.launch" />
+  <include file="$(find traj_plan_wx)/launch/plan_wx.launch" />
+
+
+  <!-- <node pkg="joint_state_publisher" name="joint_state_publisher" type="joint_state_publisher"/> -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <remap from="/joint_states" to="/agv_sim/joint_states" />
+  </node>
+
+  <!-- 键盘控制节点 -->
+  <!-- <node pkg="teleop_twist_keyboard" name="teleop_twist_keyboard.py"
+  type="teleop_twist_keyboard.py" /> -->
+
+
+</launch>

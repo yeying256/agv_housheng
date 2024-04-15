@@ -70,7 +70,6 @@ bool Context::update_feedback(Object &obj)
 			{
 				ROS_INFO("take photo (update_feedback)");
 				SendEvent(e);
-				ros::Duration(1.5).sleep();
 
 				if (this->GetCurStateName() == "Idle")
 				{
@@ -184,10 +183,10 @@ void Context::buttonCallback(const agv_msg::Button::ConstPtr &msg)
 				}
 				else
 					ROS_ERROR("UNLOCK FAILED");
-				break;
 			}
 			else
 				ROS_ERROR("StateTrans error, current state is %s", current_state.c_str());
+			break;
 		}
 		case grab_reset_:
 		{
@@ -289,7 +288,7 @@ void Context::statusCallback(const move_base_msgs::MoveBaseActionResult &msg)
 	{
 		std::cout << "the goal was achieved successfully!" << std::endl;
 
-		this->nav_flag = 0; // 导航结束，发布下一个命令
+		// this->nav_flag = 0; // 导航结束，发布下一个命令
 
 		// this->TransForState("Adjust");//导航结束就跳转到调整命令？？？？
 	}
@@ -335,6 +334,10 @@ void Context::yoloCallback(const agv_msg::detector::Response &msg)
 			
 			sum_len += obj.length;
 			object_list.push_back(obj);
+			std::cout<<"obj.pose.x = "<<obj.pose.x<<std::endl;
+			std::cout<<"obj.pose.y = "<<obj.pose.y<<std::endl;
+			std::cout<<"obj.pose.theta = "<<obj.pose.theta<<std::endl;
+			std::cout<<"obj.length = "<<obj.length<<std::endl;
 		}
 
 		detector_flag = (OBJ_LEN - sum_len < 500) ? true : false;
@@ -367,6 +370,11 @@ void Context::yoloCallback(const agv_msg::detector::Response &msg)
 			// }
 			// else
 			// 	single_flag = false;
+
+			std::cout<<"obj.pose.x = "<<obj.pose.x<<std::endl;
+			std::cout<<"obj.pose.y = "<<obj.pose.y<<std::endl;
+			std::cout<<"obj.pose.theta = "<<obj.pose.theta<<std::endl;
+			std::cout<<"obj.length = "<<obj.length<<std::endl;
 		}
 		break;
 	}

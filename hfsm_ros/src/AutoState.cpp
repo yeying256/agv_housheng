@@ -105,7 +105,21 @@ namespace hfsm_ns
         //放料
         if ((EventS)event_data._event_type == put_)
         {
-            _context->nav_flag = 1;
+            // _context->nav_flag = 1;
+         
+            agv_msg::grab_agv srv;
+            //agv单独运动
+            srv.request.status = 4;
+            if (this->_context->client.call(srv))
+            {
+                ROS_INFO("AGV MOVE!");
+            }
+            else
+                ROS_INFO("AGV MOVE FAILED!");
+
+            ROS_INFO("send goal");
+         
+         
             geometry_msgs::Pose test1;
             std::vector<geometry_msgs::Pose>* way_point = event_data.GetData<std::vector<geometry_msgs::Pose>>();
 

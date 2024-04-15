@@ -163,6 +163,21 @@ target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
 )
 
+add_executable(test_nav src/test_navagation_main.cpp src/Context.cpp src/State.cpp)
+add_dependencies(test_nav ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(test_nav
+  hfsm_lib
+  ${catkin_LIBRARIES}
+)
+
+
+add_executable(test_visual src/test_visual_test.cpp src/Context.cpp src/State.cpp)
+add_dependencies(test_visual ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(test_visual
+  hfsm_lib
+  ${catkin_LIBRARIES}
+)
+
 #############
 ## Install ##
 #############

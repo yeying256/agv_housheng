@@ -90,10 +90,13 @@ namespace hfsm_ns
         srv.request.high = RealData2SrvData(hight, HEIGHT);
         printf_yellow("指令结束");
 
+
         if (!this->_context->client.call(srv))
         {
+            ROS_ERROR("GRAB LIFT FAILED!");
             return false;
         }
+        ROS_INFO("GRAB MOVE!");
         return true;
     }
 
@@ -285,14 +288,8 @@ namespace hfsm_ns
         // srv.request.high = pre_height;
 
         // 夹爪高度到预备高度，宽度不动
-        if (grab_move(999, pre_height, false))
-        {
-            ROS_INFO("GRAB MOVE!");
-        }
-        else
-        {
-            ROS_ERROR("GRAB LIFT FAILED!");
-        }
+        grab_move(999, pre_height, false);
+
 
         //     x: 1.1960333585739136
         // y: 0.08133205771446228
@@ -301,21 +298,19 @@ namespace hfsm_ns
         this->_context->update_feedback(obj);
         std::cout<<"obj.pose = "<<obj.pose<<std::endl;
 
-        if (!relative_move_cmd(1.23245, -0.25491, 0.02329, obj.pose))
-            return;
+        geometry_msgs::Pose2D pre_target;
+        pre_target.x = 1.23245;
+        pre_target.y = -0.22091;
+        pre_target.theta = 0.0;
 
+        if (!relative_move_cmd(pre_target.x, pre_target.y, pre_target.theta, obj.pose))
+            return;
         // 进入预备点
 
         // 预备向里面伸进去，将宽度改变为料的宽度
-        double target_length = obj.length + 15.0;
-        if (grab_move(target_length, pre_height, true))
-        {
-            ROS_INFO("GRAB MOVE!");
-        }
-        else
-        {
-            ROS_ERROR("GRAB LIFT FAILED!");
-        }
+        double target_length = obj.length + 55.0;
+        grab_move(target_length, pre_height, true);
+
 
         sleep(1);
         // 调整一下
@@ -323,8 +318,10 @@ namespace hfsm_ns
         std::cout<<"obj.pose = "<<obj.pose<<std::endl;
 
 
-        if (!relative_move_cmd(1.23245, -0.25491, 0.02329, obj.pose))
+        if (!relative_move_cmd(pre_target.x, pre_target.y, pre_target.theta, obj.pose))
             return;
+        grab_move(target_length, pre_height, true);
+
 
 
         sleep(1);
@@ -333,34 +330,26 @@ namespace hfsm_ns
         this->_context->update_feedback(obj);
         std::cout<<"obj.pose = "<<obj.pose<<std::endl;
         
-        if (!relative_move_cmd(1.23245, -0.25491, 0.02829, obj.pose))
-        {
+        if (!relative_move_cmd(pre_target.x, pre_target.y, pre_target.theta, obj.pose))
             return;
-        }
+        grab_move(target_length, pre_height, true);
 
         
 
         if (this->_context->GetCurStateName() == "Lock" || this->_context->GetCurStateName() == "Idle")
             return;
-
-            sleep(5);
         
 
         // 重新调整夹爪宽度
-        if (grab_move(target_length, pre_height, true))
-        {
-            ROS_INFO("GRAB MOVE!");
-        }
-        else
-        {
-            ROS_ERROR("GRAB LIFT FAILED!");
-        }
+        grab_move(target_length, pre_height, true);
 
         // x: 0.7971910238265991
         //     y: 0.04687689617276192
         //     theta: 0.006656110752373934
         // 进去
         this->_context->update_feedback(obj);
+        if (!relative_move_cmd(0.8, pre_target.y, pre_target.theta, obj.pose))
+        return;
 
         // while (ros::ok())
         // {
@@ -410,27 +399,24 @@ namespace hfsm_ns
         //  }
 
         // 改变为抬起来的
-        // if (grab_move(target_length,grab_height,true))
+        if (grab_move(target_length,grab_height,true))
 
-        this->_context->take_flag = 1;
+        // 夹爪下降
+        grab_move(999, pre_height, false);
+
+        // this->_context->take_flag = 1;
 
         geometry_msgs::Pose2D back_tmp;
         back_tmp.x = 0.0;
         back_tmp.y = 0.0;
         back_tmp.theta = 0.0;
         // 撤走的代码
-        if (!relative_move_cmd(0.5, 0.0, 0.0, back_tmp))
+        if (!relative_move_cmd(0.6, 0.0, 0.0, back_tmp))
         {
             return;
         }
 
-        // 夹爪下降
-        if (grab_move(999, pre_height, false))
-        {
-            ROS_INFO("GRAB MOVE!");
-        }
-        else
-            ROS_INFO("GRAB LIFT FAILED!");
+
 
         if (Switch_agv_mode(4))
         {
@@ -578,7 +564,7 @@ namespace hfsm_ns
         //     ROS_INFO("GRAB LIFT FAILED!");
 
         // 已经取完料了
-        this->_context->take_flag = 1;
+        // this->_context->take_flag = 1;
 
         TransState("Auto");
     }

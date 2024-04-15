@@ -80,6 +80,9 @@ namespace xj_control_ns
 
 
         ros::Publisher test_msg_pub_;
+
+        // 最大角速度
+        double max_vel_ = 15.0;
         
         
         

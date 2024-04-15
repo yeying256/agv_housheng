@@ -98,7 +98,6 @@ int main(int argc, char **argv)
     context->Start("HardwareInit");
 
     int time = 0;
-    int way_point = 1;
     int detect_times = 0;
     while (ros::ok() && (context->run_ == true))
     {
@@ -113,19 +112,19 @@ int main(int argc, char **argv)
         // 如果为自动状态，每隔1s发出心跳事件
         if (current_state == "Auto")
         {
-            // std::cout<<"现在进入了auto"<<std::endl;
-            if (time % 10 == 0)
-            {
-                EventData e = EventData((int)checkheart_);
-                context->SendEvent(e);
-            }
-            // wangxiao
+            // std::cout<<"现在进入了auto"<<std::endl;                
+                if (time % 10 == 0)
+                {
+                    EventData e = EventData((int)checkheart_);
+                    context->SendEvent(e);
+                }
+                // wangxiao
 
-            // wangxiao
+                // wangxiao
+                // nav_flag :导航阶段
+                // take_flag： 手上有没有料
 
-            if (context->nav_flag == 0)
-            {
-                if (way_point == 1)
+                if (context->nav_flag == 0)
                 {
                     std::cout << "send waypoint" << std::endl;
                     // 途经点
@@ -147,133 +146,105 @@ int main(int argc, char **argv)
                     goal_data put = {2.91035048977949, -0.4558212749612451, q};
                     e.SetData(&put);
                     context->SendEvent(e);
-                    way_point = 0;
                     // continue;
                     // context->take_flag = 0;
+
+
                 }
 
-                // if (context->take_flag == 1)
-                // {
-                //     // 放
-                //     // position:
-                //     // x: 4.201893556236952
-                //     // y: -0.9959773657127725
-                //     // z: 0.0
-                //     // orientation:
-                //     // x: 0.0
-                //     // y: 0.0
-                //     // z: -0.5843139394532142
-                //     // w: 0.811527707574218
-
-                //     geometry_msgs::Quaternion q;
-                //     q.w = 0.811527707574218;
-                //     q.z = -0.5843139394532142;
-                //     q.y = 0;
-                //     q.x = 0;
-                //     EventData e = EventData((int)go_);
-                //     goal_data put = {4.201893556236952, -0.9959773657127725, q};
-                //     e.SetData(&put);
-                //     context->SendEvent(e);
-                //     // context->take_flag = 0;
-                // }
-
-                // if (context->put_flag == 1)
-                // {
-                //     // 放
-                //     // position:
-                //     //   x: 4.441739180668326
-                //     //   y: -1.5032635120511704
-                //     //   z: 0.0
-                //     // orientation:
-                //     //   x: 0.0
-                //     //   y: 0.0
-                //     //   z: -0.5738386402429688
-                //     //   w: 0.8189683845937525
-                //     std::cout << "go to put down" << std::endl;
-
-                //     geometry_msgs::Quaternion q;
-                //     q.w = 0.8241698824972953;
-                //     q.z = -0.5663426566879758;
-                //     q.y = 0;
-                //     q.x = 0;
-                //     EventData e = EventData((int)go_);
-                //     goal_data start = {10.870451444661438, 4.875714719729624, q};
-                //     e.SetData(&start);
-                //     context->SendEvent(e);
-                //     // context->take_flag = 0;
-                // }
-            }
-
-            // if (context->nav.ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED && way_point == 1)
-            // {
-            //     way_point = 0;
-            //     continue;
-            // }
-
-            // if (context->nav.ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-            // {
-            //     context->nav_flag = 0;
-
-            //     context->TransForState("Adjust");
-            // }
-
-            // 前面导航进入取料位置
-            // if (context->nav_flag == 0)
-            // {
-            //     context->nav_flag = 1;
-            // }
-
-            // 如果前面运行过了，并且拿起来了
-            if (context->nav_flag == 1)
-            {
-                // 如果
-                // if(context->take_flag == 1)
+                // !!!!!!!!!!!!!!!!!!!!!测试用
+                context->nav_flag = 1;
+                context->take_flag = 1;
+                
+                // 如果前面运行过了，并且拿起来了
+                if (context->nav_flag == 1)
                 {
-                    // 放料
-                    EventData e = EventData((int)put_);
+                    // 如果
+                    if(context->take_flag == 1)
+                    {
+                        // 放料
+                        EventData e = EventData((int)put_);
 
-                    // 把这个消息发过去
-                    std::vector<geometry_msgs::Pose> way_point;
-                    geometry_msgs::Pose point1;
-                    // 第一个点，退出
-                    point1.position.x = 2.8881201451787653;
-                    point1.position.y = 3.2236157804702135;
-                    point1.orientation.x = 0.0;
-                    point1.orientation.y = 0.0;
-                    point1.orientation.z = 0.6292847017063496;
-                    point1.orientation.w = 0.7771748607606596;
+                        // 把这个消息发过去
+                        std::vector<geometry_msgs::Pose> way_point;
+                        geometry_msgs::Pose point1;
 
-                    way_point.push_back(point1);
+                        point1.position.x = 2.546320548332148;
+                        point1.position.y = -1.4942356780273902;
+                        point1.orientation.x = 0.0;
+                        point1.orientation.y = 0.0;
+                        point1.orientation.z = 0.5748077291939767;
+                        point1.orientation.w = 0.8182885031936254;
 
-                    // 第二个点：原地转个圈
-                    point1.orientation.z = -0.8033431988003251;
-                    point1.orientation.w = 0.5955163347392424;
+                        way_point.push_back(point1);
 
-                    way_point.push_back(point1);
+                        // 第二个点：原地转个圈
 
-                    // 有几个途径点就写几个
 
-                    e.SetData(&way_point);
-                    context->SendEvent(e);
+                        point1.position.x = 3.243672395914593;
+                        point1.position.y = -1.6305395628278034;
+                        point1.orientation.z = -0.1700017543506582;
+                        point1.orientation.w = 0.9854437596929103;
 
-                    // 动夹爪
-                    // e = EventData((int)automove_grabmove_);
-                    // grab_move gb_msg;
-                    // e.SetData(&gb_msg);
-                    // context->SendEvent(e);
+                        way_point.push_back(point1);
 
-                    // 退出
-                    way_point.clear();
+                        point1.position.x = 10.325582067881982;
+                        point1.position.y = -3.6231888689456717;
+                        point1.orientation.z = -0.17284721479546436;
+                        point1.orientation.w = 0.984948648578925;
 
-                    // e.SetData(&way_point);
-                    // context->SendEvent(e);
+                        way_point.push_back(point1);
 
-                    // 重置takeflag
-                    context->take_flag = 0;
+                        point1.position.x = 10.325582067881982;
+                        point1.position.y = -3.6231888689456717;
+                        point1.orientation.z = 0.5748077291939767;
+                        point1.orientation.w = 0.8182885031936254;
+
+                        way_point.push_back(point1);
+
+                        // 有几个途径点就写几个
+
+                        e.SetData(&way_point);
+                        context->SendEvent(e);
+
+                        // 动夹爪
+                        e = EventData((int)automove_grabmove_);
+                        grab_move gb_msg;
+                        e.SetData(&gb_msg);
+                        context->SendEvent(e);
+
+                        // 退出
+                        e = EventData((int)put_);
+                        way_point.clear();
+
+                        point1.position.x = 2.6432228129606186;
+                        point1.position.y = -1.6002449424544825;
+                        point1.orientation.z = 0.9883107167820162;
+                        point1.orientation.w = 0.15245303241922506;
+
+                        way_point.push_back(point1);
+
+                        point1.position.x = 0.0;
+                        point1.position.y = 0.0;
+                        point1.orientation.z = 0.0;
+                        point1.orientation.w = 1.0;
+
+                        way_point.push_back(point1);
+
+                        e.SetData(&way_point);
+                        context->SendEvent(e);
+
+                        // 重置takeflag
+                        context->take_flag = 0;
+                    }
+                    context->nav_flag = 2;
                 }
+                // !!!!!!!!!!!!!!!!!!!!!!测试用循环跑
+                    context->nav_flag = 0;
+                // !!!!!!!!!!!!!!!!!!!!!!测试用
 
-                context->nav_flag = 2;
-            }
+
+
         }
         else if (context->GetCurStateName() == "Adjust")
         {
@@ -291,17 +262,16 @@ int main(int argc, char **argv)
         }
         else if (current_state == "Idle")
         {
-            // if (!context->detector_flag)
-            // {
-            //     ROS_INFO("take photo");
-            //     EventData e = EventData((int)photo_);
-            //     context->SendEvent(e);
-            //     ros::Duration(1.0).sleep();
-            // }
+            if (!context->detector_flag)
+            {
+                ROS_INFO("take photo");
+                EventData e = EventData((int)photo_);
+                context->SendEvent(e);
+                ros::Duration(1.0).sleep();
+            }
         }
         else if (current_state == "Gohome")
         {
-
 			context->TransForState("Auto");
             geometry_msgs::Quaternion q;
             q.w = 1;

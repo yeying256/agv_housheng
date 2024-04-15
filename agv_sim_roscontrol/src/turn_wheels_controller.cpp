@@ -67,6 +67,7 @@ namespace xj_control_ns
 
         B = 0.625;
         R = 0.625;
+        max_vel_ = 15.0;
 
         printf("\033[1;36;40m  /agv_sim/lr = %f lf=%f,B=%f,R=%f \033[0m \n", lr, lf, B, R);
         agv_cal_.init(lr, lf, B, R);
@@ -219,9 +220,20 @@ namespace xj_control_ns
         cmd_turn_drive[2] = cmd_vel_steer[1];
         cmd_turn_drive[3] = cmd_vel_drive[1];
 
+        double vel_scale = 1.0;
         for (int i = 0; i < turn_wheel_joint_handles_.size(); i++)
         {
-            turn_wheel_joint_handles_[i].setCommand(cmd_turn_drive[i]);
+            if (cmd_turn_drive[i]>this->max_vel_)
+            {
+                double sacle_new = max_vel_ / cmd_turn_drive[i];
+                vel_scale =   sacle_new <vel_scale ? sacle_new : vel_scale;
+            }
+        }
+        
+
+        for (int i = 0; i < turn_wheel_joint_handles_.size(); i++)
+        {
+            turn_wheel_joint_handles_[i].setCommand(vel_scale*cmd_turn_drive[i]);
             // turn_wheel_joint_handles_[i].setCommand(10);
 
             // std::cout<<"\033[1;36;40m "<<"cmd_turn_drive"<<i<<"="<<cmd_turn_drive[i]<<"\033[0m "<<std::endl;

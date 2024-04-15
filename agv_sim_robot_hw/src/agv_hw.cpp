@@ -158,8 +158,53 @@ namespace xj_control_ns
         {
             resp.agv_result = 0;
 
+
+
+            // 让最后一个轮子往前走一小段
             ZAux_Direct_SetAtype(handle, FRONT_STEER, 65);
             ZAux_Direct_SetAtype(handle, BACK_STEER, 65);
+            ZAux_Direct_SetAtype(handle, FRONT_WHEEL, 65);
+            ZAux_Direct_SetAtype(handle, BACK_WHEEL, 65);
+            ZAux_Direct_SetAxisEnable(handle, FRONT_STEER, 0);
+            ZAux_Direct_SetAxisEnable(handle, BACK_STEER, 0);
+            ZAux_Direct_SetAxisEnable(handle, FRONT_WHEEL, 0);
+            ZAux_Direct_SetAxisEnable(handle, BACK_WHEEL, 1);
+
+            ZAux_Direct_SetSpeed(handle, BACK_WHEEL, 72);
+
+
+            // ZAux_Direct_SetSpeed(handle, 0, 200); //设置轴 0 速度为 200units/s
+            ZAux_Direct_SetAccel(handle, BACK_WHEEL, 2000); //设置轴 0 加速度为 2000units/s/s
+            ZAux_Direct_SetDecel(handle, BACK_WHEEL, 2000); //设置轴 0 减速度为 2000units/s/s
+            ZAux_Direct_SetSramp(handle, BACK_WHEEL, 200); //设置轴 0 S 曲线为 200ms
+
+            int ret  = 0;
+            // ret = ZAux_Direct_Single_Move(handle, BACK_WHEEL, 360);
+            
+            commandCheckHandler("往前运行一小段", ret);//判断指令是否执行成功
+
+
+            int tmp = 0;
+            int state;
+            while (ros::ok() && tmp < 20)
+            {
+                tmp++;
+                printf("夹爪上升位置：%f\n", lift_pos);
+                ZAux_Direct_GetIfIdle(handle, BACK_WHEEL, &state);
+                if (state == -1)
+                {
+                    std::cout<<"向前走了一小段距离"<<std::endl;
+                    break;
+                }
+                sleep(1);
+            }
+            sleep(1);
+
+
+
+            // 
+            ZAux_Direct_SetAtype(handle, FRONT_STEER, 65);
+            ZAux_Direct_SetAtype(handle, BACK_STEER, 66);
             ZAux_Direct_SetSpeed(handle, FRONT_STEER, 72);
             ZAux_Direct_SetSpeed(handle, BACK_STEER, 72);
             ZAux_Direct_SetCreep(handle, FRONT_STEER, 36);
@@ -167,10 +212,16 @@ namespace xj_control_ns
 
             // 前轮转向电机回零运动
             ZAux_Direct_SetAxisEnable(handle, FRONT_WHEEL, 0);
+            // ZAux_Direct_SetAxisEnable(handle, BACK_STEER, 1);
             ZAux_Direct_SetAxisEnable(handle, BACK_STEER, 0);
+            ZAux_Direct_SetAxisEnable(handle, FRONT_STEER, 1);
             ZAux_Direct_SetAxisEnable(handle, BACK_WHEEL, 0);
+
             int retBD0 = ZAux_BusCmd_Datum(handle, FRONT_STEER, 22);
             commandCheckHandler("ZAux_BusCmd_Datum", retBD0);
+
+            // 让后轮一直转
+            int retSVS = ZAux_Direct_SetDAC(handle, BACK_STEER, 3.14);
             if (!retBD0)
             {
                 int tmp = 0;
@@ -183,6 +234,11 @@ namespace xj_control_ns
                     // ZAux_Direct_GetMpos(handle,FRONT_STEER,&tmp_position);
                     // int tmp_enable;
                     // ZAux_Direct_GetAxisEnable(handle,FRONT_STEER,&tmp_enable);
+                    if (tmp>10)
+                    {
+                        int retSVS = ZAux_Direct_SetDAC(handle, BACK_STEER, -3.14);
+                    }
+                    
 
                     if (homestatus == 1)
                     {
@@ -191,7 +247,10 @@ namespace xj_control_ns
                     }
                     ROS_INFO("***前转向轮正在回零***\n");
                 }
-                if (tmp == 20)
+                // 让后轮停转
+                int retSVS = ZAux_Direct_SetDAC(handle, BACK_STEER, 0.0);
+
+                if (tmp >= 20)
                 {
                     agv_msg::error_log msg;
                     msg.device_num = 0;
@@ -201,16 +260,32 @@ namespace xj_control_ns
                     return false;
                 }
             }
+
+
+
+            
+
+
+
+
+
+            ZAux_Direct_SetAtype(handle, FRONT_STEER, 66);
+            ZAux_Direct_SetAtype(handle, BACK_STEER, 65);
+
+
             ZAux_Direct_SetAxisEnable(handle, BACK_STEER, 1);
 
             // 后轮转向电机回零运动
-            ZAux_Direct_SetAxisEnable(handle, BACK_WHEEL, 1);
+            ZAux_Direct_SetAxisEnable(handle, BACK_WHEEL, 0);
             ZAux_Direct_SetAxisEnable(handle, FRONT_STEER, 0);
             ZAux_Direct_SetAxisEnable(handle, FRONT_WHEEL, 0);
 
             int retBD2 = ZAux_BusCmd_Datum(handle, BACK_STEER, 22);
             commandCheckHandler("ZAux_BusCmd_Datum", retBD2);
             // 后轮转向电机回零运动
+
+            retSVS = ZAux_Direct_SetDAC(handle, FRONT_STEER, 3.14);
+
             if (!retBD2)
             {
                 int tmp = 0;
@@ -219,6 +294,13 @@ namespace xj_control_ns
                     sleep(1);
                     tmp++;
                     ZAux_Direct_GetHomeStatus(handle, BACK_STEER, &homestatus); // 获取回零运动完成状态
+
+                    if (tmp>10)
+                    {
+                        retSVS = ZAux_Direct_SetDAC(handle, FRONT_STEER, -3.14);
+
+                    }
+                    
                     if (homestatus == 1)
                     {
                         ROS_INFO("***后转向轮回零了***\n");
@@ -226,7 +308,8 @@ namespace xj_control_ns
                     }
                     ROS_INFO("***后转向轮正在回零***\n");
                 }
-                if (tmp == 20)
+                retSVS = ZAux_Direct_SetDAC(handle, FRONT_STEER, 0.0);
+                if (tmp >= 20)
                 {
                     agv_msg::error_log msg;
                     msg.device_num = 0;
@@ -238,10 +321,16 @@ namespace xj_control_ns
                 }
             }
             ZAux_Direct_SetAxisEnable(handle, FRONT_STEER, 1);
+            ZAux_Direct_SetAxisEnable(handle, BACK_STEER, 1);
             ZAux_Direct_SetAxisEnable(handle, FRONT_WHEEL, 1);
+            ZAux_Direct_SetAxisEnable(handle, BACK_WHEEL, 1);
 
+            // 66是速度模式
             ZAux_Direct_SetAtype(handle, FRONT_STEER, 66);
             ZAux_Direct_SetAtype(handle, BACK_STEER, 66);
+            ZAux_Direct_SetAtype(handle, FRONT_WHEEL, 66);
+            ZAux_Direct_SetAtype(handle, BACK_WHEEL, 66);
+
             ZAux_Direct_SetMpos(handle, FRONT_WHEEL, 0);
             sleep(0.5);
             ZAux_Direct_SetMpos(handle, BACK_WHEEL, 0);
